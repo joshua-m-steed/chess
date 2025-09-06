@@ -43,4 +43,11 @@ public class ChessMove {
     public ChessPiece.PieceType getPromotionPiece() {
         return promotionPiece;
     }
+
+    // Changes 'chess.ChessMove@{object}' to a readable string for testing
+    // PromotionType could be included in this test later on
+    @Override
+    public String toString() {
+        return String.format("%s%s", startPosition, endPosition);
+    }
 }

@@ -32,4 +32,10 @@ public class ChessPosition {
     public int getColumn() {
         return col;
     }
+
+    // Changes movement ID to a readable string for testing
+    @Override
+    public String toString() {
+        return String.format("[%d,%d]", row, col);
+    }
 }
