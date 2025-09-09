@@ -1,6 +1,7 @@
 package chess;
 
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
 
 /**
@@ -54,12 +55,15 @@ public class ChessPiece {
      * @return Collection of valid moves
      */
     public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition) {
+
+
         ChessPiece piece = board.getPiece(myPosition);
         if (piece.getPieceType() == PieceType.BISHOP) {
             //HARDCODED for FIRST POSITION
             return List.of(new ChessMove(new ChessPosition(5,4), new ChessPosition(1,8), null ));
         }
         return List.of(); // TEMPORARY HACK
-//        throw new RuntimeException("Not implemented");
+        //        throw new RuntimeException("Not implemented");
+        //        return new HashSet<ChessMove>(); Another return idea
     }
 }
