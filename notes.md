@@ -23,7 +23,7 @@
  - Private: Access modifier, allows access only within class
  - Static: Belongs to the class
 
- __:: public static void main(String[] args) ::__
+ __:: public static void main(String[] args) ::__  
 A special line that lets Java call and activate whatever is in the command
 
 *Objects*
@@ -51,3 +51,81 @@ import {package name}
 ```
 - Great for modularity
 
+
+Check slides**
+Class example
+``` Java
+//Field
+private String name;
+
+// Contructor
+public Person(String name) {
+    this. name = name;
+}
+
+// Method
+public void sayName() {
+    System.out.println(name);
+}
+``` 
+
+__extends__ : Inherits from the parent class. Ex. public class GetSetExample extends Database { ... }  
+
+``` Java
+public class ConstructEx {
+    private String value;
+
+    //Default constructor
+    public ConstructEx() {
+        value = "default";
+    }
+    //Parameterized Constructor
+    public ConstructEx(String value) {
+        this.value = value;
+    }
+
+    //Copy Constructor
+    public ConstructEx(ConstructorEx copy) {
+        this(copy.value);
+    }
+}
+```
+
+Enum is like a fixed set.
+
+Design Priciples:
+- Encapsulation: Hiding the details
+Prevents external code from being concerned with the internal workings of an object.  
+- Immutability: Cannot Change
+Immutable objects are simple. They are safe to share and publish freely without the need to make defensive copies.  
+
+``` Java
+// ## Example ## //
+public class GetSetExample {
+    public int[] scores = new int[10];
+}
+
+// Is concise, however, you now have no controll
+
+public class GetSetExample {
+    public int[] getScores() {
+        return scores;
+    }
+
+    public void setScores(int[] scores) {
+        this.scores = scores;
+    }
+
+    private int[] scores = new int[10];
+}
+
+// More controll, can restrict to functions
+```
+
+*Object class*
+- toString(): Often overwritten. Can be overwritten with just about anything as long as it returns a string  
+- equals(): Often overwritten. Can be overwritten with different '=' ideas
+- hashCode(): Often overwritten. Can be overwritten to get a value in order to distribute their values  
+
+*Records*
+Greatly simplifies the classes constructrion by taking values and not allowing mutability  
