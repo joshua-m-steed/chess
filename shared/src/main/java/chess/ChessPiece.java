@@ -89,7 +89,7 @@ public class ChessPiece {
         //        return new HashSet<ChessMove>(); Another return idea
     }
 
-    private List<ChessMove> calculateBishopMoves(ChessBoard board, ChessPosition myPos, ChessPosition pos, List<ChessMove> possibleMoves)
+    private List<ChessMove> calculateBishopMoves(ChessBoard board, ChessPosition myPos, ChessPosition pos,  List<ChessMove> possibleMoves)
     {
 //        enum direction {
 //            TOPRIGHT,
@@ -108,11 +108,15 @@ public class ChessPiece {
         }
 
         ChessPiece tile = board.getPiece(pos);
+        ChessPiece myPiece = board.getPiece(myPos);
         if(tile != null)
         {
-            // SPEAK when you are a piece! ANNOUNCE YOURSELF!
-            System.out.println("YES, HELLO, I AM NOT NULL");
-            possibleMoves.add(new ChessMove(myPos, new ChessPosition(pos.getRow(), pos.getColumn()), null));
+            if(tile.getTeamColor() != myPiece.getTeamColor())
+            {
+                // SPEAK when you are a piece! ANNOUNCE YOURSELF!
+                System.out.println("YES, HELLO, I AM NOT NULL");
+                possibleMoves.add(new ChessMove(myPos, new ChessPosition(pos.getRow(), pos.getColumn()), null));
+            }
             return possibleMoves;
         }
 
