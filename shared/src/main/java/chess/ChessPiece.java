@@ -91,16 +91,35 @@ public class ChessPiece {
 
     private List<ChessMove> calculateBishopMoves(ChessBoard board, ChessPosition myPos, ChessPosition pos, List<ChessMove> possibleMoves)
     {
+//        enum direction {
+//            TOPRIGHT,
+//            TOPLEFT,
+//            BOTTOMRIGHT,
+//            BOTTOMLEFT
+//        }
+
 //        int row = pos.getRow();
 //        int col = pos.getColumn();
 
         if(pos.getRow() < 0 | pos.getColumn() < 0 | pos.getRow() >= 8 | pos.getColumn() >= 8)
         {
+            System.out.println("Sorry, out of bounds");
             return possibleMoves;
         }
 
-        System.out.println("RESURSIVE");
+        ChessPiece tile = board.getPiece(pos);
+        if(tile != null)
+        {
+            // SPEAK when you are a piece! ANNOUNCE YOURSELF!
+            System.out.println("YES, HELLO, I AM NOT NULL");
+            possibleMoves.add(new ChessMove(myPos, new ChessPosition(pos.getRow(), pos.getColumn()), null));
+            return possibleMoves;
+        }
+
+        // Readability for my pleasure
+        System.out.println("RECURSIVE");
         System.out.println(new ChessMove(myPos, new ChessPosition(pos.getRow(), pos.getColumn()), null ));
+
         possibleMoves.add(new ChessMove(myPos, new ChessPosition(pos.getRow(), pos.getColumn()), null ));
 
         return calculateBishopMoves(board, myPos, new ChessPosition(pos.getRow() + 1,pos.getColumn() + 1 ), possibleMoves);
