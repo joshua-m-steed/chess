@@ -1,8 +1,6 @@
 package chess;
 
-import java.lang.reflect.Array;
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -62,7 +60,8 @@ public class ChessPiece {
 
         if (piece.getPieceType() == PieceType.BISHOP) {
 
-            calculateBishopMoves(board, myPosition, new ChessPosition(myPosition.getRow() + 1, myPosition.getColumn() + 1), possibleMoves);
+            calculateBishopMoves(board, myPosition, new ChessPosition(myPosition.getRow() + 1, myPosition.getColumn() + 1), 1 , 1, possibleMoves);
+            calculateBishopMoves(board, myPosition, new ChessPosition(myPosition.getRow() + -1, myPosition.getColumn() + -1), -1 , -1, possibleMoves);
 
 
             // PSUEDO CODE
@@ -89,19 +88,9 @@ public class ChessPiece {
         //        return new HashSet<ChessMove>(); Another return idea
     }
 
-    private List<ChessMove> calculateBishopMoves(ChessBoard board, ChessPosition myPos, ChessPosition pos,  List<ChessMove> possibleMoves)
+    private List<ChessMove> calculateBishopMoves(ChessBoard board, ChessPosition myPos, ChessPosition pos, int dx, int dy,  List<ChessMove> possibleMoves)
     {
-//        enum direction {
-//            TOPRIGHT,
-//            TOPLEFT,
-//            BOTTOMRIGHT,
-//            BOTTOMLEFT
-//        }
-
-//        int row = pos.getRow();
-//        int col = pos.getColumn();
-
-        if(pos.getRow() < 0 | pos.getColumn() < 0 | pos.getRow() >= 8 | pos.getColumn() >= 8)
+        if(pos.getRow() < 1 | pos.getColumn() < 1 | pos.getRow() >= 9 | pos.getColumn() >= 9)
         {
             System.out.println("Sorry, out of bounds");
             return possibleMoves;
@@ -126,6 +115,6 @@ public class ChessPiece {
 
         possibleMoves.add(new ChessMove(myPos, new ChessPosition(pos.getRow(), pos.getColumn()), null ));
 
-        return calculateBishopMoves(board, myPos, new ChessPosition(pos.getRow() + 1,pos.getColumn() + 1 ), possibleMoves);
+        return calculateBishopMoves(board, myPos, new ChessPosition(pos.getRow() + dx,pos.getColumn() + dy), dx, dy, possibleMoves);
     }
 }
