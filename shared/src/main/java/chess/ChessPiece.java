@@ -3,6 +3,7 @@ package chess;
 import java.util.Collection;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * Represents a single chess piece
@@ -59,40 +60,20 @@ public class ChessPiece {
         ChessPiece piece = board.getPiece(myPosition);
 
         if (piece.getPieceType() == PieceType.BISHOP) {
-
             calculateBishopMoves(board, myPosition, new ChessPosition(myPosition.getRow() + 1, myPosition.getColumn() + 1), 1 , 1, possibleMoves);
-            calculateBishopMoves(board, myPosition, new ChessPosition(myPosition.getRow() + -1, myPosition.getColumn() + -1), -1 , -1, possibleMoves);
-
-
-            // PSUEDO CODE
-                // CurrentPos
-                // New Pos
-
-                // If New Pos is:
-                    // out of bounds
-                    // A piece
-                        // Capture
-                        // Denied
-//            possibleMoves.add(new ChessMove(new ChessPosition(5,4), new ChessPosition(1,8), null ));
-//            possibleMoves.add(new ChessMove(new ChessPosition(5,4), new ChessPosition(2,1), null ));
-//            possibleMoves.add(new ChessMove(new ChessPosition(5,4), new ChessPosition(2,7), null ));
-//            possibleMoves.add(new ChessMove(new ChessPosition(5,4), new ChessPosition(3,2), null ));
-
-            System.out.println(possibleMoves);
-
-            //HARDCODED for FIRST POSITION
-            return possibleMoves;
+            calculateBishopMoves(board, myPosition, new ChessPosition(myPosition.getRow() - 1, myPosition.getColumn() - 1), -1 , -1, possibleMoves);
+            calculateBishopMoves(board, myPosition, new ChessPosition(myPosition.getRow() + 1, myPosition.getColumn() - 1), 1 , -1, possibleMoves);
+            calculateBishopMoves(board, myPosition, new ChessPosition(myPosition.getRow() - 1, myPosition.getColumn() + 1), -1 , 1, possibleMoves);
+//            System.out.println(possibleMoves); // DEBUG PRINT FOR FULL MOVE COLLECTION
         }
-        return List.of(); // TEMPORARY HACK
-        //        throw new RuntimeException("Not implemented");
-        //        return new HashSet<ChessMove>(); Another return idea
+        return possibleMoves;
     }
 
     private List<ChessMove> calculateBishopMoves(ChessBoard board, ChessPosition myPos, ChessPosition pos, int dx, int dy,  List<ChessMove> possibleMoves)
     {
         if(pos.getRow() < 1 | pos.getColumn() < 1 | pos.getRow() >= 9 | pos.getColumn() >= 9)
         {
-            System.out.println("Sorry, out of bounds");
+//            System.out.println("Sorry, out of bounds");
             return possibleMoves;
         }
 
@@ -103,18 +84,40 @@ public class ChessPiece {
             if(tile.getTeamColor() != myPiece.getTeamColor())
             {
                 // SPEAK when you are a piece! ANNOUNCE YOURSELF!
-                System.out.println("YES, HELLO, I AM NOT NULL");
+//                System.out.println("YES, HELLO, I AM NOT NULL");
                 possibleMoves.add(new ChessMove(myPos, new ChessPosition(pos.getRow(), pos.getColumn()), null));
             }
             return possibleMoves;
         }
 
         // Readability for my pleasure
-        System.out.println("RECURSIVE");
-        System.out.println(new ChessMove(myPos, new ChessPosition(pos.getRow(), pos.getColumn()), null ));
+//        System.out.println("RECURSIVE");
+//        System.out.println(new ChessMove(myPos, new ChessPosition(pos.getRow(), pos.getColumn()), null ));
 
         possibleMoves.add(new ChessMove(myPos, new ChessPosition(pos.getRow(), pos.getColumn()), null ));
 
         return calculateBishopMoves(board, myPos, new ChessPosition(pos.getRow() + dx,pos.getColumn() + dy), dx, dy, possibleMoves);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        ChessPiece that = (ChessPiece) o;
+        return pieceColor == that.pieceColor && type == that.type;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(pieceColor, type);
+    }
+
+    @Override
+    public String toString() {
+        return "Piece: " +
+                "pieceColor=" + pieceColor +
+                ", type=" + type +
+                '}';
     }
 }
