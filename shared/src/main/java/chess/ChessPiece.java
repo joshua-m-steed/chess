@@ -97,6 +97,20 @@ public class ChessPiece {
             calculateKingMoves(board, myPosition, new ChessPosition(myPosition.getRow() - 1, myPosition.getColumn() + 1), possibleMoves);
         }
 
+        if(piece.getPieceType() == PieceType.KNIGHT) {
+            calculateKnightMoves(board, myPosition, new ChessPosition(myPosition.getRow() + 2, myPosition.getColumn() - 1), possibleMoves);
+            calculateKnightMoves(board, myPosition, new ChessPosition(myPosition.getRow() + 2, myPosition.getColumn() + 1), possibleMoves);
+
+            calculateKnightMoves(board, myPosition, new ChessPosition(myPosition.getRow() - 2, myPosition.getColumn() - 1), possibleMoves);
+            calculateKnightMoves(board, myPosition, new ChessPosition(myPosition.getRow() - 2, myPosition.getColumn() + 1), possibleMoves);
+
+            calculateKnightMoves(board, myPosition, new ChessPosition(myPosition.getRow() + 1, myPosition.getColumn() - 2), possibleMoves);
+            calculateKnightMoves(board, myPosition, new ChessPosition(myPosition.getRow() + 1, myPosition.getColumn() + 2), possibleMoves);
+
+            calculateKnightMoves(board, myPosition, new ChessPosition(myPosition.getRow() - 1, myPosition.getColumn() - 2), possibleMoves);
+            calculateKnightMoves(board, myPosition, new ChessPosition(myPosition.getRow() - 1, myPosition.getColumn() + 2), possibleMoves);
+        }
+
         if(piece.getPieceType() == PieceType.PAWN) {
             if(piece.getTeamColor() == ChessGame.TeamColor.WHITE)
             {
@@ -272,6 +286,38 @@ public class ChessPiece {
         possibleMoves.add(new ChessMove(myPos, new ChessPosition(pos.getRow(), pos.getColumn()), null ));
 
         return possibleMoves;
+    }
+
+    private List<ChessMove> calculateKnightMoves(ChessBoard board, ChessPosition myPos, ChessPosition pos, List<ChessMove> possibleMoves)
+    {
+        if(pos.getRow() < 1 | pos.getColumn() < 1 | pos.getRow() >= 9 | pos.getColumn() >= 9)
+        {
+//            System.out.println("Sorry, out of bounds");
+            return possibleMoves;
+        }
+
+        ChessPiece tile = board.getPiece(pos);
+        ChessPiece myPiece = board.getPiece(myPos);
+
+        if(tile != null)
+        {
+            if(tile.getTeamColor() != myPiece.getTeamColor())
+            {
+                // SPEAK when you are a piece! ANNOUNCE YOURSELF!
+//                System.out.println("YES, HELLO, I AM NOT NULL");
+                possibleMoves.add(new ChessMove(myPos, new ChessPosition(pos.getRow(), pos.getColumn()), null));
+            }
+            return possibleMoves;
+        }
+
+        // Readability for my pleasure
+//        System.out.println("RECURSIVE");
+//        System.out.println(new ChessMove(myPos, new ChessPosition(pos.getRow(), pos.getColumn()), null ));
+
+        possibleMoves.add(new ChessMove(myPos, new ChessPosition(pos.getRow(), pos.getColumn()), null ));
+
+        return possibleMoves;
+
     }
 
     private List<ChessMove> calculatePawnMoves(ChessBoard board, ChessPosition myPos, ChessPosition pos, List<ChessMove> possibleMoves, PieceType promotionType)
