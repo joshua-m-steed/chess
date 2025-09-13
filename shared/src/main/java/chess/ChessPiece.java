@@ -102,35 +102,52 @@ public class ChessPiece {
             {
                 if(myPosition.getRow() == 2)
                 {
-                    System.out.println("Advance");
-                    calculatePawnMoves(board, myPosition, new ChessPosition(myPosition.getRow() + 2, myPosition.getColumn()), possibleMoves);
+                    calculatePawnMoves(board, myPosition, new ChessPosition(myPosition.getRow() + 2, myPosition.getColumn()), possibleMoves, null);
                 }
 
                 if(myPosition.getRow() == 7)
                 {
-                    System.out.println("PROMOTE ME BRO");
+                    for(PieceType piecetype : PieceType.values())
+                    {
+                        if(piecetype != PieceType.PAWN && piecetype != PieceType.KING) {
+                            calculatePawnMoves(board, myPosition, new ChessPosition(myPosition.getRow() + 1, myPosition.getColumn()), possibleMoves, piecetype);
+                            calculatePawnMoves(board, myPosition, new ChessPosition(myPosition.getRow() + 1, myPosition.getColumn() + 1), possibleMoves, piecetype);
+                            calculatePawnMoves(board, myPosition, new ChessPosition(myPosition.getRow() + 1, myPosition.getColumn() - 1), possibleMoves, piecetype);
+                        }
+                    }
+
+                    return possibleMoves;
                 }
 
-                calculatePawnMoves(board, myPosition, new ChessPosition(myPosition.getRow() + 1, myPosition.getColumn()), possibleMoves);
-                calculatePawnMoves(board, myPosition, new ChessPosition(myPosition.getRow() + 1, myPosition.getColumn() + 1), possibleMoves);
-                calculatePawnMoves(board, myPosition, new ChessPosition(myPosition.getRow() + 1, myPosition.getColumn() - 1), possibleMoves);
+                calculatePawnMoves(board, myPosition, new ChessPosition(myPosition.getRow() + 1, myPosition.getColumn()), possibleMoves, null);
+                calculatePawnMoves(board, myPosition, new ChessPosition(myPosition.getRow() + 1, myPosition.getColumn() + 1), possibleMoves, null);
+                calculatePawnMoves(board, myPosition, new ChessPosition(myPosition.getRow() + 1, myPosition.getColumn() - 1), possibleMoves, null);
             }
 
             if(piece.getTeamColor() == ChessGame.TeamColor.BLACK)
             {
                 if(myPosition.getRow() == 7)
                 {
-                    calculatePawnMoves(board, myPosition, new ChessPosition(myPosition.getRow() - 2, myPosition.getColumn()), possibleMoves);
+                    calculatePawnMoves(board, myPosition, new ChessPosition(myPosition.getRow() - 2, myPosition.getColumn()), possibleMoves, null);
                 }
 
                 if(myPosition.getRow() == 2)
                 {
-                    System.out.println("PROMOTE ME BRO");
+                    for(PieceType piecetype : PieceType.values())
+                    {
+                        if(piecetype != PieceType.PAWN && piecetype != PieceType.KING) {
+                            calculatePawnMoves(board, myPosition, new ChessPosition(myPosition.getRow() - 1, myPosition.getColumn()), possibleMoves, piecetype);
+                            calculatePawnMoves(board, myPosition, new ChessPosition(myPosition.getRow() - 1, myPosition.getColumn() + 1), possibleMoves, piecetype);
+                            calculatePawnMoves(board, myPosition, new ChessPosition(myPosition.getRow() - 1, myPosition.getColumn() - 1), possibleMoves, piecetype);
+                        }
+                    }
+
+                    return possibleMoves;
                 }
 
-                calculatePawnMoves(board, myPosition, new ChessPosition(myPosition.getRow() - 1, myPosition.getColumn()), possibleMoves);
-                calculatePawnMoves(board, myPosition, new ChessPosition(myPosition.getRow() - 1, myPosition.getColumn() + 1), possibleMoves);
-                calculatePawnMoves(board, myPosition, new ChessPosition(myPosition.getRow() - 1, myPosition.getColumn() - 1), possibleMoves);
+                calculatePawnMoves(board, myPosition, new ChessPosition(myPosition.getRow() - 1, myPosition.getColumn()), possibleMoves, null);
+                calculatePawnMoves(board, myPosition, new ChessPosition(myPosition.getRow() - 1, myPosition.getColumn() + 1), possibleMoves, null);
+                calculatePawnMoves(board, myPosition, new ChessPosition(myPosition.getRow() - 1, myPosition.getColumn() - 1), possibleMoves, null);
             }
         }
 
@@ -257,7 +274,7 @@ public class ChessPiece {
         return possibleMoves;
     }
 
-    private List<ChessMove> calculatePawnMoves(ChessBoard board, ChessPosition myPos, ChessPosition pos, List<ChessMove> possibleMoves)
+    private List<ChessMove> calculatePawnMoves(ChessBoard board, ChessPosition myPos, ChessPosition pos, List<ChessMove> possibleMoves, PieceType promotionType)
     {
         if(pos.getRow() < 1 | pos.getColumn() < 1 | pos.getRow() >= 9 | pos.getColumn() >= 9)
         {
@@ -272,7 +289,7 @@ public class ChessPiece {
         {
             if(tile == null)
             {
-                possibleMoves.add(new ChessMove(myPos, new ChessPosition(pos.getRow(), pos.getColumn()), null));
+                possibleMoves.add(new ChessMove(myPos, new ChessPosition(pos.getRow(), pos.getColumn()), promotionType));
             }
             else
             {
@@ -294,7 +311,7 @@ public class ChessPiece {
                 {
                     if(tile == null)
                     {
-                        possibleMoves.add(new ChessMove(myPos, new ChessPosition(pos.getRow(), pos.getColumn()), null));
+                        possibleMoves.add(new ChessMove(myPos, new ChessPosition(pos.getRow(), pos.getColumn()), promotionType));
                     }
                     else
                     {
@@ -315,7 +332,7 @@ public class ChessPiece {
                 {
                     if(tile == null)
                     {
-                        possibleMoves.add(new ChessMove(myPos, new ChessPosition(pos.getRow(), pos.getColumn()), null));
+                        possibleMoves.add(new ChessMove(myPos, new ChessPosition(pos.getRow(), pos.getColumn()), promotionType));
                     }
                     else
                     {
@@ -331,7 +348,7 @@ public class ChessPiece {
             {
                 // SPEAK when you are a piece! ANNOUNCE YOURSELF!
 //                System.out.println("YES, HELLO, I AM NOT NULL");
-                possibleMoves.add(new ChessMove(myPos, new ChessPosition(pos.getRow(), pos.getColumn()), null));
+                possibleMoves.add(new ChessMove(myPos, new ChessPosition(pos.getRow(), pos.getColumn()), promotionType));
             }
             return possibleMoves;
         }
