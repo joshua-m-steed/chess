@@ -102,6 +102,7 @@ public class ChessPiece {
             {
                 if(myPosition.getRow() == 2)
                 {
+                    System.out.println("Advance");
                     calculatePawnMoves(board, myPosition, new ChessPosition(myPosition.getRow() + 2, myPosition.getColumn()), possibleMoves);
                 }
 
@@ -280,13 +281,47 @@ public class ChessPiece {
         }
         else if((myPos.getRow() + 2 == pos.getRow() && myPos.getColumn() == pos.getColumn()) | (myPos.getRow() - 2 == pos.getRow() && myPos.getColumn() == pos.getColumn()))
         {
-            if(tile == null)
+            if(myPos.getRow() + 2 == pos.getRow())
             {
-                possibleMoves.add(new ChessMove(myPos, new ChessPosition(pos.getRow(), pos.getColumn()), null));
+                ChessPosition prevPos = new ChessPosition(myPos.getRow() + 1, myPos.getColumn());
+                ChessPiece prevTile = board.getPiece(prevPos);
+
+                if(prevTile != null)
+                {
+                    return possibleMoves;
+                }
+                else
+                {
+                    if(tile == null)
+                    {
+                        possibleMoves.add(new ChessMove(myPos, new ChessPosition(pos.getRow(), pos.getColumn()), null));
+                    }
+                    else
+                    {
+                        return possibleMoves;
+                    }
+                }
             }
-            else
+            else if (myPos.getRow() - 2 == pos.getRow())
             {
-                return possibleMoves;
+                ChessPosition prevPos = new ChessPosition(myPos.getRow() - 1, myPos.getColumn());
+                ChessPiece prevTile = board.getPiece(prevPos);
+
+                if(prevTile != null)
+                {
+                    return possibleMoves;
+                }
+                else
+                {
+                    if(tile == null)
+                    {
+                        possibleMoves.add(new ChessMove(myPos, new ChessPosition(pos.getRow(), pos.getColumn()), null));
+                    }
+                    else
+                    {
+                        return possibleMoves;
+                    }
+                }
             }
         }
 
