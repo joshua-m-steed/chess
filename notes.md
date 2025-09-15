@@ -98,6 +98,10 @@ Design Priciples:
 Prevents external code from being concerned with the internal workings of an object.  
 - Immutability: Cannot Change
 Immutable objects are simple. They are safe to share and publish freely without the need to make defensive copies.  
+- Abstraction: Simplifying to Purpose
+Allows to focus on specific points
+1 - Customer Today (Works)
+2 - Customer Tomorrow (Exstensability)
 
 ``` Java
 // ## Example ## //
@@ -129,3 +133,120 @@ public class GetSetExample {
 
 *Records*
 Greatly simplifies the classes constructrion by taking values and not allowing mutability  
+
+
+*Polymorphism* : Many Forms  
+- Achieved by many interfaces and inheritance
+- You only need to expose what others need to know
+
+- Interfaces:
+You define specialization
+
+Interface Example
+``` Java
+public interface SymbolIterator {
+    boolean hasNext();
+
+    char next();
+}
+```
+Implementing the Interface
+``` Java
+public class CharIterator implements SymbolIterator {
+    int current = 0;
+    String charString = 'abcdefg';
+
+    @Override
+    public boolean hasNext() {
+        return current < charString.length();
+
+    @Override
+    public char next() {
+        return charString.charAt(current++);
+    }
+    }
+}
+```
+Provides a limiter of the class. Examples includes taking a computer and focusing/limiting the keyboard only.  
+
+
+*Inheritance*
+Extending what a parent is.
+SuperClass is over the SubClass.  
+``` Java
+public class InheritanceExample {
+    public static void main(String[] args) {
+        var sub = new SubClass();
+        System.out.println(sub);
+    }
+
+    public static class SuperClass extends Object { 
+        string name = "super";
+
+        public String toString() {
+            return name;
+        }
+    }
+
+    public static class SubClass extends SuperClass {
+        public String toString() {
+            return "Sub-class of " + super.toString();
+        }
+    }
+}
+```
+
+*Abstract Classes*
+Extending a parent & defining partial interface
+
+``` Java
+public static abstract class CharIterator implements Iterator { 
+    int current = 0;
+    String charString = "abcdefg";
+
+    public boolean hasNext() {
+        return current < charString.length();
+    }
+
+    public Object next() {
+        return charString.substring(current, ++current)
+    }
+
+    public abstract String newWithPrefix(String prefix);
+}
+```
+Child must implement the `newWithPrefix` method  
+Child can inherit the methods `hasNext` and `next`  
+The methods are the inheritance parts. The interface part is the abstract  
+
+
+Create an interface with a funciton that isn't defined, so you can have different implementations
+Create an inheritance provides all the methods  
+
+`*instanceOf*`
+- It's a test to see if something is an instance of [String, Object, etc...]  
+
+*ShallowCopy*
+You keep a pointer to the copy of the original data
+
+*DeepCopy*
+Same exact values, but it is in two different memory place
+
+
+Feilded abstractions
+``` Java
+public class ChessPiece {
+    private final ChessGame.TeamColor pieceColor;
+    private final PieceType type;
+
+    public collection<ChessMove> pieceMoves(Board, Position);
+}
+```
+|------------|
+| ChessPiece |
+|------------|
+| pieceColor |
+| pieceType  |
+|------------|
+| pieceMove()|
+|------------|
