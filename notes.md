@@ -242,11 +242,39 @@ public class ChessPiece {
     public collection<ChessMove> pieceMoves(Board, Position);
 }
 ```
-|------------|
+
 | ChessPiece |
 |------------|
 | pieceColor |
 | pieceType  |
-|------------|
 | pieceMove()|
-|------------|
+
+**JDK Collections**
+Be familiar with these:
+Package: java.util
+Interfaces: List, Map, Set, Iterator
+Implementations: ArrayList, HashMpa, HashSet
+
+*Exceptions*
+``` Java
+// Try / Catch
+try {
+    // Code that might throw exceptions
+} catch ('SpecificException' ex) {
+    // If there's a specific exception, it can be caught
+} catch (Exception ex) {
+    // A General exception catch for anything
+}
+
+// Throw exeptions
+void C() throws Exception {
+    throw new Exception("Forces declarations");
+}
+
+// Try / Finally
+try {
+    // Code that may throw an exception
+} finally {
+    // Always call this code 
+}
+```
