@@ -93,16 +93,6 @@ public class ConstructEx {
 
 Enum is like a fixed set.
 
-Design Priciples:
-- Encapsulation: Hiding the details
-Prevents external code from being concerned with the internal workings of an object.  
-- Immutability: Cannot Change
-Immutable objects are simple. They are safe to share and publish freely without the need to make defensive copies.  
-- Abstraction: Simplifying to Purpose
-Allows to focus on specific points
-1 - Customer Today (Works)
-2 - Customer Tomorrow (Exstensability)
-
 ``` Java
 // ## Example ## //
 public class GetSetExample {
@@ -278,3 +268,37 @@ try {
     // Always call this code 
 }
 ```
+
+
+**Domain Driven Design**
+Who are the *actors/users* in the system?  
+What *tasks* do the actors want to accomplish?  
+What are the *objects* that the actors use?  
+What are the *interactions* between actors and objects?  
+
+Object Relationships
+- Is-A  :: Inheritance. Often represented by extending :: A Programmer is a Person  
+- Has-A :: Encapsulation. Often represented by a field :: A Programmer has a Computer  
+- Use-A :: Transient association. Often represented with a method parameter :: A Person uses a Car to travel  
+
+Design Priciples:
+- Encapsulation: Hiding the details
+Prevents external code from being concerned with the internal workings of an object.  
+- Immutability: Cannot Change
+Immutable objects are simple. They are safe to share and publish freely without the need to make defensive copies.  
+- Abstraction: Simplifying to Purpose
+Allows to focus on specific points
+1 - Customer Today (Works)
+2 - Customer Tomorrow (Exstensability)
+- Decomposition: Decomposing larger pieces to smaller bits to prevent external code from being concerned with internal workings of an object.  
+- Simplicity: Keep it simple!!!
+- YAGNI: You're not going to need it! Always implement what you need, never when you just foresee that
+- DRY: Don't repeat yourself!
+- High Cohesion Low Coupling: Modules that belong with each other should be together, but reliance outside it should be minimal in connection
+- POLA: Principle of least astonishment. They should not surprise you!
+**SOLID** - Bob Martin
+- Single Responsibility: A module should be responsible to one, and only one, actor
+- Open Closed: You should be able to extend the behavior of a system without having to modify that system
+- Liskov Substitution: If a subclass violates the expecations of an interface, (throws errors and exceptions), it breaks LSP
+- Interface Segregation: Clients should not be forced to depend on methods they do not use
+- Dependency Inversion: High-level modules should not depend on low-level modules. Both should depend on abstractions
