@@ -269,8 +269,22 @@ try {
 }
 ```
 
+**Inner Class**  
+Static Inner Class  
+- Static: It can be its own thing and doesn't pay too much attention to context  
+Inner Class  
+- Similar to *Static Inner* but it can reference outter code or outter class values  
+Local Inner Class  
+- Similar to *Inner Class*, however, it's created within a method and can reference variables form the method  
+Annonymous Class  
+- No class is beind declared, but new instances of interfaces can be declared  
 
-**Domain Driven Design**
+*Closure* - Close around surrounding creation state  
+*Labmbda functions* - `function(() -> "return")`  
+*Functional Interface* - Single method interface  
+
+
+**Domain Driven Design**  
 Who are the *actors/users* in the system?  
 What *tasks* do the actors want to accomplish?  
 What are the *objects* that the actors use?  
