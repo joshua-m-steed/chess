@@ -1,0 +1,46 @@
+package chess.moves_calculator;
+
+import chess.*;
+
+import java.util.ArrayList;
+import java.util.List;
+
+public class KnightMovesCalculator implements CalculateMoves {
+    @Override
+    public List<ChessMove> possibleMoves(ChessBoard board, ChessPosition myPosition) {
+        List<ChessMove> knightMoves = new ArrayList<>();
+
+        calculateKnightMoves(board, myPosition, new ChessPosition(myPosition.getRow() + 2, myPosition.getColumn() - 1), knightMoves);
+        calculateKnightMoves(board, myPosition, new ChessPosition(myPosition.getRow() + 2, myPosition.getColumn() + 1), knightMoves);
+
+        calculateKnightMoves(board, myPosition, new ChessPosition(myPosition.getRow() - 2, myPosition.getColumn() - 1), knightMoves);
+        calculateKnightMoves(board, myPosition, new ChessPosition(myPosition.getRow() - 2, myPosition.getColumn() + 1), knightMoves);
+
+        calculateKnightMoves(board, myPosition, new ChessPosition(myPosition.getRow() + 1, myPosition.getColumn() - 2), knightMoves);
+        calculateKnightMoves(board, myPosition, new ChessPosition(myPosition.getRow() + 1, myPosition.getColumn() + 2), knightMoves);
+
+        calculateKnightMoves(board, myPosition, new ChessPosition(myPosition.getRow() - 1, myPosition.getColumn() - 2), knightMoves);
+        calculateKnightMoves(board, myPosition, new ChessPosition(myPosition.getRow() - 1, myPosition.getColumn() + 2), knightMoves);
+
+        return knightMoves;
+    }
+
+    private void calculateKnightMoves(ChessBoard board, ChessPosition myPos, ChessPosition newPos, List<ChessMove> knightMoves) {
+        if(newPos.getRow() < 1 | newPos.getColumn() < 1 | newPos.getRow() >= 9 | newPos.getColumn() >= 9) {
+            return;
+        }
+
+        ChessPiece nextTile = board.getPiece(newPos);
+        ChessPiece myPiece = board.getPiece(myPos);
+
+        if(nextTile != null) {
+            if(nextTile.getTeamColor() != myPiece.getTeamColor()) {
+                knightMoves.add(new ChessMove(myPos, new ChessPosition(newPos.getRow(), newPos.getColumn()), null));
+            }
+            return;
+        }
+
+        knightMoves.add(new ChessMove(myPos, new ChessPosition(newPos.getRow(), newPos.getColumn()), null ));
+
+    }
+}
