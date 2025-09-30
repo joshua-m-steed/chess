@@ -283,6 +283,31 @@ Annonymous Class
 *Labmbda functions* - `function(() -> "return")`  
 *Functional Interface* - Single method interface  
 
+**IO**  
+IO streams can be read, write, or both  
+Reader <- Read something in  
+Writer -> Write something out  
+
+**Generics**  
+< Type > - Allows a type to be specified with Object as a defuault item  
+ - Similar to Templates  
+``` Java
+public class GenericExample {
+    static class Storage<T> {
+        List<T> items = new ArrayList<>{};
+
+        void add(T item) { items.add(item); }
+
+        T get(int i) { return items.get(i); }
+    }
+
+    public static void main(String[] args) {
+        var intStorage = new Storage<Integer>();
+        var stringStorage = new Storage<String>();
+    }
+}
+
+```
 
 **Domain Driven Design**  
 Who are the *actors/users* in the system?  
@@ -315,4 +340,4 @@ Allows to focus on specific points
 - Open Closed: You should be able to extend the behavior of a system without having to modify that system
 - Liskov Substitution: If a subclass violates the expecations of an interface, (throws errors and exceptions), it breaks LSP
 - Interface Segregation: Clients should not be forced to depend on methods they do not use
-- Dependency Inversion: High-level modules should not depend on low-level modules. Both should depend on abstractions
+- Dependency Inversion: High-level modules should not depend on low-level modules. Both should depend on abstractions  
