@@ -134,7 +134,44 @@ public class ChessGame {
      * @return True if the specified team is in checkmate
      */
     public boolean isInCheckmate(TeamColor teamColor) {
-        throw new RuntimeException("Not implemented");
+        ChessPiece[][] board = this.board.getBoard();
+        Collection<ChessMove> enemyMoves = new ArrayList<>();
+        Collection<ChessMove> kingMoves = new ArrayList<>();
+        ChessPosition targetKingPos = null;
+
+        for(int i = 0; i < 8; i++) {
+            for(int j = 0; j < 8; j++) {
+                if(board[i][j] != null) {
+                    if(board[i][j].getPieceType() == ChessPiece.PieceType.KING && board[i][j].getTeamColor() == teamColor) {
+                        targetKingPos = new ChessPosition(i + 1, j + 1);
+                        Collection<ChessMove> moves = validMoves(targetKingPos);
+                        if(moves != null) {
+                            kingMoves.addAll(moves);
+                        }
+                    }
+                    else if(board[i][j].getTeamColor() != teamColor) {
+                        Collection<ChessMove> moves = validMoves(new ChessPosition(i + 1, j + 1));
+                        if(moves != null) {
+                            enemyMoves.addAll(moves);
+                        }
+                    }
+                }
+            }
+        }
+
+        int tiles_blocked = 0;
+        if(targetKingPos != null) {
+            for(ChessMove k_move : kingMoves) {
+                for(ChessMove e_move : enemyMoves) {
+                    if((k_move.getEndPosition().getColumn() == e_move.getEndPosition().getColumn()) && (k_move.getEndPosition().getRow() == e_move.getEndPosition().getRow()))  {
+                        tiles_blocked += 1;
+                        break;
+                    }
+                }
+            }
+        }
+
+        return tiles_blocked == kingMoves.size();
     }
 
     /**
