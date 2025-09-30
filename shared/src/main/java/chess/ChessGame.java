@@ -72,9 +72,19 @@ public class ChessGame {
     public void makeMove(ChessMove move) throws InvalidMoveException {
         ChessPosition startPos = move.getStartPosition();
         ChessPosition endPos = move.getEndPosition();
+        ChessPiece target_piece = this.board.getPiece(startPos);
 
-        System.out.println(startPos + " and " + endPos);
-        throw new RuntimeException("Not implemented");
+        try {
+            Collection<ChessMove> validMoves = validMoves(startPos);
+            if(validMoves.contains(move) && target_piece.getTeamColor() == teamTurn) {
+                System.out.println("You are a " + target_piece + " moving from " + startPos + " to " + endPos);
+            }
+            else {
+                throw new InvalidMoveException("This is not a valid move!");
+            }
+        } catch (InvalidMoveException e) {
+            System.out.println("Sorry, this isn't a valid move: " + startPos + "," + endPos);
+        }
     }
 
     /**
@@ -148,9 +158,6 @@ public class ChessGame {
         ChessPiece[][] new_board = board.getBoard();
 
         for(int i = 0; i < 8; i++) {
-//            for(int j = 0; j < 8; j++) {
-//                System.out.println(current_board[i][j]);
-//            }
             System.arraycopy(new_board[i], 0, current_board[i], 0, 8);
         }
     }
