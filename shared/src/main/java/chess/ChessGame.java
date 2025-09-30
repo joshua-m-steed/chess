@@ -106,8 +106,14 @@ public class ChessGame {
             }
         }
 
-        System.out.println(targetKingPos);
-        System.out.println(enemyMoves);
+        if(targetKingPos != null) {
+            for(ChessMove move : enemyMoves) {
+                if((targetKingPos.getColumn() == move.getEndPosition().getColumn()) && (targetKingPos.getRow() == move.getEndPosition().getRow()))  {
+                    System.out.println("I HIT HIM\n");
+                    return true;
+                }
+            }
+        }
 
         return false;
     }
