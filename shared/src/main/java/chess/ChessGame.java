@@ -152,6 +152,10 @@ public class ChessGame {
             }
         }
 
+        if(!isInCheck(teamColor)) {
+            return false;
+        }
+
         for(ChessMove move : kingMoves) {
             ChessGame false_game = new ChessGame();
             false_game.setBoard(this.board);
@@ -191,6 +195,10 @@ public class ChessGame {
                     }
                 }
             }
+        }
+
+        if(isInCheck(teamColor)) {
+            return false;
         }
 
         for(ChessMove move : kingMoves) {
