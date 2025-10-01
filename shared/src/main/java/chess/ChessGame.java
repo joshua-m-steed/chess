@@ -118,7 +118,6 @@ public class ChessGame {
         if(targetKingPos != null) {
             for(ChessMove move : enemyMoves) {
                 if((targetKingPos.getColumn() == move.getEndPosition().getColumn()) && (targetKingPos.getRow() == move.getEndPosition().getRow()))  {
-                    System.out.println("I HIT HIM\n");
                     return true;
                 }
             }
@@ -133,6 +132,7 @@ public class ChessGame {
      * @param teamColor which team to check for checkmate
      * @return True if the specified team is in checkmate
      */
+    // NEEDS TO CHECK CURRENT POSITION TO SEE IF IN CHECK
     public boolean isInCheckmate(TeamColor teamColor) {
         ChessPiece[][] board = this.board.getBoard();
         Collection<ChessMove> kingMoves = new ArrayList<>();
@@ -175,7 +175,37 @@ public class ChessGame {
      * @return True if the specified team is in stalemate, otherwise false
      */
     public boolean isInStalemate(TeamColor teamColor) {
-        throw new RuntimeException("Not implemented");
+        ChessPiece[][] board = this.board.getBoard();
+        Collection<ChessMove> kingMoves = new ArrayList<>();
+        ChessPosition targetKingPos = null;
+
+        for(int i = 0; i < 8; i++) {
+            for(int j = 0; j < 8; j++) {
+                if(board[i][j] != null) {
+                    if(board[i][j].getPieceType() == ChessPiece.PieceType.KING && board[i][j].getTeamColor() == teamColor) {
+                        targetKingPos = new ChessPosition(i + 1, j + 1);
+                        Collection<ChessMove> moves = validMoves(targetKingPos);
+                        if(moves != null) {
+                            kingMoves.addAll(moves);
+                        }
+                    }
+                }
+            }
+        }
+
+        for(ChessMove move : kingMoves) {
+            ChessGame false_game = new ChessGame();
+            false_game.setBoard(this.board);
+
+            false_game.getBoard().addPiece(move.getEndPosition(), new ChessPiece(teamColor, ChessPiece.PieceType.KING));
+            false_game.getBoard().removePiece(move.getStartPosition());
+
+            if(!false_game.isInCheck(teamColor)) {
+                return false;
+            }
+        }
+
+        return true;
     }
 
     /**
