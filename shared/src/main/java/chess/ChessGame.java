@@ -159,19 +159,19 @@ public class ChessGame {
             }
         }
 
-        int tiles_blocked = 0;
-        if(targetKingPos != null) {
-            for(ChessMove k_move : kingMoves) {
-                for(ChessMove e_move : enemyMoves) {
-                    if((k_move.getEndPosition().getColumn() == e_move.getEndPosition().getColumn()) && (k_move.getEndPosition().getRow() == e_move.getEndPosition().getRow()))  {
-                        tiles_blocked += 1;
-                        break;
-                    }
-                }
+        for(ChessMove move : kingMoves) {
+            ChessGame false_game = new ChessGame();
+            false_game.setBoard(this.board);
+
+            false_game.getBoard().addPiece(move.getEndPosition(), new ChessPiece(teamColor, ChessPiece.PieceType.KING));
+            false_game.getBoard().removePiece(move.getStartPosition());
+
+            if(!false_game.isInCheck(teamColor)) {
+                return false;
             }
         }
 
-        return tiles_blocked == kingMoves.size();
+        return true;
     }
 
     /**
