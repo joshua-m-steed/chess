@@ -135,7 +135,6 @@ public class ChessGame {
      */
     public boolean isInCheckmate(TeamColor teamColor) {
         ChessPiece[][] board = this.board.getBoard();
-        Collection<ChessMove> enemyMoves = new ArrayList<>();
         Collection<ChessMove> kingMoves = new ArrayList<>();
         ChessPosition targetKingPos = null;
 
@@ -147,12 +146,6 @@ public class ChessGame {
                         Collection<ChessMove> moves = validMoves(targetKingPos);
                         if(moves != null) {
                             kingMoves.addAll(moves);
-                        }
-                    }
-                    else if(board[i][j].getTeamColor() != teamColor) {
-                        Collection<ChessMove> moves = validMoves(new ChessPosition(i + 1, j + 1));
-                        if(moves != null) {
-                            enemyMoves.addAll(moves);
                         }
                     }
                 }
