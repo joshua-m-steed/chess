@@ -341,3 +341,42 @@ Allows to focus on specific points
 - Liskov Substitution: If a subclass violates the expecations of an interface, (throws errors and exceptions), it breaks LSP
 - Interface Segregation: Clients should not be forced to depend on methods they do not use
 - Dependency Inversion: High-level modules should not depend on low-level modules. Both should depend on abstractions  
+
+# Phase 2  
+**Endpoints & Descriptions**  
+Clear - Clears the database. Removes everything  
+Register - Register a new user ( returns a new authToken )
+Login - Logs in an existing user ( returns a new authToken )  
+Logout - Logs out the user represented by the prodivded authToken  
+List Games - Verifies the provided authToken and gives a list of all games  
+Create Game - Verifies provided authToken and creates a new game  
+Join Game - Verifies the provided authToken. Checks that a specific game exists, specified colors, or observer etc.  
+
+**Objects**  
+UserData
+```
+{
+    "user": "name",
+    "pass": "secret",
+    "email": "@this,com"
+}
+```
+
+AuthData
+```
+{
+    "authToken": "asdoifh390u4",
+    "username": "name"
+}
+```
+
+GameData
+```
+{
+    "gameID": #,
+    "whitePlayer": "name",
+    "blackPlayer": null,
+    "GameName": "chess",
+    "game": "serialized_data"
+}
+```
