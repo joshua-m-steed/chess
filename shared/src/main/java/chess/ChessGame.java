@@ -270,15 +270,12 @@ public class ChessGame {
             ChessGame false_game = new ChessGame();
             false_game.setBoard(this.board);
 
-            false_game.getBoard().addPiece(move.getEndPosition(), new ChessPiece(teamColor, ChessPiece.PieceType.KING));
-            false_game.getBoard().removePiece(move.getStartPosition());
-
-            if(!false_game.isInCheck(teamColor)) {
-                return false;
+            if(isInCheckmateHelper(teamColor, false_game.getBoard(), move)) {
+                return true;
             }
         }
 
-        return true;
+        return false;
     }
 
     /**
