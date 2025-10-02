@@ -57,28 +57,37 @@ public class ChessGame {
         Collection<ChessMove> validMoves = new ArrayList<>();
         Collection<ChessMove> rejectMoves = new ArrayList<>();
 
-
+        // VALID MOVES
+        // COLLECT ALL MOVES FROM THAT PIECE
+        // PRETEND TO MOVE IN THOSE PLACES
+        // If in Check, can't Move
+            // Move piece to reject
+        // At end, remove rejects from valid
 
         if(target_piece != null) {
             validMoves = target_piece.pieceMoves(board, startPosition);
-//            System.out.println("SET MOVES - " + validMoves);
-//            for(ChessMove move : validMoves) {
-//                ChessGame false_game = new ChessGame();
-//                false_game.setBoard(this.board);
-//
-//                System.out.println(move.getStartPosition() + " --> " + move.getEndPosition());
-//                false_game.getBoard().addPiece(move.getEndPosition(), target_piece);
-//                false_game.getBoard().removePiece(move.getStartPosition());
-//                if(false_game.isInCheck(target_piece.getTeamColor())) {
-//                    rejectMoves.add(move);
-//                }
-//            }
-            return validMoves;
-        }
-        else {
+            System.out.println(validMoves);
+            for(ChessMove move : validMoves) {
+                ChessGame false_game = new ChessGame();
+                false_game.setBoard(this.board);
+
+                if(isInCheckHelper(target_piece.getTeamColor(), false_game.getBoard(), move)) {
+                    rejectMoves.add(move);
+                }
+            }
+        } else {
             return null;
         }
-        // Still needs to implement checking if "IN CHECK"
+
+        for(ChessMove move : rejectMoves) {
+            System.out.println(move);
+            validMoves.remove(move);
+            if(validMoves.contains(move)) {
+                System.out.println("I am a liar, I hid the move!");
+            }
+        }
+
+        return validMoves;
     }
 
     /**
@@ -126,7 +135,7 @@ public class ChessGame {
                     // Finding Enemy Moves
                     else if(board[i][j].getTeamColor() != teamColor)
                     {
-                        Collection<ChessMove> moves = validMoves(new ChessPosition(i + 1, j + 1));
+                        Collection<ChessMove> moves = board[i][j].pieceMoves(this.board, new ChessPosition(i + 1, j + 1));
                         if(moves != null) {
                             enemyMoves.addAll(moves);
                         }
@@ -163,7 +172,7 @@ public class ChessGame {
                     // Finding the King
                     if(board[i][j].getPieceType() == ChessPiece.PieceType.KING && board[i][j].getTeamColor() == teamColor) {
                         targetKingPos = new ChessPosition(i + 1, j + 1);
-                        Collection<ChessMove> moves = validMoves(targetKingPos);
+                        Collection<ChessMove> moves = board[i][j].pieceMoves(this.board, targetKingPos);
                         if(moves != null) {
                             kingMoves.addAll(moves);
                         }
@@ -180,7 +189,7 @@ public class ChessGame {
             ChessGame false_game = new ChessGame();
             false_game.setBoard(this.board);
 
-            if(isInCheckmateHelper(teamColor, false_game.getBoard(), move)) {
+            if(isInCheckHelper(teamColor, false_game.getBoard(), move)) {
                 return true;
             }
 
@@ -196,7 +205,7 @@ public class ChessGame {
         return false;
     }
 
-    private boolean isInCheckmateHelper(TeamColor teamColor, ChessBoard board, ChessMove move) {
+    private boolean isInCheckHelper(TeamColor teamColor, ChessBoard board, ChessMove move) {
         board.addPiece(move.getEndPosition(), board.getPiece(move.getStartPosition()));
         board.removePiece(move.getStartPosition());
 
@@ -215,7 +224,7 @@ public class ChessGame {
                     // Finding Enemy Moves
                     else if(board_iter[i][j].getTeamColor() != teamColor)
                     {
-                        Collection<ChessMove> moves = validMoves(new ChessPosition(i + 1, j + 1));
+                        Collection<ChessMove> moves = board_iter[i][j].pieceMoves(board, new ChessPosition(i + 1, j + 1));
                         if(moves != null) {
                             enemyMoves.addAll(moves);
                         }
@@ -253,7 +262,7 @@ public class ChessGame {
                 if(board[i][j] != null) {
                     if(board[i][j].getPieceType() == ChessPiece.PieceType.KING && board[i][j].getTeamColor() == teamColor) {
                         targetKingPos = new ChessPosition(i + 1, j + 1);
-                        Collection<ChessMove> moves = validMoves(targetKingPos);
+                        Collection<ChessMove> moves = board[i][j].pieceMoves(this.board, targetKingPos);
                         if(moves != null) {
                             kingMoves.addAll(moves);
                         }
@@ -270,7 +279,7 @@ public class ChessGame {
             ChessGame false_game = new ChessGame();
             false_game.setBoard(this.board);
 
-            if(isInCheckmateHelper(teamColor, false_game.getBoard(), move)) {
+            if(isInCheckHelper(teamColor, false_game.getBoard(), move)) {
                 return true;
             }
         }
