@@ -104,8 +104,12 @@ public class ChessGame {
             throw new InvalidMoveException("This is not a valid move!");
         }
 
-        this.board.addPiece(endPos, target_piece);
         this.board.removePiece(startPos);
+        ChessPiece new_target_piece = target_piece;
+        if(move.getPromotionPiece() != null) {
+            new_target_piece = new ChessPiece(target_piece.getTeamColor(), move.getPromotionPiece());
+        }
+        this.board.addPiece(endPos, new_target_piece);
 
         if(teamTurn == TeamColor.WHITE) {
             this.setTeamTurn(TeamColor.BLACK);
