@@ -1,4 +1,4 @@
-package chess.moves_calculator;
+package chess.moves;
 
 import chess.*;
 
@@ -29,8 +29,7 @@ public class RookMovesCalculator implements CalculateMoves {
 
         // Check for piece color
         if(nextTile != null) {
-            if(nextTile.getTeamColor() != myPiece.getTeamColor())
-            {
+            if(nextTile.getTeamColor() != myPiece.getTeamColor()) {
                 rookMoves.add(new ChessMove(myPos, new ChessPosition(newPos.getRow(), newPos.getColumn()), null));
             }
             return rookMoves;
