@@ -57,13 +57,6 @@ public class ChessGame {
         Collection<ChessMove> validMoves = new ArrayList<>();
         Collection<ChessMove> rejectMoves = new ArrayList<>();
 
-        // VALID MOVES
-        // COLLECT ALL MOVES FROM THAT PIECE
-        // PRETEND TO MOVE IN THOSE PLACES
-        // If in Check, can't Move
-            // Move piece to reject
-        // At end, remove rejects from valid
-
         if(target_piece != null) {
             validMoves = target_piece.pieceMoves(board, startPosition);
             System.out.println(validMoves);
@@ -101,16 +94,24 @@ public class ChessGame {
         ChessPosition endPos = move.getEndPosition();
         ChessPiece target_piece = this.board.getPiece(startPos);
 
-        try {
-            Collection<ChessMove> validMoves = validMoves(startPos);
-            if(validMoves.contains(move) && target_piece.getTeamColor() == teamTurn) {
-                System.out.println("You are a " + target_piece + " moving from " + startPos + " to " + endPos);
-            }
-            else {
-                throw new InvalidMoveException("This is not a valid move!");
-            }
-        } catch (InvalidMoveException e) {
-            System.out.println("Sorry, this isn't a valid move: " + startPos + "," + endPos);
+        if(target_piece == null) {
+            throw new InvalidMoveException("There is no piece there!");
+        }
+
+        Collection<ChessMove> validMoves = validMoves(startPos);
+
+        if(!validMoves.contains(move) || target_piece.getTeamColor() != teamTurn) {
+            throw new InvalidMoveException("This is not a valid move!");
+        }
+
+        this.board.addPiece(endPos, target_piece);
+        this.board.removePiece(startPos);
+
+        if(teamTurn == TeamColor.WHITE) {
+            this.setTeamTurn(TeamColor.BLACK);
+        }
+        else {
+            this.setTeamTurn(TeamColor.WHITE);
         }
     }
 
