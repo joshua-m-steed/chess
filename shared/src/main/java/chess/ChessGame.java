@@ -169,18 +169,7 @@ public class ChessGame {
         ChessPiece[][] board = this.board.getBoard();
         Collection<ChessMove> teamMoves = new ArrayList<>();
 
-        for(int i = 0; i < 8; i++) {
-            for(int j = 0; j < 8; j++) {
-                if(board[i][j] != null) {
-                    if(teamColor == board[i][j].getTeamColor()) {
-                        Collection<ChessMove> moves = board[i][j].pieceMoves(this.board, new ChessPosition(i + 1, j + 1));
-                        if(moves != null) {
-                            teamMoves.addAll(moves);
-                        }
-                    }
-                }
-            }
-        }
+        scanForTeamMove(board, teamColor, teamMoves);
 
         for(ChessMove move : teamMoves) {
             ChessGame mockGame = new ChessGame();
@@ -210,18 +199,7 @@ public class ChessGame {
         ChessPiece[][] board = this.board.getBoard();
         Collection<ChessMove> teamMoves = new ArrayList<>();
 
-        for(int i = 0; i < 8; i++) {
-            for(int j = 0; j < 8; j++) {
-                if(board[i][j] != null) {
-                    if(teamColor == board[i][j].getTeamColor()) {
-                        Collection<ChessMove> moves = board[i][j].pieceMoves(this.board, new ChessPosition(i + 1, j + 1));
-                        if(moves != null) {
-                            teamMoves.addAll(moves);
-                        }
-                    }
-                }
-            }
-        }
+        scanForTeamMove(board, teamColor, teamMoves);
 
         for(ChessMove move : teamMoves) {
             ChessGame mockGame = new ChessGame();
@@ -266,7 +244,6 @@ public class ChessGame {
         Collection<ChessMove> enemyMoves = new ArrayList<>();
         ChessPosition kingPiecePos = null;
 
-
         for(int i = 0; i < 8; i++) {
             for(int j = 0; j < 8; j++) {
                 if(boardIter[i][j] != null) {
@@ -293,6 +270,25 @@ public class ChessGame {
         }
 
         return false;
+    }
+
+    private void scanForTeamMove(ChessPiece[][] boardIter, TeamColor teamColor, Collection<ChessMove> foundMoves) {
+        for(int i = 0; i < 8; i++) {
+            for(int j = 0; j < 8; j++) {
+                teamMoveHelper(boardIter, i, j, teamColor, foundMoves);
+            }
+        }
+    }
+
+    private void teamMoveHelper(ChessPiece[][] boardIter, int i, int j, TeamColor teamColor, Collection<ChessMove> foundMoves) {
+        if(boardIter[i][j] != null) {
+            if(teamColor == boardIter[i][j].getTeamColor()) {
+                Collection<ChessMove> moves = boardIter[i][j].pieceMoves(this.board, new ChessPosition(i + 1, j + 1));
+                if(moves != null) {
+                    foundMoves.addAll(moves);
+                }
+            }
+        }
     }
 
     @Override
