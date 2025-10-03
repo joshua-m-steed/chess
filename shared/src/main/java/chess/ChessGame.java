@@ -127,29 +127,10 @@ public class ChessGame {
         Collection<ChessMove> enemyMoves = new ArrayList<>();
         ChessPosition kingPiecePos = null;
 
-        for(int i = 0; i < 8; i++) {
-            for(int j = 0; j < 8; j++) {
-                if(board[i][j] != null) {
-                    if(board[i][j].getPieceType() == ChessPiece.PieceType.KING && board[i][j].getTeamColor() == teamColor) {
-                        kingPiecePos = new ChessPosition(i + 1, j + 1);
-                    }
-                    else if(board[i][j].getTeamColor() != teamColor)
-                    {
-                        Collection<ChessMove> moves = board[i][j].pieceMoves(this.board, new ChessPosition(i + 1, j + 1));
-                        if(moves != null) {
-                            enemyMoves.addAll(moves);
-                        }
-                    }
-                }
-            }
-        }
+        kingPiecePos = scanForEnemyMove(this.board, board, teamColor, enemyMoves);
 
         if(kingPiecePos != null) {
-            for(ChessMove move : enemyMoves) {
-                if((kingPiecePos.getColumn() == move.getEndPosition().getColumn()) && (kingPiecePos.getRow() == move.getEndPosition().getRow()))  {
-                    return true;
-                }
-            }
+            return isKingInWay(kingPiecePos, enemyMoves);
         }
 
         return false;
@@ -219,11 +200,11 @@ public class ChessGame {
      * @param board the new board to use
      */
     public void setBoard(ChessBoard board) {
-        ChessPiece[][] current_board = this.board.getBoard();
-        ChessPiece[][] new_board = board.getBoard();
+        ChessPiece[][] boardCurrent = this.board.getBoard();
+        ChessPiece[][] boardNew = board.getBoard();
 
         for(int i = 0; i < 8; i++) {
-            System.arraycopy(new_board[i], 0, current_board[i], 0, 8);
+            System.arraycopy(boardNew[i], 0, boardCurrent[i], 0, 8);
         }
     }
 
@@ -244,51 +225,64 @@ public class ChessGame {
         Collection<ChessMove> enemyMoves = new ArrayList<>();
         ChessPosition kingPiecePos = null;
 
-        for(int i = 0; i < 8; i++) {
-            for(int j = 0; j < 8; j++) {
-                if(boardIter[i][j] != null) {
-                    if(boardIter[i][j].getPieceType() == ChessPiece.PieceType.KING && boardIter[i][j].getTeamColor() == teamColor) {
-                        kingPiecePos = new ChessPosition(i + 1, j + 1);
-                    }
-                    else if(boardIter[i][j].getTeamColor() != teamColor)
-                    {
-                        Collection<ChessMove> moves = boardIter[i][j].pieceMoves(board, new ChessPosition(i + 1, j + 1));
-                        if(moves != null) {
-                            enemyMoves.addAll(moves);
-                        }
-                    }
-                }
-            }
-        }
+        kingPiecePos = scanForEnemyMove(board, boardIter, teamColor, enemyMoves);
 
         if(kingPiecePos != null) {
-            for(ChessMove moves : enemyMoves) {
-                if((kingPiecePos.getColumn() == moves.getEndPosition().getColumn()) && (kingPiecePos.getRow() == moves.getEndPosition().getRow())) {
-                    return true;
-                }
-            }
+            return isKingInWay(kingPiecePos, enemyMoves);
         }
 
+        return false;
+    }
+
+    private boolean isKingInWay(ChessPosition kingPiecePos, Collection<ChessMove> enemyMoves) {
+        for(ChessMove move : enemyMoves) {
+            if((kingPiecePos.getColumn() == move.getEndPosition().getColumn()) && (kingPiecePos.getRow() == move.getEndPosition().getRow()))  {
+                return true;
+            }
+        }
         return false;
     }
 
     private void scanForTeamMove(ChessPiece[][] boardIter, TeamColor teamColor, Collection<ChessMove> foundMoves) {
         for(int i = 0; i < 8; i++) {
             for(int j = 0; j < 8; j++) {
+                if(boardIter[i][j] == null) {
+                    continue;
+                }
                 teamMoveHelper(boardIter, i, j, teamColor, foundMoves);
             }
         }
     }
 
     private void teamMoveHelper(ChessPiece[][] boardIter, int i, int j, TeamColor teamColor, Collection<ChessMove> foundMoves) {
-        if(boardIter[i][j] != null) {
-            if(teamColor == boardIter[i][j].getTeamColor()) {
-                Collection<ChessMove> moves = boardIter[i][j].pieceMoves(this.board, new ChessPosition(i + 1, j + 1));
-                if(moves != null) {
-                    foundMoves.addAll(moves);
+        if(teamColor == boardIter[i][j].getTeamColor()) {
+            Collection<ChessMove> moves = boardIter[i][j].pieceMoves(this.board, new ChessPosition(i + 1, j + 1));
+            if(moves != null) {
+                foundMoves.addAll(moves);
+            }
+        }
+    }
+
+    private ChessPosition scanForEnemyMove(ChessBoard board, ChessPiece[][] boardIter, TeamColor teamColor, Collection<ChessMove> foundMoves) {
+        ChessPosition kingPiecePos = null;
+        for(int i = 0; i < 8; i++) {
+            for(int j = 0; j < 8; j++) {
+                if(boardIter[i][j] == null) {
+                    continue;
+                }
+                if(boardIter[i][j].getPieceType() == ChessPiece.PieceType.KING && boardIter[i][j].getTeamColor() == teamColor) {
+                    kingPiecePos = new ChessPosition(i + 1, j + 1);
+                }
+                else if(boardIter[i][j].getTeamColor() != teamColor)
+                {
+                    Collection<ChessMove> moves = boardIter[i][j].pieceMoves(board, new ChessPosition(i + 1, j + 1));
+                    if(moves != null) {
+                        foundMoves.addAll(moves);
+                    }
                 }
             }
         }
+        return kingPiecePos;
     }
 
     @Override

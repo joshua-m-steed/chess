@@ -7,13 +7,13 @@ import java.util.List;
 
 public class BishopMovesCalculator implements CalculateMoves {
     @Override
-    public List<ChessMove> possibleMoves(ChessBoard board, ChessPosition myPosition) {
+    public List<ChessMove> possibleMoves(ChessBoard board, ChessPosition myPos) {
         List<ChessMove> bishopMoves = new ArrayList<>();
 
-        calculateBishopMoves(board, myPosition, new ChessPosition(myPosition.getRow() + 1, myPosition.getColumn() + 1), 1 , 1, bishopMoves);
-        calculateBishopMoves(board, myPosition, new ChessPosition(myPosition.getRow() - 1, myPosition.getColumn() - 1), -1 , -1, bishopMoves);
-        calculateBishopMoves(board, myPosition, new ChessPosition(myPosition.getRow() + 1, myPosition.getColumn() - 1), 1 , -1, bishopMoves);
-        calculateBishopMoves(board, myPosition, new ChessPosition(myPosition.getRow() - 1, myPosition.getColumn() + 1), -1 , 1, bishopMoves);
+        calculateBishopMoves(board, myPos, new ChessPosition(myPos.getRow() + 1, myPos.getColumn() + 1), 1 , 1, bishopMoves);
+        calculateBishopMoves(board, myPos, new ChessPosition(myPos.getRow() - 1, myPos.getColumn() - 1), -1 , -1, bishopMoves);
+        calculateBishopMoves(board, myPos, new ChessPosition(myPos.getRow() + 1, myPos.getColumn() - 1), 1 , -1, bishopMoves);
+        calculateBishopMoves(board, myPos, new ChessPosition(myPos.getRow() - 1, myPos.getColumn() + 1), -1 , 1, bishopMoves);
 
         return bishopMoves;
     }

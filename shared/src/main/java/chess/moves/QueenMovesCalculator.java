@@ -7,17 +7,17 @@ import java.util.List;
 
 public class QueenMovesCalculator implements CalculateMoves {
     @Override
-    public List<ChessMove> possibleMoves(ChessBoard board, ChessPosition myPosition) {
+    public List<ChessMove> possibleMoves(ChessBoard board, ChessPosition myPos) {
         List<ChessMove> queenMoves = new ArrayList<>();
 
-        calculateQueenMoves(board, myPosition, new ChessPosition(myPosition.getRow() + 1, myPosition.getColumn()), 1, 0, queenMoves);
-        calculateQueenMoves(board, myPosition, new ChessPosition(myPosition.getRow() - 1, myPosition.getColumn()), -1, 0, queenMoves);
-        calculateQueenMoves(board, myPosition, new ChessPosition(myPosition.getRow(), myPosition.getColumn() + 1), 0, 1, queenMoves);
-        calculateQueenMoves(board, myPosition, new ChessPosition(myPosition.getRow(), myPosition.getColumn() - 1), 0, -1, queenMoves);
-        calculateQueenMoves(board, myPosition, new ChessPosition(myPosition.getRow() + 1, myPosition.getColumn() + 1), 1 , 1, queenMoves);
-        calculateQueenMoves(board, myPosition, new ChessPosition(myPosition.getRow() - 1, myPosition.getColumn() - 1), -1 , -1, queenMoves);
-        calculateQueenMoves(board, myPosition, new ChessPosition(myPosition.getRow() + 1, myPosition.getColumn() - 1), 1 , -1, queenMoves);
-        calculateQueenMoves(board, myPosition, new ChessPosition(myPosition.getRow() - 1, myPosition.getColumn() + 1), -1 , 1, queenMoves);
+        calculateQueenMoves(board, myPos, new ChessPosition(myPos.getRow() + 1, myPos.getColumn()), 1, 0, queenMoves);
+        calculateQueenMoves(board, myPos, new ChessPosition(myPos.getRow() - 1, myPos.getColumn()), -1, 0, queenMoves);
+        calculateQueenMoves(board, myPos, new ChessPosition(myPos.getRow(), myPos.getColumn() + 1), 0, 1, queenMoves);
+        calculateQueenMoves(board, myPos, new ChessPosition(myPos.getRow(), myPos.getColumn() - 1), 0, -1, queenMoves);
+        calculateQueenMoves(board, myPos, new ChessPosition(myPos.getRow() + 1, myPos.getColumn() + 1), 1 , 1, queenMoves);
+        calculateQueenMoves(board, myPos, new ChessPosition(myPos.getRow() - 1, myPos.getColumn() - 1), -1 , -1, queenMoves);
+        calculateQueenMoves(board, myPos, new ChessPosition(myPos.getRow() + 1, myPos.getColumn() - 1), 1 , -1, queenMoves);
+        calculateQueenMoves(board, myPos, new ChessPosition(myPos.getRow() - 1, myPos.getColumn() + 1), -1 , 1, queenMoves);
 
         return queenMoves;
     }

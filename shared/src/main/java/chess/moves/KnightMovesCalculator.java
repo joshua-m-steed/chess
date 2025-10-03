@@ -7,20 +7,20 @@ import java.util.List;
 
 public class KnightMovesCalculator implements CalculateMoves {
     @Override
-    public List<ChessMove> possibleMoves(ChessBoard board, ChessPosition myPosition) {
+    public List<ChessMove> possibleMoves(ChessBoard board, ChessPosition myPos) {
         List<ChessMove> knightMoves = new ArrayList<>();
 
-        calculateKnightMoves(board, myPosition, new ChessPosition(myPosition.getRow() + 2, myPosition.getColumn() - 1), knightMoves);
-        calculateKnightMoves(board, myPosition, new ChessPosition(myPosition.getRow() + 2, myPosition.getColumn() + 1), knightMoves);
+        calculateKnightMoves(board, myPos, new ChessPosition(myPos.getRow() + 2, myPos.getColumn() - 1), knightMoves);
+        calculateKnightMoves(board, myPos, new ChessPosition(myPos.getRow() + 2, myPos.getColumn() + 1), knightMoves);
 
-        calculateKnightMoves(board, myPosition, new ChessPosition(myPosition.getRow() - 2, myPosition.getColumn() - 1), knightMoves);
-        calculateKnightMoves(board, myPosition, new ChessPosition(myPosition.getRow() - 2, myPosition.getColumn() + 1), knightMoves);
+        calculateKnightMoves(board, myPos, new ChessPosition(myPos.getRow() - 2, myPos.getColumn() - 1), knightMoves);
+        calculateKnightMoves(board, myPos, new ChessPosition(myPos.getRow() - 2, myPos.getColumn() + 1), knightMoves);
 
-        calculateKnightMoves(board, myPosition, new ChessPosition(myPosition.getRow() + 1, myPosition.getColumn() - 2), knightMoves);
-        calculateKnightMoves(board, myPosition, new ChessPosition(myPosition.getRow() + 1, myPosition.getColumn() + 2), knightMoves);
+        calculateKnightMoves(board, myPos, new ChessPosition(myPos.getRow() + 1, myPos.getColumn() - 2), knightMoves);
+        calculateKnightMoves(board, myPos, new ChessPosition(myPos.getRow() + 1, myPos.getColumn() + 2), knightMoves);
 
-        calculateKnightMoves(board, myPosition, new ChessPosition(myPosition.getRow() - 1, myPosition.getColumn() - 2), knightMoves);
-        calculateKnightMoves(board, myPosition, new ChessPosition(myPosition.getRow() - 1, myPosition.getColumn() + 2), knightMoves);
+        calculateKnightMoves(board, myPos, new ChessPosition(myPos.getRow() - 1, myPos.getColumn() - 2), knightMoves);
+        calculateKnightMoves(board, myPos, new ChessPosition(myPos.getRow() - 1, myPos.getColumn() + 2), knightMoves);
 
         return knightMoves;
     }

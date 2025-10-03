@@ -6,5 +6,5 @@ import chess.ChessPosition;
 import java.util.List;
 
 public interface CalculateMoves {
-    public List<ChessMove> possibleMoves(ChessBoard board, ChessPosition myPosition);
+    public List<ChessMove> possibleMoves(ChessBoard board, ChessPosition myPos);
 }

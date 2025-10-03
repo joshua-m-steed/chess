@@ -7,17 +7,17 @@ import java.util.List;
 
 public class KingMovesCalculator implements CalculateMoves {
     @Override
-    public List<ChessMove> possibleMoves(ChessBoard board, ChessPosition myPosition) {
+    public List<ChessMove> possibleMoves(ChessBoard board, ChessPosition myPos) {
         List<ChessMove> kingMoves = new ArrayList<>();
 
-        calculateKingMoves(board, myPosition, new ChessPosition(myPosition.getRow() + 1, myPosition.getColumn()), kingMoves);
-        calculateKingMoves(board, myPosition, new ChessPosition(myPosition.getRow() - 1, myPosition.getColumn()), kingMoves);
-        calculateKingMoves(board, myPosition, new ChessPosition(myPosition.getRow(), myPosition.getColumn() + 1), kingMoves);
-        calculateKingMoves(board, myPosition, new ChessPosition(myPosition.getRow(), myPosition.getColumn() - 1), kingMoves);
-        calculateKingMoves(board, myPosition, new ChessPosition(myPosition.getRow() + 1, myPosition.getColumn() + 1), kingMoves);
-        calculateKingMoves(board, myPosition, new ChessPosition(myPosition.getRow() - 1, myPosition.getColumn() - 1), kingMoves);
-        calculateKingMoves(board, myPosition, new ChessPosition(myPosition.getRow() + 1, myPosition.getColumn() - 1), kingMoves);
-        calculateKingMoves(board, myPosition, new ChessPosition(myPosition.getRow() - 1, myPosition.getColumn() + 1), kingMoves);
+        calculateKingMoves(board, myPos, new ChessPosition(myPos.getRow() + 1, myPos.getColumn()), kingMoves);
+        calculateKingMoves(board, myPos, new ChessPosition(myPos.getRow() - 1, myPos.getColumn()), kingMoves);
+        calculateKingMoves(board, myPos, new ChessPosition(myPos.getRow(), myPos.getColumn() + 1), kingMoves);
+        calculateKingMoves(board, myPos, new ChessPosition(myPos.getRow(), myPos.getColumn() - 1), kingMoves);
+        calculateKingMoves(board, myPos, new ChessPosition(myPos.getRow() + 1, myPos.getColumn() + 1), kingMoves);
+        calculateKingMoves(board, myPos, new ChessPosition(myPos.getRow() - 1, myPos.getColumn() - 1), kingMoves);
+        calculateKingMoves(board, myPos, new ChessPosition(myPos.getRow() + 1, myPos.getColumn() - 1), kingMoves);
+        calculateKingMoves(board, myPos, new ChessPosition(myPos.getRow() - 1, myPos.getColumn() + 1), kingMoves);
 
         return kingMoves;
     }

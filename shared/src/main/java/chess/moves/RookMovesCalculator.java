@@ -7,13 +7,13 @@ import java.util.List;
 
 public class RookMovesCalculator implements CalculateMoves {
     @Override
-    public List<ChessMove> possibleMoves(ChessBoard board, ChessPosition myPosition) {
+    public List<ChessMove> possibleMoves(ChessBoard board, ChessPosition myPos) {
         List<ChessMove> rookMoves = new ArrayList<>();
 
-        calculateRookMoves(board, myPosition, new ChessPosition(myPosition.getRow() + 1, myPosition.getColumn()), 1, 0, rookMoves);
-        calculateRookMoves(board, myPosition, new ChessPosition(myPosition.getRow() - 1, myPosition.getColumn()), -1, 0, rookMoves);
-        calculateRookMoves(board, myPosition, new ChessPosition(myPosition.getRow(), myPosition.getColumn() + 1), 0, 1, rookMoves);
-        calculateRookMoves(board, myPosition, new ChessPosition(myPosition.getRow(), myPosition.getColumn() - 1), 0, -1, rookMoves);
+        calculateRookMoves(board, myPos, new ChessPosition(myPos.getRow() + 1, myPos.getColumn()), 1, 0, rookMoves);
+        calculateRookMoves(board, myPos, new ChessPosition(myPos.getRow() - 1, myPos.getColumn()), -1, 0, rookMoves);
+        calculateRookMoves(board, myPos, new ChessPosition(myPos.getRow(), myPos.getColumn() + 1), 0, 1, rookMoves);
+        calculateRookMoves(board, myPos, new ChessPosition(myPos.getRow(), myPos.getColumn() - 1), 0, -1, rookMoves);
 
         return rookMoves;
     }

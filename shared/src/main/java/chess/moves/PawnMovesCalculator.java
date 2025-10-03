@@ -7,50 +7,50 @@ import java.util.List;
 
 public class PawnMovesCalculator implements CalculateMoves {
     @Override
-    public List<ChessMove> possibleMoves(ChessBoard board, ChessPosition myPosition) {
+    public List<ChessMove> possibleMoves(ChessBoard board, ChessPosition myPos) {
         List<ChessMove> pawnMoves = new ArrayList<>();
-        ChessPiece piece = board.getPiece(myPosition);
+        ChessPiece piece = board.getPiece(myPos);
 
         if(piece.getTeamColor() == ChessGame.TeamColor.WHITE) {
-            if(myPosition.getRow() == 2) {
-                calculatePawnMoves(board, myPosition, new ChessPosition(myPosition.getRow() + 2, myPosition.getColumn()), pawnMoves, null);
+            if(myPos.getRow() == 2) {
+                calculatePawnMoves(board, myPos, new ChessPosition(myPos.getRow() + 2, myPos.getColumn()), pawnMoves, null);
             }
 
-            if(myPosition.getRow() == 7) {
+            if(myPos.getRow() == 7) {
                 for(ChessPiece.PieceType piecetype : ChessPiece.PieceType.values()) {
                     if(piecetype != ChessPiece.PieceType.PAWN && piecetype != ChessPiece.PieceType.KING) {
-                        calculatePawnMoves(board, myPosition, new ChessPosition(myPosition.getRow() + 1, myPosition.getColumn()), pawnMoves, piecetype);
-                        calculatePawnMoves(board, myPosition, new ChessPosition(myPosition.getRow() + 1, myPosition.getColumn() + 1), pawnMoves, piecetype);
-                        calculatePawnMoves(board, myPosition, new ChessPosition(myPosition.getRow() + 1, myPosition.getColumn() - 1), pawnMoves, piecetype);
+                        calculatePawnMoves(board, myPos, new ChessPosition(myPos.getRow() + 1, myPos.getColumn()), pawnMoves, piecetype);
+                        calculatePawnMoves(board, myPos, new ChessPosition(myPos.getRow() + 1, myPos.getColumn() + 1), pawnMoves, piecetype);
+                        calculatePawnMoves(board, myPos, new ChessPosition(myPos.getRow() + 1, myPos.getColumn() - 1), pawnMoves, piecetype);
                     }
                 }
                 return pawnMoves;
             }
 
-            calculatePawnMoves(board, myPosition, new ChessPosition(myPosition.getRow() + 1, myPosition.getColumn()), pawnMoves, null);
-            calculatePawnMoves(board, myPosition, new ChessPosition(myPosition.getRow() + 1, myPosition.getColumn() + 1), pawnMoves, null);
-            calculatePawnMoves(board, myPosition, new ChessPosition(myPosition.getRow() + 1, myPosition.getColumn() - 1), pawnMoves, null);
+            calculatePawnMoves(board, myPos, new ChessPosition(myPos.getRow() + 1, myPos.getColumn()), pawnMoves, null);
+            calculatePawnMoves(board, myPos, new ChessPosition(myPos.getRow() + 1, myPos.getColumn() + 1), pawnMoves, null);
+            calculatePawnMoves(board, myPos, new ChessPosition(myPos.getRow() + 1, myPos.getColumn() - 1), pawnMoves, null);
         }
 
         if(piece.getTeamColor() == ChessGame.TeamColor.BLACK) {
-            if(myPosition.getRow() == 7) {
-                calculatePawnMoves(board, myPosition, new ChessPosition(myPosition.getRow() - 2, myPosition.getColumn()), pawnMoves, null);
+            if(myPos.getRow() == 7) {
+                calculatePawnMoves(board, myPos, new ChessPosition(myPos.getRow() - 2, myPos.getColumn()), pawnMoves, null);
             }
 
-            if(myPosition.getRow() == 2) {
+            if(myPos.getRow() == 2) {
                 for(ChessPiece.PieceType piecetype : ChessPiece.PieceType.values()) {
                     if(piecetype != ChessPiece.PieceType.PAWN && piecetype != ChessPiece.PieceType.KING) {
-                        calculatePawnMoves(board, myPosition, new ChessPosition(myPosition.getRow() - 1, myPosition.getColumn()), pawnMoves, piecetype);
-                        calculatePawnMoves(board, myPosition, new ChessPosition(myPosition.getRow() - 1, myPosition.getColumn() + 1), pawnMoves, piecetype);
-                        calculatePawnMoves(board, myPosition, new ChessPosition(myPosition.getRow() - 1, myPosition.getColumn() - 1), pawnMoves, piecetype);
+                        calculatePawnMoves(board, myPos, new ChessPosition(myPos.getRow() - 1, myPos.getColumn()), pawnMoves, piecetype);
+                        calculatePawnMoves(board, myPos, new ChessPosition(myPos.getRow() - 1, myPos.getColumn() + 1), pawnMoves, piecetype);
+                        calculatePawnMoves(board, myPos, new ChessPosition(myPos.getRow() - 1, myPos.getColumn() - 1), pawnMoves, piecetype);
                     }
                 }
                 return pawnMoves;
             }
 
-            calculatePawnMoves(board, myPosition, new ChessPosition(myPosition.getRow() - 1, myPosition.getColumn()), pawnMoves, null);
-            calculatePawnMoves(board, myPosition, new ChessPosition(myPosition.getRow() - 1, myPosition.getColumn() + 1), pawnMoves, null);
-            calculatePawnMoves(board, myPosition, new ChessPosition(myPosition.getRow() - 1, myPosition.getColumn() - 1), pawnMoves, null);
+            calculatePawnMoves(board, myPos, new ChessPosition(myPos.getRow() - 1, myPos.getColumn()), pawnMoves, null);
+            calculatePawnMoves(board, myPos, new ChessPosition(myPos.getRow() - 1, myPos.getColumn() + 1), pawnMoves, null);
+            calculatePawnMoves(board, myPos, new ChessPosition(myPos.getRow() - 1, myPos.getColumn() - 1), pawnMoves, null);
         }
         return pawnMoves;
     }
