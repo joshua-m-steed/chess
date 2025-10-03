@@ -10,15 +10,15 @@ public class RookMovesCalculator implements CalculateMoves {
     public List<ChessMove> possibleMoves(ChessBoard board, ChessPosition myPos) {
         List<ChessMove> rookMoves = new ArrayList<>();
 
-        calculateRookMoves(board, myPos, new ChessPosition(myPos.getRow() + 1, myPos.getColumn()), 1, 0, rookMoves);
-        calculateRookMoves(board, myPos, new ChessPosition(myPos.getRow() - 1, myPos.getColumn()), -1, 0, rookMoves);
-        calculateRookMoves(board, myPos, new ChessPosition(myPos.getRow(), myPos.getColumn() + 1), 0, 1, rookMoves);
-        calculateRookMoves(board, myPos, new ChessPosition(myPos.getRow(), myPos.getColumn() - 1), 0, -1, rookMoves);
+        rookMoves(board, myPos, new ChessPosition(myPos.getRow() + 1, myPos.getColumn()), 1, 0, rookMoves);
+        rookMoves(board, myPos, new ChessPosition(myPos.getRow() - 1, myPos.getColumn()), -1, 0, rookMoves);
+        rookMoves(board, myPos, new ChessPosition(myPos.getRow(), myPos.getColumn() + 1), 0, 1, rookMoves);
+        rookMoves(board, myPos, new ChessPosition(myPos.getRow(), myPos.getColumn() - 1), 0, -1, rookMoves);
 
         return rookMoves;
     }
 
-    private List<ChessMove> calculateRookMoves(ChessBoard board, ChessPosition myPos, ChessPosition newPos, int dx, int dy,  List<ChessMove> rookMoves) {
+    private List<ChessMove> rookMoves(ChessBoard board, ChessPosition myPos, ChessPosition newPos, int dx, int dy, List<ChessMove> rookMoves) {
         // Out of bounds base case
         if(newPos.getRow() < 1 | newPos.getColumn() < 1 | newPos.getRow() >= 9 | newPos.getColumn() >= 9) {
             return rookMoves;
@@ -37,6 +37,6 @@ public class RookMovesCalculator implements CalculateMoves {
 
         rookMoves.add(new ChessMove(myPos, new ChessPosition(newPos.getRow(), newPos.getColumn()), null ));
 
-        return calculateRookMoves(board, myPos, new ChessPosition(newPos.getRow() + dx,newPos.getColumn() + dy), dx, dy, rookMoves);
+        return rookMoves(board, myPos, new ChessPosition(newPos.getRow() + dx,newPos.getColumn() + dy), dx, dy, rookMoves);
     }
 }
