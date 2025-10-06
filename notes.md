@@ -380,3 +380,55 @@ GameData
     "game": "serialized_data"
 }
 ```
+
+
+**HTTP**  
+- Client to server protocol  
+
+*URL* - Uniform Resource Locator
+Scheme - https://
+Domain - minijosh.click
+Port - :443
+^^ Address  
+Path - /api/city
+Parameters - ?q=pro
+Anchor - #3
+
+**Request**
+Method  
+POST, GET, DELETE, etc  
+Path  
+/session /db /etc  
+Version  
+HTTP/3   
+Headers   
+`Host: minijosh.click`  
+`User-Agent: curl/7.77.0`  
+`Content Length: 14 `   
+Body    
+`{"user":"tim"}`  
+
+**Methods**  
+GET - Get an existing resource  
+POST - Create a new resource  
+PUT - Update an existing resource  
+DELETE - Delete a resource  
+OPTIONS - Get information about a resource  
+
+**Response**  
+Version  
+HTTPS/3  
+Status code  
+200, 401, 403, ...  
+Status message  
+OK, ERROR, ...  
+Headers  
+`Connection: keep-alive`  
+Body  
+`{"user":"tim"}`  
+
+**Status Codes**  
+2xx - 200 Success, 204 No Content  
+3xx - 301/302 Redirect, 394 Not Modified  
+4xx - 400 Bad Request, 403 Forbidden, 404 Not Found, 429 Too many requests  
+5xx - 500 Server Error, 503 Not Available  
