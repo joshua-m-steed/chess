@@ -432,3 +432,26 @@ Body
 3xx - 301/302 Redirect, 394 Not Modified  
 4xx - 400 Bad Request, 403 Forbidden, 404 Not Found, 429 Too many requests  
 5xx - 500 Server Error, 503 Not Available  
+
+**Serialization**  
+- Simplified JavaScript Object
+- Serialized to text
+- Unicode
+
+*JSON*
+| Type     | Example                    |
+|:---------|---------------------------:|
+| string   | "crockford"                |
+| number   | 43                         |
+| boolen   | true                       |
+| array    |  [null, 43, "crockford"]   |
+| object   | {"a":1, "b":"crockford"}   |
+| null     | null                       |  
+
+*GSON*
+Serializes to and from JSON
+ - Initialize: `var serializer = new Gson();`  
+ - To JSON   : `serializer.toJson(obj);`  
+ - From JSON : `serializer.fromJson(json, Map.class);`  
+
+ 
