@@ -454,4 +454,12 @@ Serializes to and from JSON
  - To JSON   : `serializer.toJson(obj);`  
  - From JSON : `serializer.fromJson(json, Map.class);`  
 
- 
+ **Code Quality Tools**  
+ Use conventions - Naming, team, language  
+  - Be consistent
+  - Reduce Parameters
+  - Single Return
+  - Use and idiomized formatter
+ Simplicity over clever and concise  
+ Clarity over verbosity  
+ Decomposition, abstraction, and encapsulation
