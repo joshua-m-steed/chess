@@ -11,7 +11,7 @@ class DataAccessTest {
         var user = new User("James", "haha", "@me.bro");
         DataAccess da = new MemoryDataAccess();
         assertNull(da.getUser(user.username()));
-        da.saveUser(user);
+        da.createUser(user);
         assertNotNull(da.getUser(user.username()));
         da.clear();
         assertNull(da.getUser(user.username()));

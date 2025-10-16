@@ -8,14 +8,13 @@ public class MemoryDataAccess implements DataAccess{
 
     private final HashMap<String, User> users = new HashMap<>();
 
-
     @Override
     public void clear() {
         users.clear();
     }
 
     @Override
-    public void saveUser(User user) {
+    public void createUser(User user) {
         users.put(user.username(), user);
     }
 

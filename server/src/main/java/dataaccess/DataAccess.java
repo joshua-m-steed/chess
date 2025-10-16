@@ -4,6 +4,6 @@ import datamodel.User;
 
 public interface DataAccess {
         void clear();
-        void saveUser(User user);
+        void createUser(User user);
         User getUser(String username);
 }
