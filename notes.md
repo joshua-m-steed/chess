@@ -463,3 +463,19 @@ Serializes to and from JSON
  Simplicity over clever and concise  
  Clarity over verbosity  
  Decomposition, abstraction, and encapsulation
+
+ **Test Driven Development (TDD)**
+ 1. Add Tests while coding  
+ 2. Run all the tests (repeat to 1)  
+ 3. Refactor/cleanup  
+ 4. Run all the tests (repeat to 4)  
+
+ *TTD Attributes*  
+- Easy to read  
+- Cohesive  
+- Quick to execute  
+- Does not repeat  
+- Stable  
+- Automated  
+
+*JUnit*  
