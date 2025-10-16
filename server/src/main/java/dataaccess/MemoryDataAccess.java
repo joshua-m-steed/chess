@@ -22,4 +22,9 @@ public class MemoryDataAccess implements DataAccess{
     public User getUser(String username) {
         return users.get(username);
     }
+
+    @Override
+    public void deleteUser(String authToken) {
+        users.remove(authToken);
+    }
 }

@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import dataaccess.DataAccess;
 import dataaccess.MemoryDataAccess;
 import datamodel.LoginResult;
+import datamodel.LogoutResult;
 import datamodel.RegistrationResult;
 import datamodel.User;
 import io.javalin.*;
@@ -27,6 +28,7 @@ public class Server {
         server.delete("db", ctx -> ctx.result("{}"));
         server.post("user", this::register);
         server.post("session", this::login);
+        server.delete("session", this::logout);
 
         // Register your endpoints and exception handlers here.
 
@@ -48,6 +50,15 @@ public class Server {
         var serializer = new Gson();
         var req = serializer.fromJson(ctx.body(), User.class);
         LoginResult response = userService.login(req);
+
+        var res = serializer.toJson(response);
+        ctx.result(res);
+    }
+
+    private void logout(Context ctx) {
+        var serializer = new Gson();
+        var req = serializer.fromJson(ctx.body(), User.class);
+        LogoutResult response = userService.logout(req);
 
         var res = serializer.toJson(response);
         ctx.result(res);
