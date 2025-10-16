@@ -1,6 +1,7 @@
 package service;
 
 import dataaccess.DataAccess;
+import datamodel.LoginResult;
 import datamodel.RegistrationResult;
 import datamodel.User;
 
@@ -13,5 +14,9 @@ public class UserService {
 
     public RegistrationResult register(User user) {
         return new RegistrationResult(user.username(), "theOneRing");
+    }
+
+    public LoginResult login(User user) {
+        return new LoginResult(user.username(), "melonTheElvishWordForFriend");
     }
 }
