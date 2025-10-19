@@ -14,7 +14,7 @@ public class UserService {
     }
 
     public RegistrationResult register(User user) throws BadRequestResponse {
-        if((user.username() == null || user.username().isBlank() )
+        if((user.username() == null || user.username().isBlank())
             || (user.password() == null || user.password().isBlank())
                 || (user.email() == null || user.email().isBlank())) {
             throw new BadRequestResponse("Error: bad request");
@@ -22,7 +22,11 @@ public class UserService {
         return new RegistrationResult(user.username(), "theOneRing");
     }
 
-    public LoginResult login(User user) {
+    public LoginResult login(User user) throws BadRequestResponse {
+        if((user.username() == null || user.username().isBlank() )
+                || (user.password() == null || user.password().isBlank())) {
+            throw new BadRequestResponse("Error: bad request");
+        }
         return new LoginResult(user.username(), "melonTheElvishWordForFriend");
     }
 

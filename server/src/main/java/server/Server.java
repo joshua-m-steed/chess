@@ -47,7 +47,7 @@ public class Server {
         ctx.result(res);
     }
 
-    private void login(Context ctx) {
+    private void login(Context ctx) throws BadRequestResponse {
         var serializer = new Gson();
         var req = serializer.fromJson(ctx.body(), User.class);
         LoginResult response = userService.login(req);
@@ -76,7 +76,7 @@ public class Server {
     private void exceptionHandler(BadRequestResponse ex, Context ctx) {
         var serializer = new Gson();
         ctx.status(400);
-        ctx.json(serializer.toJson(Map.of("message", ex.getMessage(), "status", 400)));
+        ctx.json(serializer.toJson(Map.of("message", ex.getMessage())));
     }
 
     public int run(int desiredPort) {
