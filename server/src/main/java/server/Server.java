@@ -5,6 +5,7 @@ import dataaccess.DataAccess;
 import dataaccess.MemoryDataAccess;
 import datamodel.*;
 import io.javalin.*;
+import io.javalin.http.BadRequestResponse;
 import io.javalin.http.Context;
 import org.eclipse.jetty.util.TopologicalSort;
 import service.UserService;
@@ -28,12 +29,13 @@ public class Server {
         server.post("session", this::login);
         server.delete("session", this::logout);
         server.get("game", this::listGame);
+        server.exception(BadRequestResponse.class, this::exceptionHandler);
 
         // Register your endpoints and exception handlers here.
 
     }
 
-    private void register(Context ctx) {
+    private void register(Context ctx) throws BadRequestResponse {
         var serializer = new Gson();
         var req = serializer.fromJson(ctx.body(), User.class);
         RegistrationResult response = userService.register(req);
@@ -69,6 +71,12 @@ public class Server {
 
         var res = serializer.toJson(response);
         ctx.result(res);
+    }
+
+    private void exceptionHandler(BadRequestResponse ex, Context ctx) {
+        var serializer = new Gson();
+        ctx.status(400);
+        ctx.json(serializer.toJson(Map.of("message", ex.getMessage(), "status", 400)));
     }
 
     public int run(int desiredPort) {

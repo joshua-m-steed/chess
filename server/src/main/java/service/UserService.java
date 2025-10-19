@@ -2,6 +2,7 @@ package service;
 
 import dataaccess.DataAccess;
 import datamodel.*;
+import io.javalin.http.BadRequestResponse;
 
 import java.util.ArrayList;
 
@@ -12,7 +13,12 @@ public class UserService {
         this.dataAccess = dataAccess;
     }
 
-    public RegistrationResult register(User user) {
+    public RegistrationResult register(User user) throws BadRequestResponse {
+        if((user.username() == null || user.username().isBlank() )
+            || (user.password() == null || user.password().isBlank())
+                || (user.email() == null || user.email().isBlank())) {
+            throw new BadRequestResponse("Error: bad request");
+        }
         return new RegistrationResult(user.username(), "theOneRing");
     }
 
