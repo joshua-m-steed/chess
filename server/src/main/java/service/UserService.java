@@ -1,10 +1,9 @@
 package service;
 
 import dataaccess.DataAccess;
-import datamodel.LoginResult;
-import datamodel.LogoutResult;
-import datamodel.RegistrationResult;
-import datamodel.User;
+import datamodel.*;
+
+import java.util.ArrayList;
 
 public class UserService {
     private final DataAccess dataAccess;
@@ -23,5 +22,12 @@ public class UserService {
 
     public LogoutResult logout(User user) {
         return new LogoutResult();
+    }
+
+    public GameListResult gameList() {
+        ArrayList<Game> games = new ArrayList<>();
+//        games.add(new Game(5555, "MiniJosh", "Frodo", "Uhhh", null));
+//        games.add(new Game(2, "Me", "Myself", "AndI", null));
+        return new GameListResult(games);
     }
 }

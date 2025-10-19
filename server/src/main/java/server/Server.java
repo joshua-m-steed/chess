@@ -3,15 +3,13 @@ package server;
 import com.google.gson.Gson;
 import dataaccess.DataAccess;
 import dataaccess.MemoryDataAccess;
-import datamodel.LoginResult;
-import datamodel.LogoutResult;
-import datamodel.RegistrationResult;
-import datamodel.User;
+import datamodel.*;
 import io.javalin.*;
 import io.javalin.http.Context;
 import org.eclipse.jetty.util.TopologicalSort;
 import service.UserService;
 
+import java.util.ArrayList;
 import java.util.Map;
 
 public class Server {
@@ -29,6 +27,7 @@ public class Server {
         server.post("user", this::register);
         server.post("session", this::login);
         server.delete("session", this::logout);
+        server.get("game", this::listGame);
 
         // Register your endpoints and exception handlers here.
 
@@ -59,6 +58,14 @@ public class Server {
         var serializer = new Gson();
         var req = serializer.fromJson(ctx.body(), User.class);
         LogoutResult response = userService.logout(req);
+
+        var res = serializer.toJson(response);
+        ctx.result(res);
+    }
+
+    private void listGame(Context ctx) {
+        var serializer = new Gson();
+        GameListResult response = userService.gameList();
 
         var res = serializer.toJson(response);
         ctx.result(res);
