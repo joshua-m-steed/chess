@@ -2,6 +2,7 @@ package service;
 
 import dataaccess.DataAccess;
 import datamodel.*;
+import io.javalin.http.BadRequestResponse;
 
 import java.util.ArrayList;
 
@@ -19,8 +20,12 @@ public class GameService {
         return new GameListResult(games);
     }
 
-    public GameCreateResult createGame(String gameName) {
-        Game game = this.dataAccess.createGame(gameName);
+    public GameCreateResult createGame(Game gameName) {
+        System.out.println(gameName);
+//        if((gameName == null || gameName.isBlank())) {
+//            throw new BadRequestResponse("Error: bad request");
+//        }
+        Game game = this.dataAccess.createGame(gameName.gameName());
         return new GameCreateResult(game.gameID());
     }
 }
