@@ -7,10 +7,10 @@ import datamodel.*;
 import io.javalin.*;
 import io.javalin.http.BadRequestResponse;
 import io.javalin.http.Context;
-import org.eclipse.jetty.util.TopologicalSort;
+import io.javalin.http.ForbiddenResponse;
+import io.javalin.http.UnauthorizedResponse;
 import service.UserService;
 
-import java.util.ArrayList;
 import java.util.Map;
 
 public class Server {
@@ -29,16 +29,19 @@ public class Server {
         server.post("session", this::login);
         server.delete("session", this::logout);
         server.get("game", this::listGame);
-        server.exception(BadRequestResponse.class, this::exceptionHandler);
+        server.exception(BadRequestResponse.class, this::badResponseHandler);
+        server.exception(ForbiddenResponse.class, this::forbiddenResponseHandler);
+        server.exception(UnauthorizedResponse.class, this::unauthorizedResponseHandler);
 
         // Register your endpoints and exception handlers here.
 
     }
 
-    private void register(Context ctx) throws BadRequestResponse {
+    private void register(Context ctx) throws BadRequestResponse, ForbiddenResponse {
         var serializer = new Gson();
         var req = serializer.fromJson(ctx.body(), User.class);
         RegistrationResult response = userService.register(req);
+
 
         // req.put("authToken", "cow");
         // Call the service and register this
@@ -47,7 +50,7 @@ public class Server {
         ctx.result(res);
     }
 
-    private void login(Context ctx) throws BadRequestResponse {
+    private void login(Context ctx) throws BadRequestResponse, UnauthorizedResponse {
         var serializer = new Gson();
         var req = serializer.fromJson(ctx.body(), User.class);
         LoginResult response = userService.login(req);
@@ -73,9 +76,21 @@ public class Server {
         ctx.result(res);
     }
 
-    private void exceptionHandler(BadRequestResponse ex, Context ctx) {
+    private void badResponseHandler(BadRequestResponse ex, Context ctx) {
         var serializer = new Gson();
         ctx.status(400);
+        ctx.json(serializer.toJson(Map.of("message", ex.getMessage())));
+    }
+
+    private void unauthorizedResponseHandler(UnauthorizedResponse ex, Context ctx) {
+        var serializer = new Gson();
+        ctx.status(401);
+        ctx.json(serializer.toJson(Map.of("message", ex.getMessage())));
+    }
+
+    private void forbiddenResponseHandler(ForbiddenResponse ex, Context ctx) {
+        var serializer = new Gson();
+        ctx.status(403);
         ctx.json(serializer.toJson(Map.of("message", ex.getMessage())));
     }
 
