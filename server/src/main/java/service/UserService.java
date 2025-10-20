@@ -23,11 +23,12 @@ public class UserService {
             throw new BadRequestResponse("Error: bad request");
         }
 
-        this.dataAccess.createUser(user);
         // Verify that GetUser is either Object or result!
-//        if(this.dataAccess.getUser(user.username()) != null) {
-//            throw new ForbiddenResponse("Error: already taken");
-//        }
+        if(this.dataAccess.getUser(user.username()) != null) {
+            throw new ForbiddenResponse("Error: already taken");
+        }
+
+        this.dataAccess.createUser(user);
 
         return new RegistrationResult(user.username(), "theOneRing");
     }
