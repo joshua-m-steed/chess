@@ -20,12 +20,11 @@ public class GameService {
         return new GameListResult(games);
     }
 
-    public GameCreateResult createGame(Game gameName) {
-        System.out.println(gameName);
-//        if((gameName == null || gameName.isBlank())) {
-//            throw new BadRequestResponse("Error: bad request");
-//        }
-        Game game = this.dataAccess.createGame(gameName.gameName());
-        return new GameCreateResult(game.gameID());
+    public GameCreateResult createGame(Game game) {
+        if((game.gameName() == null || game.gameName().isBlank())) {
+            throw new BadRequestResponse("Error: bad request");
+        }
+        Game newGame = this.dataAccess.createGame(game.gameName());
+        return new GameCreateResult(newGame.gameID());
     }
 }
