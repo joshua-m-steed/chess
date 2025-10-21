@@ -12,6 +12,8 @@ import io.javalin.http.UnauthorizedResponse;
 import service.GameService;
 import service.UserService;
 
+import java.net.URI;
+import java.net.http.HttpRequest;
 import java.util.Map;
 
 public class Server {
@@ -34,6 +36,7 @@ public class Server {
 
         server.post("game", this::createGame);
         server.get("game", this::listGame);
+        server.put("game", this::joinGame);
 
         server.exception(BadRequestResponse.class, this::badResponseHandler);
         server.exception(ForbiddenResponse.class, this::forbiddenResponseHandler);
@@ -68,6 +71,7 @@ public class Server {
     private void logout(Context ctx) throws UnauthorizedResponse {
         var serializer = new Gson();
         var req = serializer.fromJson(ctx.body(), User.class);
+//        var authToken = ctx.header("authorization");
         LogoutResult response = userService.logout(req);
 
         var res = serializer.toJson(response);
@@ -84,8 +88,17 @@ public class Server {
 
     private void createGame(Context ctx) {
         var serializer = new Gson();
-        var req = serializer.fromJson(ctx.body(), String.class);
+        var req = serializer.fromJson(ctx.body(), Game.class);
         GameCreateResult response = gameService.createGame(req);
+
+        var res = serializer.toJson(response);
+        ctx.result(res);
+    }
+
+    private void joinGame(Context ctx) {
+        var serializer = new Gson();
+        var req = serializer.fromJson(ctx.body(), JoinGameRequest.class);
+        GameJoinResult response = gameService.joinGame(req);
 
         var res = serializer.toJson(response);
         ctx.result(res);
