@@ -50,7 +50,16 @@ public class UserService {
         return this.dataAccess.authUser(user);
     }
 
-    public LogoutResult logout(User user) {
-        return new LogoutResult();
+    public LogoutResult logout(String authToken) {
+        if(authToken == null || authToken.isBlank())
+        {
+            throw new UnauthorizedResponse("Error: unauthorized");
+        }
+
+        if(this.dataAccess.deleteUser(authToken)) {
+            return new LogoutResult();
+        } else {
+            throw new UnauthorizedResponse("Error: unauthorized");
+        }
     }
 }

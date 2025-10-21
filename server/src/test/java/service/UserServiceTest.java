@@ -3,6 +3,7 @@ package service;
 import dataaccess.DataAccess;
 import dataaccess.MemoryDataAccess;
 import datamodel.LoginResult;
+import datamodel.LogoutResult;
 import datamodel.RegistrationResult;
 import datamodel.User;
 import io.javalin.http.BadRequestResponse;
@@ -118,5 +119,20 @@ class UserServiceTest {
         assertThrows(UnauthorizedResponse.class, () -> {
             service.login(new User("Michael", "uhoh", "Why@you"));
         });
+    }
+
+    @Test
+    void logout() {
+        var regUser = new User("James", "haha", "@me.bro");
+
+        var da = new MemoryDataAccess();
+        var service = new UserService(da);
+
+        RegistrationResult regResponse = service.register(regUser);
+
+        LogoutResult outResponse = service.logout(regResponse.authToken());
+
+        assertNotNull(outResponse);
+        assertEquals(new LogoutResult(), outResponse);
     }
 }

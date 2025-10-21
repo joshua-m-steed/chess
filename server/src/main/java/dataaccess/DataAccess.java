@@ -12,7 +12,7 @@ public interface DataAccess {
         RegistrationResult createUser(User user);
         User getUser(String username);
         LoginResult authUser(User user);
-        void deleteUser(String authToken);
+        boolean deleteUser(String authToken);
         ArrayList<Game> listGame(String authToken);
         Game createGame(String gameName);
         void joinGame(String userName, int gameID);

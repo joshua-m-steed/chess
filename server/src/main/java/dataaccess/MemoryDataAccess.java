@@ -46,10 +46,11 @@ public class MemoryDataAccess implements DataAccess{
     }
 
     @Override
-    public void deleteUser(String authToken) {
-        User user = usersByAuth.get(authToken);
-        usersByName.remove(user.username());
-        usersByAuth.remove(authToken);
+    public boolean deleteUser(String authToken) {
+//        User user = usersByAuth.get(authToken);
+//        usersByName.remove(user.username());
+        User removedUser = usersByAuth.remove(authToken);
+        return removedUser != null;
     }
 
     @Override
