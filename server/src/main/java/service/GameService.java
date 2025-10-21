@@ -53,4 +53,8 @@ public class GameService {
 
 
     }
+
+    public void clear() {
+        this.dataAccess.clearGames();
+    }
 }

@@ -13,7 +13,8 @@ class DataAccessTest {
         assertNull(da.getUser(user.username()));
         da.createUser(user);
         assertNotNull(da.getUser(user.username()));
-        da.clear();
+        da.clearUsers();
+        da.clearGames();
         assertNull(da.getUser(user.username()));
     }
 }

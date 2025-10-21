@@ -8,7 +8,8 @@ import datamodel.Game;
 import java.util.ArrayList;
 
 public interface DataAccess {
-        void clear();
+        void clearUsers();
+        void clearGames();
         RegistrationResult createUser(User user);
         User getUser(String username);
         LoginResult authUser(User user);

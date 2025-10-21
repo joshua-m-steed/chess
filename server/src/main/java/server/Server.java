@@ -27,7 +27,8 @@ public class Server {
         gameService = new GameService(dataAccess);
         server = Javalin.create(config -> config.staticFiles.add("web"));
 
-        server.delete("db", ctx -> ctx.result("{}"));
+//        server.delete("db", ctx -> ctx.result("{}"));
+        server.delete("db", this::clear);
         server.post("user", this::register);
         server.post("session", this::login);
         server.delete("session", this::logout);
@@ -42,6 +43,12 @@ public class Server {
 
         // Register your endpoints and exception handlers here.
 
+    }
+    private void clear(Context ctx) {
+        userService.clear();
+        gameService.clear();
+
+        ctx.result();
     }
 
     private void register(Context ctx) throws BadRequestResponse, ForbiddenResponse {

@@ -62,4 +62,8 @@ public class UserService {
             throw new UnauthorizedResponse("Error: unauthorized");
         }
     }
+
+    public void clear() {
+        this.dataAccess.clearUsers();
+    }
 }
