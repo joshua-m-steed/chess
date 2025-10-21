@@ -1,5 +1,6 @@
 package dataaccess;
 
+import datamodel.RegistrationResult;
 import datamodel.User;
 import datamodel.Game;
 
@@ -7,7 +8,7 @@ import java.util.ArrayList;
 
 public interface DataAccess {
         void clear();
-        void createUser(User user);
+        RegistrationResult createUser(User user);
         User getUser(String username);
         void deleteUser(String authToken);
         ArrayList<Game> listGame(String authToken);

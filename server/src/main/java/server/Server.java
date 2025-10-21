@@ -12,8 +12,6 @@ import io.javalin.http.UnauthorizedResponse;
 import service.GameService;
 import service.UserService;
 
-import java.net.URI;
-import java.net.http.HttpRequest;
 import java.util.Map;
 
 public class Server {
@@ -70,9 +68,8 @@ public class Server {
 
     private void logout(Context ctx) throws UnauthorizedResponse {
         var serializer = new Gson();
-        var req = serializer.fromJson(ctx.body(), User.class);
-//        var authToken = ctx.header("authorization");
-        LogoutResult response = userService.logout(req);
+        String authToken = ctx.header("authorization");
+        LogoutResult response = userService.logout(authToken);
 
         var res = serializer.toJson(response);
         ctx.result(res);

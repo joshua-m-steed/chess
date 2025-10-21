@@ -2,36 +2,44 @@ package dataaccess;
 
 import chess.ChessGame;
 import datamodel.Game;
+import datamodel.RegistrationResult;
 import datamodel.User;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 
 public class MemoryDataAccess implements DataAccess{
 
-    private final HashMap<String, User> users = new HashMap<>();
+    // Idea? Make the usersByAuth using authData?
+    private final HashMap<String, User> usersByName = new HashMap<>();
+    private final HashMap<String, User> usersByAuth = new HashMap<>();
     private final HashMap<Integer, Game> games = new HashMap<>();
 
     @Override
     public void clear() {
-        users.clear();
+        usersByName.clear();
+        usersByAuth.clear();
+        games.clear();
     }
 
     @Override
-    public void createUser(User user) {
-        users.put(user.username(), user);
+    public RegistrationResult createUser(User user) {
+        usersByName.put(user.username(), user);
+        return new RegistrationResult(user.username(), generateAuthToken());
     }
 
     @Override
     public User getUser(String username) {
-        return users.get(username);
+        return usersByName.get(username);
     }
 
     @Override
     public void deleteUser(String authToken) {
-        System.out.println(users);
-        users.remove(authToken);
+        User user = usersByAuth.get(authToken);
+        usersByName.remove(user.username());
+        usersByAuth.remove(authToken);
     }
 
     @Override
@@ -47,5 +55,14 @@ public class MemoryDataAccess implements DataAccess{
         Game newGame = new Game(1234, "", "", gameName, new ChessGame());
         games.put(newGame.gameID(), newGame);
         return newGame;
+    }
+
+    @Override
+    public void joinGame(String userName, int gameID) {
+
+    }
+
+    private String generateAuthToken() {
+        return UUID.randomUUID().toString();
     }
 }
