@@ -2,6 +2,7 @@ package dataaccess;
 
 import chess.ChessGame;
 import datamodel.Game;
+import datamodel.LoginResult;
 import datamodel.RegistrationResult;
 import datamodel.User;
 
@@ -27,12 +28,21 @@ public class MemoryDataAccess implements DataAccess{
     @Override
     public RegistrationResult createUser(User user) {
         usersByName.put(user.username(), user);
-        return new RegistrationResult(user.username(), generateAuthToken());
+        String authToken = generateAuthToken();
+        usersByAuth.put(authToken, user);
+        return new RegistrationResult(user.username(), authToken);
     }
 
     @Override
     public User getUser(String username) {
         return usersByName.get(username);
+    }
+
+    @Override
+    public LoginResult authUser(User user) {
+        String authToken = generateAuthToken();
+        usersByAuth.put(authToken, user);
+        return new LoginResult(user.username(), authToken);
     }
 
     @Override

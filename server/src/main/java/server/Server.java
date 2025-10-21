@@ -49,10 +49,6 @@ public class Server {
         var req = serializer.fromJson(ctx.body(), User.class);
         RegistrationResult response = userService.register(req);
 
-
-        // req.put("authToken", "cow");
-        // Call the service and register this
-
         var res = serializer.toJson(response);
         ctx.result(res);
     }
