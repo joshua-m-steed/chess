@@ -5,6 +5,7 @@ import datamodel.*;
 import io.javalin.http.BadRequestResponse;
 
 import java.util.ArrayList;
+import java.util.Map;
 
 public class GameService {
     private final DataAccess dataAccess;
@@ -14,9 +15,7 @@ public class GameService {
     }
 
     public GameListResult gameList() {
-        ArrayList<Game> games = new ArrayList<>();
-//        games.add(new Game(5555, "MiniJosh", "Frodo", "Uhhh", null));
-//        games.add(new Game(2, "Me", "Myself", "AndI", null));
+        ArrayList<Game> games = this.dataAccess.listGame("Hobbits");
         return new GameListResult(games);
     }
 
@@ -26,5 +25,32 @@ public class GameService {
         }
         Game newGame = this.dataAccess.createGame(game.gameName());
         return new GameCreateResult(newGame.gameID());
+    }
+
+    public GameJoinResult joinGame(JoinGameRequest gameRequest) throws BadRequestResponse {
+        if(gameRequest.playerColor() == null || gameRequest.playerColor().isBlank()) {
+            throw new BadRequestResponse("Error: bad request");
+        } else if (!gameRequest.playerColor().equals("WHITE") && !gameRequest.playerColor().equals("BLACK")) {
+            throw new BadRequestResponse("Error: bad request");
+        }
+
+        ArrayList<Game> games = this.dataAccess.listGame("Hobbits");
+        Game targetGame = null;
+        for(Game game : games) {
+            if(game.gameID() == gameRequest.gameID()) {
+                targetGame = game;
+                break;
+            }
+        }
+
+        if(targetGame == null) {
+            throw new BadRequestResponse("Error: bad request");
+        }
+
+        return new GameJoinResult();
+
+
+
+
     }
 }
