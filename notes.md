@@ -342,7 +342,7 @@ Allows to focus on specific points
 - Interface Segregation: Clients should not be forced to depend on methods they do not use
 - Dependency Inversion: High-level modules should not depend on low-level modules. Both should depend on abstractions  
 
-# Phase 2  
+# Phase 2 / 3
 **Endpoints & Descriptions**  
 Clear - Clears the database. Removes everything  
 Register - Register a new user ( returns a new authToken )
@@ -479,3 +479,35 @@ Serializes to and from JSON
 - Automated  
 
 *JUnit*  
+
+# Phase 4  
+*Relational Databases*  
+There are column relationships and row relationships  
+Column -> Fields
+Rows -> Objects
+
+Example:
+| id | name    | type |
+|:--:|:-------:|:----:|
+| 92 | Fido    | dog  |
+| 14 | Puddles | cat  |
+| 44 | Pubbles | fish | 
+
+Primary key is unique to objects/tables  
+Secondary keys or foreign keys aren't originally part of the table, but references  
+Good Key Characteristsics
+Unique - No duplicates  
+Stable - Doesn't change  
+Simple - Avoid composites  
+
+Teminology
+Problmems - PDBS
+Verified - SQP
+MySQL - Implementation
+
+
+**MySQL, SQL**  
+*Structure Query Language*  
+Declaritive language to work with relational data  
+
+
