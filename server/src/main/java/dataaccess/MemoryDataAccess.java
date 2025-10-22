@@ -17,6 +17,7 @@ public class MemoryDataAccess implements DataAccess{
     private final HashMap<String, User> usersByName = new HashMap<>();
     private final HashMap<String, User> usersByAuth = new HashMap<>();
     private final HashMap<Integer, Game> games = new HashMap<>();
+    private int nextGameID = 1;
 
     @Override
     public void clearUsers() {
@@ -78,7 +79,7 @@ public class MemoryDataAccess implements DataAccess{
 
     @Override
     public Game createGame(String gameName) {
-        Game newGame = new Game(1234, null, null, gameName, new ChessGame());
+        Game newGame = new Game(nextGameID++, null, null, gameName, new ChessGame());
         games.put(newGame.gameID(), newGame);
         return newGame;
     }
@@ -89,7 +90,7 @@ public class MemoryDataAccess implements DataAccess{
             case "WHITE" ->
                     new Game(game.gameID(), user.username(), game.blackUsername(), game.gameName(), game.game());
             case "BLACK" ->
-                    new Game(game.gameID(), game.blackUsername(), user.username(), game.gameName(), game.game());
+                    new Game(game.gameID(), game.whiteUsername(), user.username(), game.gameName(), game.game());
             default -> null;
         };
         assert newGame != null;

@@ -83,10 +83,6 @@ public class GameService {
         this.dataAccess.joinGame(authUser, targetGame, gameRequest.playerColor());
 
         return new GameJoinResult();
-
-
-
-
     }
 
     public void clear() {
