@@ -100,7 +100,8 @@ public class Server {
     private void joinGame(Context ctx) {
         var serializer = new Gson();
         var req = serializer.fromJson(ctx.body(), JoinGameRequest.class);
-        GameJoinResult response = gameService.joinGame(req);
+        String authToken = ctx.header("authorization");
+        GameJoinResult response = gameService.joinGame(req, authToken);
 
         var res = serializer.toJson(response);
         ctx.result(res);

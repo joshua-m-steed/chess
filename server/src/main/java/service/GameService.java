@@ -36,10 +36,12 @@ public class GameService {
         return new GameCreateResult(newGame.gameID());
     }
 
-    public GameJoinResult joinGame(JoinGameRequest gameRequest) throws BadRequestResponse {
+    public GameJoinResult joinGame(JoinGameRequest gameRequest, String authToken) throws BadRequestResponse {
         if(gameRequest.playerColor() == null || gameRequest.playerColor().isBlank()) {
             throw new BadRequestResponse("Error: bad request");
         } else if (!gameRequest.playerColor().equals("WHITE") && !gameRequest.playerColor().equals("BLACK")) {
+            throw new BadRequestResponse("Error: bad request");
+        } else if (gameRequest.gameID() == null) {
             throw new BadRequestResponse("Error: bad request");
         }
 
