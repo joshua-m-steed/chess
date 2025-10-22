@@ -10,33 +10,11 @@ public class RookMovesCalculator implements CalculateMoves {
     public List<ChessMove> possibleMoves(ChessBoard board, ChessPosition myPos) {
         List<ChessMove> rookMoves = new ArrayList<>();
 
-        rookMoves(board, myPos, new ChessPosition(myPos.getRow() + 1, myPos.getColumn()), 1, 0, rookMoves);
-        rookMoves(board, myPos, new ChessPosition(myPos.getRow() - 1, myPos.getColumn()), -1, 0, rookMoves);
-        rookMoves(board, myPos, new ChessPosition(myPos.getRow(), myPos.getColumn() + 1), 0, 1, rookMoves);
-        rookMoves(board, myPos, new ChessPosition(myPos.getRow(), myPos.getColumn() - 1), 0, -1, rookMoves);
+        recursiveMoves(board, myPos, new ChessPosition(myPos.getRow() + 1, myPos.getColumn()), 1, 0, rookMoves);
+        recursiveMoves(board, myPos, new ChessPosition(myPos.getRow() - 1, myPos.getColumn()), -1, 0, rookMoves);
+        recursiveMoves(board, myPos, new ChessPosition(myPos.getRow(), myPos.getColumn() + 1), 0, 1, rookMoves);
+        recursiveMoves(board, myPos, new ChessPosition(myPos.getRow(), myPos.getColumn() - 1), 0, -1, rookMoves);
 
         return rookMoves;
-    }
-
-    private List<ChessMove> rookMoves(ChessBoard board, ChessPosition myPos, ChessPosition newPos, int dx, int dy, List<ChessMove> rookMoves) {
-        // Out of bounds base case
-        if(newPos.getRow() < 1 | newPos.getColumn() < 1 | newPos.getRow() >= 9 | newPos.getColumn() >= 9) {
-            return rookMoves;
-        }
-
-        ChessPiece nextTile = board.getPiece(newPos);
-        ChessPiece myPiece = board.getPiece(myPos);
-
-        // Check for piece color
-        if(nextTile != null) {
-            if(nextTile.getTeamColor() != myPiece.getTeamColor()) {
-                rookMoves.add(new ChessMove(myPos, new ChessPosition(newPos.getRow(), newPos.getColumn()), null));
-            }
-            return rookMoves;
-        }
-
-        rookMoves.add(new ChessMove(myPos, new ChessPosition(newPos.getRow(), newPos.getColumn()), null ));
-
-        return rookMoves(board, myPos, new ChessPosition(newPos.getRow() + dx,newPos.getColumn() + dy), dx, dy, rookMoves);
     }
 }
