@@ -84,8 +84,17 @@ public class MemoryDataAccess implements DataAccess{
     }
 
     @Override
-    public void joinGame(String userName, int gameID) {
-
+    public void joinGame(User user, Game game, String color) {
+        Game newGame = switch (color) {
+            case "WHITE" ->
+                    new Game(game.gameID(), user.username(), game.blackUsername(), game.gameName(), game.game());
+            case "BLACK" ->
+                    new Game(game.gameID(), game.blackUsername(), user.username(), game.gameName(), game.game());
+            default -> null;
+        };
+        assert newGame != null;
+        games.remove(game.gameID());
+        games.put(newGame.gameID(), newGame);
     }
 
     private String generateAuthToken() {

@@ -3,6 +3,7 @@ package service;
 import dataaccess.DataAccess;
 import datamodel.*;
 import io.javalin.http.BadRequestResponse;
+import io.javalin.http.ForbiddenResponse;
 import io.javalin.http.UnauthorizedResponse;
 
 import java.util.ArrayList;
@@ -37,10 +38,13 @@ public class GameService {
     }
 
     public GameJoinResult joinGame(JoinGameRequest gameRequest, String authToken) throws BadRequestResponse {
-        if(this.dataAccess.getAuth(authToken) == null) {
+        User authUser = this.dataAccess.getAuth(authToken);
+        // Verify AuthToken
+        if(authUser == null) {
             throw new UnauthorizedResponse("Error: unauthorized");
         }
 
+        // Verify Given Data Exists
         if(gameRequest.playerColor() == null || gameRequest.playerColor().isBlank()) {
             throw new BadRequestResponse("Error: bad request");
         } else if (!gameRequest.playerColor().equals("WHITE") && !gameRequest.playerColor().equals("BLACK")) {
@@ -58,9 +62,25 @@ public class GameService {
             }
         }
 
+        // Verify that there is a matching game
         if(targetGame == null) {
             throw new BadRequestResponse("Error: bad request");
         }
+
+        switch (gameRequest.playerColor()) {
+            case "WHITE":
+                if(targetGame.whiteUsername() != null && !targetGame.whiteUsername().isBlank()) {
+                    throw new ForbiddenResponse("Error: already taken");
+                }
+                break;
+            case "BLACK":
+                if(targetGame.blackUsername() != null && !targetGame.blackUsername().isBlank()) {
+                    throw new ForbiddenResponse("Error: already taken");
+                }
+                break;
+        }
+
+        this.dataAccess.joinGame(authUser, targetGame, gameRequest.playerColor());
 
         return new GameJoinResult();
 
