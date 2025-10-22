@@ -3,6 +3,7 @@ package service;
 import dataaccess.DataAccess;
 import datamodel.*;
 import io.javalin.http.BadRequestResponse;
+import io.javalin.http.UnauthorizedResponse;
 
 import java.util.ArrayList;
 import java.util.Map;
@@ -14,15 +15,23 @@ public class GameService {
         this.dataAccess = dataAccess;
     }
 
-    public GameListResult gameList() {
-        ArrayList<Game> games = this.dataAccess.listGame("Hobbits");
+    public GameListResult gameList(String authToken) {
+        ArrayList<Game> games = this.dataAccess.listGame(authToken);
+        if(games == null) {
+            throw new UnauthorizedResponse("Error: unauthorized");
+        }
         return new GameListResult(games);
     }
 
-    public GameCreateResult createGame(Game game) {
+    public GameCreateResult createGame(Game game, String authToken) {
+        if(this.dataAccess.getAuth(authToken) == null) {
+            throw new UnauthorizedResponse("Error: unauthorized");
+        }
+
         if((game.gameName() == null || game.gameName().isBlank())) {
             throw new BadRequestResponse("Error: bad request");
         }
+
         Game newGame = this.dataAccess.createGame(game.gameName());
         return new GameCreateResult(newGame.gameID());
     }

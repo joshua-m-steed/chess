@@ -43,6 +43,11 @@ public class MemoryDataAccess implements DataAccess{
     }
 
     @Override
+    public User getAuth(String authToken) {
+        return usersByAuth.get(authToken);
+    }
+
+    @Override
     public LoginResult authUser(User user) {
         String authToken = generateAuthToken();
         usersByAuth.put(authToken, user);
@@ -59,6 +64,12 @@ public class MemoryDataAccess implements DataAccess{
 
     @Override
     public ArrayList<Game> listGame(String authToken) {
+        User authUser = usersByAuth.get(authToken);
+
+        if(authUser == null) {
+            return null;
+        }
+
         ArrayList<Game> gameList = new ArrayList<>();
         for(Map.Entry<Integer, Game> game : games.entrySet())
             gameList.add(game.getValue());

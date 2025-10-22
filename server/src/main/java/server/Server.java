@@ -80,7 +80,8 @@ public class Server {
 
     private void listGame(Context ctx) {
         var serializer = new Gson();
-        GameListResult response = gameService.gameList();
+        String authToken = ctx.header("authorization");
+        GameListResult response = gameService.gameList(authToken);
 
         var res = serializer.toJson(response);
         ctx.result(res);
@@ -89,7 +90,8 @@ public class Server {
     private void createGame(Context ctx) {
         var serializer = new Gson();
         var req = serializer.fromJson(ctx.body(), Game.class);
-        GameCreateResult response = gameService.createGame(req);
+        String authToken = ctx.header("authorization");
+        GameCreateResult response = gameService.createGame(req, authToken);
 
         var res = serializer.toJson(response);
         ctx.result(res);

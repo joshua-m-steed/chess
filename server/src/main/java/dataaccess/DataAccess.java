@@ -12,6 +12,7 @@ public interface DataAccess {
         void clearGames();
         RegistrationResult createUser(User user);
         User getUser(String username);
+        User getAuth(String authToken);
         LoginResult authUser(User user);
         boolean deleteUser(String authToken);
         ArrayList<Game> listGame(String authToken);
