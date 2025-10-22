@@ -19,7 +19,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class UserServiceTest {
     @Test
     void register() {
-        var user = new User("James", "haha", "@me.bro");
+        var user = new User("Frodo", "theOneRing", "frodo@baggins.com");
 
         var da = new MemoryDataAccess();
         var service = new UserService(da);
@@ -32,7 +32,7 @@ class UserServiceTest {
 
     @Test
     void registerNameAlreadyExists() {
-        var existingUser = new User("James", "haha", "@me.bro");
+        var existingUser = new User("Frodo", "theOneRing", "frodo@baggins.com");
 
         var da = new MemoryDataAccess();
         var service = new UserService(da);
@@ -71,7 +71,7 @@ class UserServiceTest {
 
     @Test
     void login() {
-        var regUser = new User("James", "haha", "@me.bro");
+        var regUser = new User("Frodo", "theOneRing", "frodo@baggins.com");
 
         var da = new MemoryDataAccess();
         var service = new UserService(da);
@@ -109,7 +109,7 @@ class UserServiceTest {
 
     @Test
     void loginUserNotFound() {
-        var regUser = new User("James", "haha", "@me.bro");
+        var regUser = new User("Frodo", "theOneRing", "frodo@baggins.com");
 
         var da = new MemoryDataAccess();
         var service = new UserService(da);
@@ -117,13 +117,13 @@ class UserServiceTest {
         service.register(regUser);
 
         assertThrows(UnauthorizedResponse.class, () -> {
-            service.login(new User("Michael", "uhoh", "Why@you"));
+            service.login(new User("Samwise", "ImGoingWithYou", "allforfrodo@baggins.com"));
         });
     }
 
     @Test
     void logout() {
-        var regUser = new User("James", "haha", "@me.bro");
+        var regUser = new User("Frodo", "theOneRing", "frodo@baggins.com");
 
         var da = new MemoryDataAccess();
         var service = new UserService(da);
@@ -134,5 +134,39 @@ class UserServiceTest {
 
         assertNotNull(outResponse);
         assertEquals(new LogoutResult(), outResponse);
+    }
+
+    @Test
+    void logoutMissionAuthInfo() {
+        var regUser = new User("Frodo", "theOneRing", "frodo@baggins.com");
+
+        var da = new MemoryDataAccess();
+        var service = new UserService(da);
+
+        RegistrationResult auth = service.register(regUser);
+        String emptyAuth = null;
+
+        assertEquals(String.class, auth.authToken().getClass());
+        assertNotEquals(emptyAuth, auth.authToken());
+        assertThrows(UnauthorizedResponse.class, () -> {
+            service.logout(emptyAuth);
+        });
+    }
+
+    @Test
+    void logoutInvalidAuthToken() {
+        var regUser = new User("Frodo", "theOneRing", "frodo@baggins.com");
+
+        var da = new MemoryDataAccess();
+        var service = new UserService(da);
+
+        RegistrationResult auth = service.register(regUser);
+        String invalidAuth = "WhereDidFrodoGo";
+
+        assertEquals(String.class, auth.authToken().getClass());
+        assertNotEquals(invalidAuth, auth.authToken());
+        assertThrows(UnauthorizedResponse.class, () -> {
+            service.logout(invalidAuth);
+        });
     }
 }
