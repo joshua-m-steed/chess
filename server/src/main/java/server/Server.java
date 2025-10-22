@@ -81,7 +81,7 @@ public class Server {
     private void listGame(Context ctx) {
         var serializer = new Gson();
         String authToken = ctx.header("authorization");
-        GameListResult response = gameService.gameList(authToken);
+        GameListResult response = gameService.listGame(authToken);
 
         var res = serializer.toJson(response);
         ctx.result(res);

@@ -15,7 +15,7 @@ public class GameService {
         this.dataAccess = dataAccess;
     }
 
-    public GameListResult gameList(String authToken) {
+    public GameListResult listGame(String authToken) {
         ArrayList<Game> games = this.dataAccess.listGame(authToken);
         if(games == null) {
             throw new UnauthorizedResponse("Error: unauthorized");

@@ -1,18 +1,15 @@
 package service;
 
-import dataaccess.DataAccess;
+import chess.ChessGame;
 import dataaccess.MemoryDataAccess;
 import datamodel.*;
 import io.javalin.http.BadRequestResponse;
 import io.javalin.http.ForbiddenResponse;
 import io.javalin.http.UnauthorizedResponse;
-import org.eclipse.jetty.server.Authentication;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import passoff.model.TestAuthResult;
 
-import java.net.HttpURLConnection;
+import java.util.ArrayList;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -154,6 +151,49 @@ class GameServiceTest {
 
         assertThrows(ForbiddenResponse.class, () -> {
             service.joinGame(gameBlackRequest, existingAuth);
+        });
+    }
+
+    @Test
+    void listGame() {
+        var service = new GameService(da);
+        GameListResult listResponse = service.listGame(existingAuth);
+
+        assertNotNull(listResponse);
+        assertEquals(ArrayList.class, listResponse.games().getClass());
+        assertEquals(1, listResponse.games().size());
+        Game gameOne = listResponse.games().get(0);
+
+        assertEquals("ToMordor", gameOne.gameName());
+        assertNull(gameOne.blackUsername());
+        assertNull(gameOne.whiteUsername());
+        assertEquals(ChessGame.class, gameOne.game().getClass());
+
+        Game gameName = new Game(null, null, null, "AnEnchantedForest", null);
+        service.createGame(gameName, existingAuth);
+
+        GameListResult listResponseTwo = service.listGame(existingAuth);
+        assertNotNull(listResponseTwo);
+        assertEquals(ArrayList.class, listResponseTwo.games().getClass());
+        assertEquals(2, listResponseTwo.games().size());
+        Game gameTwo = listResponseTwo.games().get(1);
+
+        assertEquals("AnEnchantedForest", gameTwo.gameName());
+    }
+
+    @Test
+    void listGameMissingAuth() {
+        var service = new GameService(da);
+
+        assertThrows(UnauthorizedResponse.class, () -> {
+            service.listGame(null);
+        });
+
+        Game gameName = new Game(null, null, null, "AnEnchantedForest", null);
+        service.createGame(gameName, existingAuth);
+
+        assertThrows(UnauthorizedResponse.class, () -> {
+            service.listGame("");
         });
     }
 }
