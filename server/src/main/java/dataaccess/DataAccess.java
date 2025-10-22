@@ -17,7 +17,5 @@ public interface DataAccess {
         boolean deleteUser(String authToken);
         ArrayList<Game> listGame(String authToken);
         Game createGame(String gameName);
-//        void joinGame(String userName, int gameID);
-
         void joinGame(User authUser, Game targetGame, String s);
 }
