@@ -72,8 +72,9 @@ public class MemoryDataAccess implements DataAccess{
         }
 
         ArrayList<Game> gameList = new ArrayList<>();
-        for(Map.Entry<Integer, Game> game : games.entrySet())
+        for(Map.Entry<Integer, Game> game : games.entrySet()) {
             gameList.add(game.getValue());
+        }
         return gameList;
     }
 
