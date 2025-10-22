@@ -7,7 +7,6 @@ import io.javalin.http.ForbiddenResponse;
 import io.javalin.http.UnauthorizedResponse;
 
 import java.util.ArrayList;
-import java.util.Map;
 
 public class GameService {
     private final DataAccess dataAccess;
