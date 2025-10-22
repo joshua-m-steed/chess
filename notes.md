@@ -510,4 +510,14 @@ MySQL - Implementation
 *Structure Query Language*  
 Declaritive language to work with relational data  
 
+**Java Database Connections - JDBC**  
+Connecting over the network to a database  
 
+**Security Advice**  
+Make sure you know the packages that you are importing do what you think they do.
+ - They execute using the credentials that you have!
+Don't let the user create any of the SQL statements  
+ - They can input or find a lot using those strings
+
+**Securing Passwords**  
+They hash the passwords and store the key in the new hashedpassword. More info to come in next lecture.
