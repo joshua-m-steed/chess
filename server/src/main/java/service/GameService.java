@@ -37,6 +37,10 @@ public class GameService {
     }
 
     public GameJoinResult joinGame(JoinGameRequest gameRequest, String authToken) throws BadRequestResponse {
+        if(this.dataAccess.getAuth(authToken) == null) {
+            throw new UnauthorizedResponse("Error: unauthorized");
+        }
+
         if(gameRequest.playerColor() == null || gameRequest.playerColor().isBlank()) {
             throw new BadRequestResponse("Error: bad request");
         } else if (!gameRequest.playerColor().equals("WHITE") && !gameRequest.playerColor().equals("BLACK")) {
@@ -45,7 +49,7 @@ public class GameService {
             throw new BadRequestResponse("Error: bad request");
         }
 
-        ArrayList<Game> games = this.dataAccess.listGame("Hobbits");
+        ArrayList<Game> games = this.dataAccess.listGame(authToken);
         Game targetGame = null;
         for(Game game : games) {
             if(game.gameID() == gameRequest.gameID()) {
