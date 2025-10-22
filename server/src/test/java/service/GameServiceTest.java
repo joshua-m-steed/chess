@@ -15,13 +15,12 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class GameServiceTest {
     private String existingAuth;
-    private User existingUser;
     private Integer existingGameID;
     private MemoryDataAccess da;
 
     @BeforeEach
     public void setup() {
-        existingUser = new User("Frodo", "theOneRing", "frodo@baggins.com");
+        User existingUser = new User("Frodo", "theOneRing", "frodo@baggins.com");
         da = new MemoryDataAccess();
         var userService = new UserService(da);
         var gameService = new GameService(da);
@@ -36,13 +35,14 @@ class GameServiceTest {
     @Test
     void createGame() {
         var service = new GameService(da);
+        service.clear();
         Game gameName = new Game(null, null, null, "ToMordor", null);
 
         GameCreateResult gameResult = service.createGame(gameName, existingAuth);
 
         assertNotNull(gameResult);
         assertEquals(Integer.class, gameResult.gameID().getClass());
-        assertEquals(1, gameResult.gameID());
+        assertEquals(2, gameResult.gameID());
     }
 
     @Test
