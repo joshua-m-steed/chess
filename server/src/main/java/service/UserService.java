@@ -7,8 +7,6 @@ import io.javalin.http.ForbiddenResponse;
 import io.javalin.http.UnauthorizedResponse;
 import org.mindrot.jbcrypt.BCrypt;
 
-import java.util.Objects;
-
 public class UserService {
     private final DataAccess dataAccess;
 

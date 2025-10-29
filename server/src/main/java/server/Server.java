@@ -2,7 +2,8 @@ package server;
 
 import com.google.gson.Gson;
 import dataaccess.DataAccess;
-import dataaccess.MemoryDataAccess;
+import dataaccess.DataAccessException;
+import dataaccess.MySqlDataAccess;
 import datamodel.*;
 import io.javalin.*;
 import io.javalin.http.BadRequestResponse;
@@ -22,12 +23,15 @@ public class Server {
     private DataAccess dataAccess;
 
     public Server() {
-        dataAccess = new MemoryDataAccess();
+//        dataAccess = new MemoryDataAccess();
+        try { dataAccess = new MySqlDataAccess(); }
+        catch (DataAccessException e) { System.out.println("Failed to Connect to SQL");}
+
         userService = new UserService(dataAccess);
         gameService = new GameService(dataAccess);
+
         server = Javalin.create(config -> config.staticFiles.add("web"));
 
-//        server.delete("db", ctx -> ctx.result("{}"));
         server.delete("db", this::clear);
         server.post("user", this::register);
         server.post("session", this::login);
