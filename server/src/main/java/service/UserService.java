@@ -5,6 +5,7 @@ import datamodel.*;
 import io.javalin.http.BadRequestResponse;
 import io.javalin.http.ForbiddenResponse;
 import io.javalin.http.UnauthorizedResponse;
+import org.mindrot.jbcrypt.BCrypt;
 
 import java.util.Objects;
 
@@ -28,7 +29,11 @@ public class UserService {
             throw new ForbiddenResponse("Error: already taken");
         }
 
-        return this.dataAccess.createUser(user);
+        // Hash Password
+        String hashPwd = BCrypt.hashpw(user.password(), BCrypt.gensalt());
+        User hashUser = new User(user.username(), hashPwd, user.email());
+
+        return this.dataAccess.createUser(hashUser);
     }
 
     public LoginResult login(User user) throws BadRequestResponse, UnauthorizedResponse {
@@ -43,7 +48,9 @@ public class UserService {
         if(checkAuth == null) {
             throw new UnauthorizedResponse("Error: unauthorized");
         }
-        else if(!Objects.equals(checkAuth.password(), user.password())) {
+
+        // Check Hashed Password
+        if(!BCrypt.checkpw(user.password(), checkAuth.password())) {
             throw new UnauthorizedResponse("Error: unauthorized");
         }
 
