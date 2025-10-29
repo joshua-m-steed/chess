@@ -76,6 +76,17 @@ public class MySqlDataAccess implements DataAccess {
                PRIMARY KEY (`id`),
                INDEX(username)
              );
+            """,
+            """
+            CREATE TABLE IF NOT EXISTS  auth (
+               `id` int NOT NULL AUTO_INCREMENT,
+               `username` varchar(256) NOT NULL,
+               `authkey` varchar(256) NOT NULL,
+               `json` TEXT DEFAULT NULL,
+               PRIMARY KEY (`id`),
+               INDEX(username),
+               INDEX(authkey)
+             );
             """
     };
 
