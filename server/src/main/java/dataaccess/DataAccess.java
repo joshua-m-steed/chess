@@ -1,9 +1,6 @@
 package dataaccess;
 
-import datamodel.LoginResult;
-import datamodel.RegistrationResult;
-import datamodel.User;
-import datamodel.Game;
+import datamodel.*;
 
 import java.util.ArrayList;
 
