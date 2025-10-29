@@ -72,10 +72,10 @@ public class MySqlDataAccess implements DataAccess {
                `username` varchar(256) NOT NULL,
                `password` varchar(256) NOT NULL,
                `email` varchar(256) NOT NULL,
-               'json' TEXT DEFAULT NULL
+               `json` TEXT DEFAULT NULL,
                PRIMARY KEY (`id`),
                INDEX(username)
-             )
+             );
             """
     };
 
@@ -92,16 +92,7 @@ public class MySqlDataAccess implements DataAccess {
 }
 
 
-//,
-//        """
-//            CREATE TABLE IF NOT EXISTS  auth (
-//               `id` int NOT NULL AUTO_INCREMENT,
-//               `username` varchar(256) NOT NULL,
-//               `authkey` varchar(256) NOT NULL,
-//               PRIMARY KEY (`id`),
-//               INDEX(username)
-//             )
-//            """,
+
 //        """
 //            CREATE TABLE IF NOT EXISTS  game (
 //               `id` int NOT NULL AUTO_INCREMENT,
