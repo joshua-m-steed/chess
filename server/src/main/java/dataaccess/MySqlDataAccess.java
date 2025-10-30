@@ -82,7 +82,14 @@ public class MySqlDataAccess implements DataAccess {
 
     @Override
     public LoginResult authUser(User user) {
-        return null;
+        String authToken = generateAuthToken();
+        try {
+            String authStatement = "INSERT INTO auth (username, authkey) VALUES (?, ?)";
+            executeUpdate(authStatement, user.username(), authToken);
+        } catch (DataAccessException e) {
+            throw new RuntimeException(e);
+        }
+        return new LoginResult(user.username(), authToken);
     }
 
     @Override
