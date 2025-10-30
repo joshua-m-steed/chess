@@ -6,6 +6,7 @@ import datamodel.RegistrationResult;
 import datamodel.User;
 
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
@@ -106,15 +107,13 @@ public class MySqlDataAccess implements DataAccess {
     private void configureDatabase() throws DataAccessException {
         DatabaseManager.createDatabase();
         try (Connection conn = DatabaseManager.getConnection()) {
-//            for (String statement : createStatments);
-            System.out.println("MADE IT");
-//                try (var prepared)
+            for (String statement : createStatments) {
+                try (PreparedStatement preparedStatement = conn.prepareStatement(statement)) {
+                    preparedStatement.executeUpdate();
+                }
+            }
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
     }
 }
-
-
-
-
