@@ -22,7 +22,14 @@ public class MySqlDataAccess implements DataAccess {
 
     @Override
     public void clearUsers() {
-
+        try {
+            String userStatement = "TRUNCATE TABLE user";
+            executeUpdate(userStatement);
+            String authStatement = "TRUNCATE TABLE auth";
+            executeUpdate(authStatement);
+        } catch (DataAccessException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Override
