@@ -9,6 +9,10 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.UUID;
+
+import static java.sql.Statement.RETURN_GENERATED_KEYS;
+import static java.sql.Types.NULL;
 
 public class MySqlDataAccess implements DataAccess {
 
@@ -66,6 +70,31 @@ public class MySqlDataAccess implements DataAccess {
 
     }
 
+    private String generateAuthToken() {
+        return UUID.randomUUID().toString();
+    }
+
+    private void executeUpdate(String statement, Object... params) throws DataAccessException {
+        try (Connection conn = DatabaseManager.getConnection()) {
+            // Connect with statement and return primary keys from DB / SQL
+            try (PreparedStatement ps = conn.prepareStatement(statement, RETURN_GENERATED_KEYS)) {
+                for (int i = 0; i < params.length; i++) {
+                    Object param = params[i];
+                    switch (param) {
+                        case String p -> ps.setString(i + 1, p);
+                        case Integer p -> ps.setInt(i + 1, p);
+                        case null -> ps.setNull(i + 1, NULL);
+                        default -> {
+                        }
+                    }
+                }
+                ps.executeUpdate();
+            }
+        } catch (SQLException | DataAccessException e) {
+            System.out.println("Couldn't prepare statement string for SQL");
+        }
+    }
+
     private final String[] createStatments = {
             """
             CREATE TABLE IF NOT EXISTS  user (
@@ -73,7 +102,6 @@ public class MySqlDataAccess implements DataAccess {
                `username` varchar(256) NOT NULL,
                `password` varchar(256) NOT NULL,
                `email` varchar(256) NOT NULL,
-               `json` TEXT DEFAULT NULL,
                PRIMARY KEY (`id`),
                INDEX(`username`)
              );
@@ -83,7 +111,6 @@ public class MySqlDataAccess implements DataAccess {
                `id` int NOT NULL AUTO_INCREMENT,
                `username` varchar(256) NOT NULL,
                `authkey` varchar(256) NOT NULL,
-               `json` TEXT DEFAULT NULL,
                PRIMARY KEY (`id`),
                INDEX(`username`),
                INDEX(`authkey`)
