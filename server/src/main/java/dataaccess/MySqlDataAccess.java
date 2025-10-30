@@ -7,6 +7,7 @@ import datamodel.User;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.UUID;
@@ -53,7 +54,25 @@ public class MySqlDataAccess implements DataAccess {
 
     @Override
     public User getUser(String username) {
-        return null;
+        User foundUser = null;
+        try (Connection conn = DatabaseManager.getConnection()) {
+            String userStatement = "SELECT username, password, email FROM user WHERE username=?";
+            try (PreparedStatement ps = conn.prepareStatement(userStatement)) {
+                ps.setString(1, username);
+                try (ResultSet rs = ps.executeQuery()) {
+                    if (rs.next()) {
+                        foundUser = new User(
+                                rs.getString("username"),
+                                rs.getString("password"),
+                                rs.getString("email")
+                        );
+                    }
+                }
+            }
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+        return foundUser;
     }
 
     @Override
