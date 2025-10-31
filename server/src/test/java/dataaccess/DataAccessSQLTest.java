@@ -5,15 +5,10 @@ import datamodel.Game;
 import datamodel.LoginResult;
 import datamodel.RegistrationResult;
 import datamodel.User;
-import io.javalin.http.BadRequestResponse;
-import io.javalin.http.ForbiddenResponse;
-import io.javalin.http.UnauthorizedResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
-import java.util.concurrent.atomic.AtomicInteger;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -32,42 +27,42 @@ class DataAccessSQLTest {
 
     @Test
     void clearPositive() {
-        var user = new User("Frodo", "theOneRing", "frodo@baggins.com");
-        DataAccess da = null;
+        var userSQL = new User("Frodo", "theOneRing", "frodo@baggins.com");
+        DataAccess sqlda = null;
         try {
-            da = new MySqlDataAccess();
+            sqlda = new MySqlDataAccess();
         } catch (DataAccessException e) {
             throw new RuntimeException(e);
         }
 
 
-        assertNull(da.getUser(user.username()));
-        da.createUser(user);
-        assertNotNull(da.getUser(user.username()));
-        da.clearUsers();
-        da.clearGames();
-        assertNull(da.getUser(user.username()));
+        assertNull(sqlda.getUser(userSQL.username()));
+        sqlda.createUser(userSQL);
+        assertNotNull(sqlda.getUser(userSQL.username()));
+        sqlda.clearUsers();
+        sqlda.clearGames();
+        assertNull(sqlda.getUser(userSQL.username()));
     }
 
     @Test
     void clearNegative() {
-        var user = new User("Frodo", "theOneRing", "frodo@baggins.com");
-        var missingUser = new User("Bilbo", "ofTheShire", "bilbo@baggins.com");
-        DataAccess da = null;
+        var userSQL = new User("Frodo", "theOneRing", "frodo@baggins.com");
+        var missingUserSQL = new User("Bilbo", "ofTheShire", "bilbo@baggins.com");
+        DataAccess sqlda = null;
         try {
-            da = new MySqlDataAccess();
+            sqlda = new MySqlDataAccess();
         } catch (DataAccessException e) {
             throw new RuntimeException(e);
         }
 
-        assertNull(da.getUser(user.username()));
-        da.createUser(user);
-        assertNotNull(da.getUser(user.username()));
-        assertNull(da.getUser(missingUser.username()));
-        da.clearUsers();
-        da.clearGames();
-        assertNull(da.getUser(user.username()));
-        assertNull(da.getUser(missingUser.username()));
+        assertNull(sqlda.getUser(userSQL.username()));
+        sqlda.createUser(userSQL);
+        assertNotNull(sqlda.getUser(userSQL.username()));
+        assertNull(sqlda.getUser(missingUserSQL.username()));
+        sqlda.clearUsers();
+        sqlda.clearGames();
+        assertNull(sqlda.getUser(userSQL.username()));
+        assertNull(sqlda.getUser(missingUserSQL.username()));
 
         assertThrows(RuntimeException.class, () -> {
             MySqlDataAccess msa = new MySqlDataAccess() {
@@ -82,28 +77,28 @@ class DataAccessSQLTest {
 
     @Test
     void createUserPositive() {
-        var user = new User("Frodo", "theOneRing", "frodo@baggins.com");
-        DataAccess da = null;
+        var userSQL = new User("Frodo", "theOneRing", "frodo@baggins.com");
+        DataAccess sqlda = null;
         try {
-            da = new MySqlDataAccess();
+            sqlda = new MySqlDataAccess();
         } catch (DataAccessException e) {
             throw new RuntimeException(e);
         }
-        da.clearUsers();
-        da.clearGames();
-        RegistrationResult response = da.createUser(user);
-        assertEquals(user.username(), response.username());
+        sqlda.clearUsers();
+        sqlda.clearGames();
+        RegistrationResult response = sqlda.createUser(userSQL);
+        assertEquals(userSQL.username(), response.username());
         assertEquals(String.class, response.authToken().getClass());
-        assertEquals(user.password(), da.getUser(user.username()).password());
-        assertEquals(user.email(), da.getUser(user.username()).email());
+        assertEquals(userSQL.password(), sqlda.getUser(userSQL.username()).password());
+        assertEquals(userSQL.email(), sqlda.getUser(userSQL.username()).email());
     }
 
     @Test
     void createUserNegative() {
-        var user = new User("Frodo", "theOneRing", "frodo@baggins.com");
-        DataAccess da = null;
+        var userSQL = new User("Frodo", "theOneRing", "frodo@baggins.com");
+        DataAccess sqlda = null;
         try {
-            da = new MySqlDataAccess();
+            sqlda = new MySqlDataAccess();
         } catch (DataAccessException e) {
             throw new RuntimeException(e);
         }
@@ -115,37 +110,37 @@ class DataAccessSQLTest {
                     throw new RuntimeException("Server is down");
                 }
             };
-            msa.createUser(user);
+            msa.createUser(userSQL);
         });
     }
 
     @Test
     void getUserPositive() {
-        var user = new User("Frodo", "theOneRing", "frodo@baggins.com");
-        DataAccess da = null;
+        var userSQL = new User("Frodo", "theOneRing", "frodo@baggins.com");
+        DataAccess sqlda = null;
         try {
-            da = new MySqlDataAccess();
+            sqlda = new MySqlDataAccess();
         } catch (DataAccessException e) {
             throw new RuntimeException(e);
         }
-        da.clearUsers();
-        da.clearGames();
-        da.createUser(user);
+        sqlda.clearUsers();
+        sqlda.clearGames();
+        sqlda.createUser(userSQL);
 
-        User foundUser = da.getUser(user.username());
+        User foundUser = sqlda.getUser(userSQL.username());
         assertNotNull(foundUser);
         assertEquals(User.class, foundUser.getClass());
-        assertEquals(user.username(), foundUser.username());
-        assertEquals(user.password(), foundUser.password());
-        assertEquals(user.email(), foundUser.email());
+        assertEquals(userSQL.username(), foundUser.username());
+        assertEquals(userSQL.password(), foundUser.password());
+        assertEquals(userSQL.email(), foundUser.email());
     }
 
     @Test
     void getUserNegative() {
-        var user = new User("Frodo", "theOneRing", "frodo@baggins.com");
-        DataAccess da = null;
+        var userSQL = new User("Frodo", "theOneRing", "frodo@baggins.com");
+        DataAccess sqlda = null;
         try {
-            da = new MySqlDataAccess();
+            sqlda = new MySqlDataAccess();
         } catch (DataAccessException e) {
             throw new RuntimeException(e);
         }
@@ -157,39 +152,39 @@ class DataAccessSQLTest {
                     throw new RuntimeException("Server is down");
                 }
             };
-            msa.getUser(user.username());
+            msa.getUser(userSQL.username());
         });
     }
 
     @Test
     void getAuthPositive() {
-        var user = new User("Frodo", "theOneRing", "frodo@baggins.com");
-        DataAccess da = null;
+        var userSQL = new User("Frodo", "theOneRing", "frodo@baggins.com");
+        DataAccess sqlda = null;
         try {
-            da = new MySqlDataAccess();
+            sqlda = new MySqlDataAccess();
         } catch (DataAccessException e) {
             throw new RuntimeException(e);
         }
 
-        da.clearUsers();
-        da.clearGames();
-        RegistrationResult response = da.createUser(user);
+        sqlda.clearUsers();
+        sqlda.clearGames();
+        RegistrationResult response = sqlda.createUser(userSQL);
         String authToken = response.authToken();
 
-        User foundUser = da.getUser(user.username());
+        User foundUser = sqlda.getUser(userSQL.username());
         assertNotNull(foundUser);
         assertEquals(User.class, foundUser.getClass());
-        assertEquals(user.username(), foundUser.username());
-        assertEquals(user.password(), foundUser.password());
-        assertEquals(user.email(), foundUser.email());
+        assertEquals(userSQL.username(), foundUser.username());
+        assertEquals(userSQL.password(), foundUser.password());
+        assertEquals(userSQL.email(), foundUser.email());
     }
 
     @Test
     void getAuthNegative() {
-        var user = new User("Frodo", "theOneRing", "frodo@baggins.com");
-        DataAccess da = null;
+        var userSQL = new User("Frodo", "theOneRing", "frodo@baggins.com");
+        DataAccess sqlda = null;
         try {
-            da = new MySqlDataAccess();
+            sqlda = new MySqlDataAccess();
         } catch (DataAccessException e) {
             throw new RuntimeException(e);
         }
@@ -201,36 +196,36 @@ class DataAccessSQLTest {
                     throw new RuntimeException("Server is down");
                 }
             };
-            msa.getAuth(user.username());
+            msa.getAuth(userSQL.username());
         });
     }
 
     @Test
     void authUserPositive() {
-        var user = new User("Frodo", "theOneRing", "frodo@baggins.com");
-        DataAccess da = null;
+        var userSQL = new User("Frodo", "theOneRing", "frodo@baggins.com");
+        DataAccess sqlda = null;
         try {
-            da = new MySqlDataAccess();
+            sqlda = new MySqlDataAccess();
         } catch (DataAccessException e) {
             throw new RuntimeException(e);
         }
-        da.clearUsers();
-        da.clearGames();
-        da.createUser(user);
+        sqlda.clearUsers();
+        sqlda.clearGames();
+        sqlda.createUser(userSQL);
 
-        LoginResult authUser = da.authUser(user);
+        LoginResult authUser = sqlda.authUser(userSQL);
         assertNotNull(authUser);
         assertEquals(LoginResult.class, authUser.getClass());
-        assertEquals(user.username(), authUser.username());
+        assertEquals(userSQL.username(), authUser.username());
         assertEquals(String.class, authUser.authToken().getClass());
     }
 
     @Test
     void authUserNegative() {
-        var user = new User("Frodo", "theOneRing", "frodo@baggins.com");
-        DataAccess da = null;
+        var userSQL = new User("Frodo", "theOneRing", "frodo@baggins.com");
+        DataAccess sqlda = null;
         try {
-            da = new MySqlDataAccess();
+            sqlda = new MySqlDataAccess();
         } catch (DataAccessException e) {
             throw new RuntimeException(e);
         }
@@ -242,39 +237,39 @@ class DataAccessSQLTest {
                     throw new RuntimeException("Server is down");
                 }
             };
-            msa.authUser(user);
+            msa.authUser(userSQL);
         });
     }
 
     @Test
     void deleteUserPositive() {
-        var user = new User("Frodo", "theOneRing", "frodo@baggins.com");
-        DataAccess da = null;
+        var userSQL = new User("Frodo", "theOneRing", "frodo@baggins.com");
+        DataAccess sqlda = null;
         try {
-            da = new MySqlDataAccess();
+            sqlda = new MySqlDataAccess();
         } catch (DataAccessException e) {
             throw new RuntimeException(e);
         }
-        da.clearUsers();
-        da.clearGames();
-        RegistrationResult response = da.createUser(user);
+        sqlda.clearUsers();
+        sqlda.clearGames();
+        RegistrationResult response = sqlda.createUser(userSQL);
 
-        assertTrue(da.deleteUser(response.authToken()));
+        assertTrue(sqlda.deleteUser(response.authToken()));
     }
 
     @Test
     void deleteUserNegative() {
-        var user = new User("Frodo", "theOneRing", "frodo@baggins.com");
-        DataAccess da = null;
+        var userSQL = new User("Frodo", "theOneRing", "frodo@baggins.com");
+        DataAccess sqlda = null;
         try {
-            da = new MySqlDataAccess();
+            sqlda = new MySqlDataAccess();
         } catch (DataAccessException e) {
             throw new RuntimeException(e);
         }
 
-        da.clearUsers();
-        da.clearGames();
-        RegistrationResult response = da.createUser(user);
+        sqlda.clearUsers();
+        sqlda.clearGames();
+        RegistrationResult response = sqlda.createUser(userSQL);
 
         assertThrows(RuntimeException.class, () -> {
             MySqlDataAccess msa = new MySqlDataAccess() {
@@ -289,16 +284,16 @@ class DataAccessSQLTest {
 
     @Test
     void createGamePositive() {
-        DataAccess da = null;
+        DataAccess sqlda = null;
         try {
-            da = new MySqlDataAccess();
+            sqlda = new MySqlDataAccess();
         } catch (DataAccessException e) {
             throw new RuntimeException(e);
         }
-        da.clearUsers();
-        da.clearGames();
+        sqlda.clearUsers();
+        sqlda.clearGames();
 
-        Game response = da.createGame("YouHaveMySword");
+        Game response = sqlda.createGame("YouHaveMySword");
         assertNotNull(response);
         assertEquals(Game.class, response.getClass());
         assertEquals(Integer.class, response.gameID().getClass());
@@ -310,14 +305,14 @@ class DataAccessSQLTest {
 
     @Test
     void createGameNegative() {
-        DataAccess da = null;
+        DataAccess sqlda = null;
         try {
-            da = new MySqlDataAccess();
+            sqlda = new MySqlDataAccess();
         } catch (DataAccessException e) {
             throw new RuntimeException(e);
         }
-        da.clearUsers();
-        da.clearGames();
+        sqlda.clearUsers();
+        sqlda.clearGames();
 
         assertThrows(RuntimeException.class, () -> {
             MySqlDataAccess msa = new MySqlDataAccess() {
@@ -332,86 +327,86 @@ class DataAccessSQLTest {
 
     @Test
     void joinGamePositive() {
-        var userWhite = new User("Frodo", "theOneRing", "frodo@baggins.com");
-        var userBlack = new User("Samwise", "ImGoingWithYou", "allforfrodo@baggins.com");
-        DataAccess da = null;
+        var userWhiteSQL = new User("Frodo", "theOneRing", "frodo@baggins.com");
+        var userBlackSQL = new User("Samwise", "ImGoingWithYou", "allforfrodo@baggins.com");
+        DataAccess sqlda = null;
         try {
-            da = new MySqlDataAccess();
+            sqlda = new MySqlDataAccess();
         } catch (DataAccessException e) {
             throw new RuntimeException(e);
         }
-        da.clearUsers();
-        da.clearGames();
+        sqlda.clearUsers();
+        sqlda.clearGames();
 
-        RegistrationResult resWhite = da.createUser(userWhite);
-        RegistrationResult resBlack = da.createUser(userWhite);
-        Game response = da.createGame("YouHaveMySword");
+        RegistrationResult resWhite = sqlda.createUser(userWhiteSQL);
+        RegistrationResult resBlack = sqlda.createUser(userWhiteSQL);
+        Game response = sqlda.createGame("YouHaveMySword");
 
-        ArrayList<Game> list = da.listGame(resWhite.authToken());
+        ArrayList<Game> list = sqlda.listGame(resWhite.authToken());
         Game onlyGame = list.getFirst();
         assertNotNull(onlyGame);
         assertEquals(Game.class, onlyGame.getClass());
 
-        da.joinGame(userWhite, response, "WHITE");
-        list = da.listGame(resWhite.authToken());
+        sqlda.joinGame(userWhiteSQL, response, "WHITE");
+        list = sqlda.listGame(resWhite.authToken());
         onlyGame = list.getFirst();
 
         assertNotNull(onlyGame);
         assertEquals(Game.class, onlyGame.getClass());
         assertEquals("YouHaveMySword", onlyGame.gameName());
-        assertEquals(userWhite.username(), onlyGame.whiteUsername());
+        assertEquals(userWhiteSQL.username(), onlyGame.whiteUsername());
 
-        da.joinGame(userBlack, response, "BLACK");
-        list = da.listGame(resBlack.authToken());
+        sqlda.joinGame(userBlackSQL, response, "BLACK");
+        list = sqlda.listGame(resBlack.authToken());
         onlyGame = list.getFirst();
 
         assertNotNull(onlyGame);
         assertEquals(Game.class, onlyGame.getClass());
         assertEquals("YouHaveMySword", onlyGame.gameName());
-        assertEquals(userBlack.username(), onlyGame.blackUsername());
+        assertEquals(userBlackSQL.username(), onlyGame.blackUsername());
 
 
     }
 
     @Test
     void joinGameNegative() {
-        var userWhite = new User("Frodo", "theOneRing", "frodo@baggins.com");
-        var userBlack = new User("Samwise", "ImGoingWithYou", "allforfrodo@baggins.com");
-        DataAccess da = null;
+        var userWhiteSQL = new User("Frodo", "theOneRing", "frodo@baggins.com");
+        var userBlackSQL = new User("Samwise", "ImGoingWithYou", "allforfrodo@baggins.com");
+        DataAccess sqlda = null;
         try {
-            da = new MySqlDataAccess();
+            sqlda = new MySqlDataAccess();
         } catch (DataAccessException e) {
             throw new RuntimeException(e);
         }
-        da.clearUsers();
-        da.clearGames();
+        sqlda.clearUsers();
+        sqlda.clearGames();
 
-        RegistrationResult resWhite = da.createUser(userWhite);
-        RegistrationResult resBlack = da.createUser(userWhite);
-        Game response = da.createGame("YouHaveMySword");
+        RegistrationResult resWhite = sqlda.createUser(userWhiteSQL);
+        RegistrationResult resBlack = sqlda.createUser(userWhiteSQL);
+        Game response = sqlda.createGame("YouHaveMySword");
 
-        ArrayList<Game> list = da.listGame(resWhite.authToken());
+        ArrayList<Game> list = sqlda.listGame(resWhite.authToken());
         Game onlyGame = list.getFirst();
         assertNotNull(onlyGame);
         assertEquals(Game.class, onlyGame.getClass());
 
-        da.joinGame(userWhite, response, "WHITE");
-        list = da.listGame(resWhite.authToken());
+        sqlda.joinGame(userWhiteSQL, response, "WHITE");
+        list = sqlda.listGame(resWhite.authToken());
         onlyGame = list.getFirst();
 
         assertNotNull(onlyGame);
         assertEquals(Game.class, onlyGame.getClass());
         assertEquals("YouHaveMySword", onlyGame.gameName());
-        assertEquals(userWhite.username(), onlyGame.whiteUsername());
+        assertEquals(userWhiteSQL.username(), onlyGame.whiteUsername());
 
-        da.joinGame(userBlack, response, "BLACK");
-        list = da.listGame(resBlack.authToken());
+        sqlda.joinGame(userBlackSQL, response, "BLACK");
+        list = sqlda.listGame(resBlack.authToken());
         onlyGame = list.getFirst();
 
         assertNotNull(onlyGame);
         assertEquals(Game.class, onlyGame.getClass());
         assertEquals("YouHaveMySword", onlyGame.gameName());
-        assertEquals(userBlack.username(), onlyGame.blackUsername());
+        assertEquals(userBlackSQL.username(), onlyGame.blackUsername());
 
         assertThrows(RuntimeException.class, () -> {
             MySqlDataAccess msa = new MySqlDataAccess() {
@@ -420,63 +415,63 @@ class DataAccessSQLTest {
                     throw new RuntimeException("Server is down");
                 }
             };
-            msa.joinGame(userWhite, response, "WHITE");
+            msa.joinGame(userWhiteSQL, response, "WHITE");
         });
     }
 
     @Test
     void listGamePositive() {
-        var userWhite = new User("Frodo", "theOneRing", "frodo@baggins.com");
-        var userBlack = new User("Samwise", "ImGoingWithYou", "allforfrodo@baggins.com");
-        DataAccess da = null;
+        var userWhiteSQL = new User("Frodo", "theOneRing", "frodo@baggins.com");
+        var userBlackSQL = new User("Samwise", "ImGoingWithYou", "allforfrodo@baggins.com");
+        DataAccess sqlda = null;
         try {
-            da = new MySqlDataAccess();
+            sqlda = new MySqlDataAccess();
         } catch (DataAccessException e) {
             throw new RuntimeException(e);
         }
-        da.clearUsers();
-        da.clearGames();
+        sqlda.clearUsers();
+        sqlda.clearGames();
 
-        RegistrationResult resWhite = da.createUser(userWhite);
-        RegistrationResult resBlack = da.createUser(userWhite);
+        RegistrationResult resWhite = sqlda.createUser(userWhiteSQL);
+        RegistrationResult resBlack = sqlda.createUser(userWhiteSQL);
 
-        ArrayList<Game> list = da.listGame(resWhite.authToken());
+        ArrayList<Game> list = sqlda.listGame(resWhite.authToken());
         assertTrue(list.isEmpty());
 
-        Game response = da.createGame("YouHaveMySword");
-        da.joinGame(userWhite, response, "WHITE");
+        Game response = sqlda.createGame("YouHaveMySword");
+        sqlda.joinGame(userWhiteSQL, response, "WHITE");
 
-        list = da.listGame(resWhite.authToken());
+        list = sqlda.listGame(resWhite.authToken());
         Game game = list.getFirst();
         assertNotNull(game);
         assertEquals(Game.class, game.getClass());
         assertEquals("YouHaveMySword", game.gameName());
-        assertEquals(userWhite.username(), game.whiteUsername());
+        assertEquals(userWhiteSQL.username(), game.whiteUsername());
 
-        response = da.createGame("DoYouHaveTheRing");
-        da.joinGame(userBlack, response, "BLACK");
+        response = sqlda.createGame("DoYouHaveTheRing");
+        sqlda.joinGame(userBlackSQL, response, "BLACK");
 
-        list = da.listGame(resWhite.authToken());
+        list = sqlda.listGame(resWhite.authToken());
         game = list.get(1);
         assertNotNull(game);
         assertEquals(Game.class, game.getClass());
         assertEquals("DoYouHaveTheRing", game.gameName());
-        assertEquals(userBlack.username(), game.blackUsername());
+        assertEquals(userBlackSQL.username(), game.blackUsername());
     }
 
     @Test
     void listGameNegative() {
-        var userWhite = new User("Frodo", "theOneRing", "frodo@baggins.com");
-        DataAccess da = null;
+        var userWhiteSQL = new User("Frodo", "theOneRing", "frodo@baggins.com");
+        DataAccess sqlda = null;
         try {
-            da = new MySqlDataAccess();
+            sqlda = new MySqlDataAccess();
         } catch (DataAccessException e) {
             throw new RuntimeException(e);
         }
-        da.clearUsers();
-        da.clearGames();
+        sqlda.clearUsers();
+        sqlda.clearGames();
 
-        RegistrationResult resWhite = da.createUser(userWhite);
+        RegistrationResult resWhite = sqlda.createUser(userWhiteSQL);
 
         assertThrows(RuntimeException.class, () -> {
             MySqlDataAccess msa = new MySqlDataAccess() {
