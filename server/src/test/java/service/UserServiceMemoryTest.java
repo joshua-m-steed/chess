@@ -1,6 +1,5 @@
 package service;
 
-import dataaccess.DataAccess;
 import dataaccess.MemoryDataAccess;
 import datamodel.LoginResult;
 import datamodel.LogoutResult;
@@ -9,14 +8,11 @@ import datamodel.User;
 import io.javalin.http.BadRequestResponse;
 import io.javalin.http.ForbiddenResponse;
 import io.javalin.http.UnauthorizedResponse;
-import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-
-import java.net.HttpURLConnection;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class UserServiceTest {
+class UserServiceMemoryTest {
     @Test
     void register() {
         var user = new User("Frodo", "theOneRing", "frodo@baggins.com");
