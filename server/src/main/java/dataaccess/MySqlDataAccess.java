@@ -75,7 +75,25 @@ public class MySqlDataAccess implements DataAccess {
 
     @Override
     public User getAuth(String authToken) {
-        return null;
+        User foundUser = null;
+        String username = null;
+        try (Connection conn = DatabaseManager.getConnection()) {
+            String authStatement = "SELECT username, authkey FROM auth WHERE authkey=?";
+            try (PreparedStatement ps = conn.prepareStatement(authStatement)) {
+                ps.setString(1, authToken);
+                try (ResultSet rs = ps.executeQuery()) {
+                    if (rs.next()) {
+                        username = rs.getString("username");
+                    }
+                }
+            }
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+
+        foundUser = getUser(username);
+
+        return foundUser;
     }
 
     @Override
@@ -83,7 +101,6 @@ public class MySqlDataAccess implements DataAccess {
         String authToken = generateAuthToken();
         String authStatement = "INSERT INTO auth (username, authkey) VALUES (?, ?)";
         try {
-            String authStatement = "INSERT INTO auth (username, authkey) VALUES (?, ?)";
             executeUpdate(authStatement, user.username(), authToken);
         } catch (DataAccessException e) {
             throw new RuntimeException(e);
@@ -157,7 +174,7 @@ public class MySqlDataAccess implements DataAccess {
     private void executeUpdate(String statement, Object... params) throws DataAccessException {
         try (Connection conn = DatabaseManager.getConnection()) {
             // Connect with statement and return primary keys from DB / SQL
-            try (PreparedStatement ps = conn.prepareStatement(statement, RETURN_GENERATED_KEYS)) {
+            try (PreparedStatement ps = conn.prepareStatement(statement)) {
                 for (int i = 0; i < params.length; i++) {
                     Object param = params[i];
                     switch (param) {
@@ -198,14 +215,12 @@ public class MySqlDataAccess implements DataAccess {
             """,
             """
             CREATE TABLE IF NOT EXISTS  game (
-               `id` int NOT NULL AUTO_INCREMENT,
-               `gameID` int NOT NULL,
+               `gameID` int NOT NULL AUTO_INCREMENT,
                `whiteUser` varchar(256) DEFAULT NULL,
                `blackUser` varchar(256) DEFAULT NULL,
                `gameName` varchar(256) NOT NULL,
                `game` TEXT NOT NULL,
-               PRIMARY KEY (`id`),
-               INDEX(`gameID`),
+               PRIMARY KEY (`gameID`),
                INDEX(`gameName`)
              );
             """
