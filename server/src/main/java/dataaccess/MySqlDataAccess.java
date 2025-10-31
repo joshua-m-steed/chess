@@ -217,9 +217,8 @@ public class MySqlDataAccess implements DataAccess {
     }
 
     private void executeUpdate(String statement, Object... params) throws DataAccessException {
-        try (Connection conn = DatabaseManager.getConnection()) {
-            // Connect with statement and return primary keys from DB / SQL
-            try (PreparedStatement ps = conn.prepareStatement(statement)) {
+        try (Connection conn = DatabaseManager.getConnection();
+             PreparedStatement ps = conn.prepareStatement(statement)) {
                 for (int i = 0; i < params.length; i++) {
                     Object param = params[i];
                     switch (param) {
@@ -231,8 +230,7 @@ public class MySqlDataAccess implements DataAccess {
                     }
                 }
                 ps.executeUpdate();
-            }
-        } catch (SQLException | DataAccessException e) {
+        } catch (SQLException e) {
             throw new DataAccessException("Error when executing SQL statement: ", e);
         }
     }

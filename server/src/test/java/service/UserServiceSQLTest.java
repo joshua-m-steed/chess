@@ -15,102 +15,102 @@ import static org.junit.jupiter.api.Assertions.*;
 class UserServiceSQLTest {
     @Test
     void register() {
-        var user = new User("Frodo", "theOneRing", "frodo@baggins.com");
+        var userSQL = new User("Frodo", "theOneRing", "frodo@baggins.com");
 
         var da = new MemoryDataAccess();
         var service = new UserService(da);
-        RegistrationResult res = service.register(user);
+        RegistrationResult res = service.register(userSQL);
         assertNotNull(res);
-        assertEquals(res.username(), user.username());
+        assertEquals(res.username(), userSQL.username());
         assertNotNull(res.authToken());
         assertEquals(String.class, res.authToken().getClass());
     }
 
     @Test
     void registerNameAlreadyExists() {
-        var existingUser = new User("Frodo", "theOneRing", "frodo@baggins.com");
+        var existingUserSQL = new User("Frodo", "theOneRing", "frodo@baggins.com");
 
         var da = new MemoryDataAccess();
         var service = new UserService(da);
 
-        RegistrationResult resOne = service.register(existingUser);
+        RegistrationResult resOne = service.register(existingUserSQL);
         assertNotNull(resOne);
-        assertEquals(resOne.username(), existingUser.username());
+        assertEquals(resOne.username(), existingUserSQL.username());
         assertNotNull(resOne.authToken());
 
         assertThrows(ForbiddenResponse.class, () -> {
-            service.register(existingUser);
+            service.register(existingUserSQL);
         });
     }
 
     @Test
     void registerMissingUserInfo() {
-        var missingUser = new User("", "AlphabetSoup", "My@email.com");
-        var missingPass = new User("I have a name", "", "My@email.com");
-        var missingMail = new User("I have a name", "AlphabetSoup", "");
+        var missingUserSQL = new User("", "AlphabetSoup", "My@email.com");
+        var missingPassSQL = new User("I have a name", "", "My@email.com");
+        var missingMailSQL = new User("I have a name", "AlphabetSoup", "");
 
         var da = new MemoryDataAccess();
         var service = new UserService(da);
 
         assertThrows(BadRequestResponse.class, () -> {
-            service.register(missingUser);
+            service.register(missingUserSQL);
         });
 
         assertThrows(BadRequestResponse.class, () -> {
-            service.register(missingPass);
+            service.register(missingPassSQL);
         });
 
         assertThrows(BadRequestResponse.class, () -> {
-            service.register(missingMail);
+            service.register(missingMailSQL);
         });
     }
 
     @Test
     void login() {
-        var regUser = new User("Frodo", "theOneRing", "frodo@baggins.com");
+        var regUserSQL = new User("Frodo", "theOneRing", "frodo@baggins.com");
 
         var da = new MemoryDataAccess();
         var service = new UserService(da);
 
-        service.register(regUser);
-        LoginResult res = service.login(regUser);
+        service.register(regUserSQL);
+        LoginResult res = service.login(regUserSQL);
 
         assertNotNull(res);
-        assertEquals(res.username(), regUser.username());
+        assertEquals(res.username(), regUserSQL.username());
         assertNotNull(res.authToken());
         assertEquals(String.class, res.authToken().getClass());
     }
 
     @Test
     void loginMissingUserInfo() {
-        var missingUser = new User("", "IS", "");
-        var missingPass = new User("MyName", "", null);
+        var missingUserSQL = new User("", "IS", "");
+        var missingPassSQL = new User("MyName", "", null);
 
 
-        var regUser = new User("MyName", "IS", "@me.bro");
+        var regUserSQL = new User("MyName", "IS", "@me.bro");
 
         var da = new MemoryDataAccess();
         var service = new UserService(da);
 
-        service.register(regUser);
+        service.register(regUserSQL);
 
         assertThrows(BadRequestResponse.class, () -> {
-            service.login(missingUser);
+            service.login(missingUserSQL);
         });
 
         assertThrows(BadRequestResponse.class, () -> {
-            service.login(missingPass);
+            service.login(missingPassSQL);
         });
     }
 
     @Test
     void loginUserNotFound() {
-        var regUser = new User("Frodo", "theOneRing", "frodo@baggins.com");
+        var regUserSQL = new User("Frodo", "theOneRing", "frodo@baggins.com");
 
         var da = new MemoryDataAccess();
         var service = new UserService(da);
 
-        service.register(regUser);
+        service.register(regUserSQL);
 
         assertThrows(UnauthorizedResponse.class, () -> {
             service.login(new User("Samwise", "ImGoingWithYou", "allforfrodo@baggins.com"));
@@ -119,12 +119,12 @@ class UserServiceSQLTest {
 
     @Test
     void logout() {
-        var regUser = new User("Frodo", "theOneRing", "frodo@baggins.com");
+        var regUserSQL = new User("Frodo", "theOneRing", "frodo@baggins.com");
 
         var da = new MemoryDataAccess();
         var service = new UserService(da);
 
-        RegistrationResult regResponse = service.register(regUser);
+        RegistrationResult regResponse = service.register(regUserSQL);
 
         LogoutResult outResponse = service.logout(regResponse.authToken());
 
@@ -134,12 +134,12 @@ class UserServiceSQLTest {
 
     @Test
     void logoutMissionAuthInfo() {
-        var regUser = new User("Frodo", "theOneRing", "frodo@baggins.com");
+        var regUserSQL = new User("Frodo", "theOneRing", "frodo@baggins.com");
 
         var da = new MemoryDataAccess();
         var service = new UserService(da);
 
-        RegistrationResult auth = service.register(regUser);
+        RegistrationResult auth = service.register(regUserSQL);
         String emptyAuth = null;
 
         assertEquals(String.class, auth.authToken().getClass());
@@ -151,12 +151,12 @@ class UserServiceSQLTest {
 
     @Test
     void logoutInvalidAuthToken() {
-        var regUser = new User("Frodo", "theOneRing", "frodo@baggins.com");
+        var regUserSQL = new User("Frodo", "theOneRing", "frodo@baggins.com");
 
         var da = new MemoryDataAccess();
         var service = new UserService(da);
 
-        RegistrationResult auth = service.register(regUser);
+        RegistrationResult auth = service.register(regUserSQL);
         String invalidAuth = "WhereDidFrodoGo";
 
         assertEquals(String.class, auth.authToken().getClass());

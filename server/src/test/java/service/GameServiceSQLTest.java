@@ -16,33 +16,33 @@ import java.util.ArrayList;
 import static org.junit.jupiter.api.Assertions.*;
 
 class GameServiceSQLTest {
-    private String existingAuth;
-    private Integer existingGameID;
+    private String existingAuthSQL;
+    private Integer existingGameIDSQL;
     private MySqlDataAccess da;
 
     @BeforeEach
     public void setup() throws DataAccessException {
-        User existingUser = new User("Frodo", "theOneRing", "frodo@baggins.com");
+        User existingUserSQL = new User("Frodo", "theOneRing", "frodo@baggins.com");
         da = new MySqlDataAccess();
         var userService = new UserService(da);
         var gameService = new GameService(da);
         da.clearUsers();
         da.clearGames();
 
-        RegistrationResult regResult = userService.register(existingUser);
-        existingAuth = regResult.authToken();
-        Game temp = new Game(null, null, null, "ToMordor", null);
-        GameCreateResult existingGame = gameService.createGame(temp, existingAuth);
-        existingGameID = existingGame.gameID();
+        RegistrationResult regResult = userService.register(existingUserSQL);
+        existingAuthSQL = regResult.authToken();
+        Game tempSQL = new Game(null, null, null, "ToMordor", null);
+        GameCreateResult existingGame = gameService.createGame(tempSQL, existingAuthSQL);
+        existingGameIDSQL = existingGame.gameID();
     }
 
     @Test
     void createGame() {
         var service = new GameService(da);
         service.clear();
-        Game gameName = new Game(null, null, null, "ToMordor", null);
+        Game gameNameSQL = new Game(null, null, null, "ToMordor", null);
 
-        GameCreateResult gameResult = service.createGame(gameName, existingAuth);
+        GameCreateResult gameResult = service.createGame(gameNameSQL, existingAuthSQL);
 
         assertNotNull(gameResult);
         assertEquals(Integer.class, gameResult.gameID().getClass());
@@ -53,15 +53,15 @@ class GameServiceSQLTest {
     void createGameMissingGameInfo() {
         var service = new GameService(da);
         service.clear();
-        Game gameNull = new Game(null, null, null, null, null);
-        Game gameBlank = new Game(null, null, null, null, null);
+        Game gameNullSQL = new Game(null, null, null, null, null);
+        Game gameBlankSQL = new Game(null, null, null, null, null);
 
         assertThrows(BadRequestResponse.class, () -> {
-            service.createGame(gameNull, existingAuth);
+            service.createGame(gameNullSQL, existingAuthSQL);
         });
 
         assertThrows(BadRequestResponse.class, () -> {
-            service.createGame(gameBlank, existingAuth);
+            service.createGame(gameBlankSQL, existingAuthSQL);
         });
     }
 
@@ -69,29 +69,29 @@ class GameServiceSQLTest {
     void createGameMissingAuth() {
         var service = new GameService(da);
         service.clear();
-        Game gameName = new Game(null, null, null, "ToMordor", null);
+        Game gameNameSQL = new Game(null, null, null, "ToMordor", null);
 
         assertThrows(UnauthorizedResponse.class, () -> {
-            service.createGame(gameName, null);
+            service.createGame(gameNameSQL, null);
         });
 
         assertThrows(UnauthorizedResponse.class, () -> {
-            service.createGame(gameName, "");
+            service.createGame(gameNameSQL, "");
         });
     }
 
     @Test
     void joinGame() {
         var service = new GameService(da);
-        JoinGameRequest gameWhiteRequest = new JoinGameRequest("WHITE", existingGameID);
-        JoinGameRequest gameBlackRequest = new JoinGameRequest("BLACK", existingGameID);
+        JoinGameRequest gameWhiteRequestSQL = new JoinGameRequest("WHITE", existingGameIDSQL);
+        JoinGameRequest gameBlackRequestSQL = new JoinGameRequest("BLACK", existingGameIDSQL);
 
-        GameJoinResult whiteResponse = service.joinGame(gameWhiteRequest, existingAuth);
+        GameJoinResult whiteResponse = service.joinGame(gameWhiteRequestSQL, existingAuthSQL);
 
         assertNotNull(whiteResponse);
         assertEquals(new GameJoinResult(), whiteResponse);
 
-        GameJoinResult blackResponse = service.joinGame(gameBlackRequest, existingAuth);
+        GameJoinResult blackResponse = service.joinGame(gameBlackRequestSQL, existingAuthSQL);
 
         assertNotNull(blackResponse);
         assertEquals(new GameJoinResult(), blackResponse);
@@ -100,83 +100,83 @@ class GameServiceSQLTest {
     @Test
     void joinGameMissingPlayerInfo() {
         var service = new GameService(da);
-        JoinGameRequest gameEmptyRequest = new JoinGameRequest("", existingGameID);
-        JoinGameRequest gameYellowRequest = new JoinGameRequest("YELLOW", existingGameID);
-        JoinGameRequest gameNullRequest = new JoinGameRequest(null, existingGameID);
-        JoinGameRequest gameNoIDRequest = new JoinGameRequest("BLACK", null);
+        JoinGameRequest gameEmptyRequestSQL = new JoinGameRequest("", existingGameIDSQL);
+        JoinGameRequest gameYellowRequestSQL = new JoinGameRequest("YELLOW", existingGameIDSQL);
+        JoinGameRequest gameNullRequestSQL = new JoinGameRequest(null, existingGameIDSQL);
+        JoinGameRequest gameNoIDRequestSQL = new JoinGameRequest("BLACK", null);
 
         assertThrows(BadRequestResponse.class, () -> {
-            service.joinGame(gameEmptyRequest, existingAuth);
+            service.joinGame(gameEmptyRequestSQL, existingAuthSQL);
         });
         assertThrows(BadRequestResponse.class, () -> {
-            service.joinGame(gameYellowRequest, existingAuth);
+            service.joinGame(gameYellowRequestSQL, existingAuthSQL);
         });
         assertThrows(BadRequestResponse.class, () -> {
-            service.joinGame(gameNullRequest, existingAuth);
+            service.joinGame(gameNullRequestSQL, existingAuthSQL);
         });
         assertThrows(BadRequestResponse.class, () -> {
-            service.joinGame(gameNoIDRequest, existingAuth);
+            service.joinGame(gameNoIDRequestSQL, existingAuthSQL);
         });
     }
 
     @Test
     void joinGameMissingAuth() {
         var service = new GameService(da);
-        JoinGameRequest gameWhiteRequest = new JoinGameRequest("WHITE", existingGameID);
-        JoinGameRequest gameBlackRequest = new JoinGameRequest("BLACK", existingGameID);
+        JoinGameRequest gameWhiteRequestSQL = new JoinGameRequest("WHITE", existingGameIDSQL);
+        JoinGameRequest gameBlackRequestSQL = new JoinGameRequest("BLACK", existingGameIDSQL);
 
         assertThrows(UnauthorizedResponse.class, () -> {
-            service.joinGame(gameWhiteRequest, null);
+            service.joinGame(gameWhiteRequestSQL, null);
         });
         assertThrows(UnauthorizedResponse.class, () -> {
-            service.joinGame(gameBlackRequest, "");
+            service.joinGame(gameBlackRequestSQL, "");
         });
     }
 
     @Test
     void joinGameAlreadyTaken() {
         var service = new GameService(da);
-        JoinGameRequest gameWhiteRequest = new JoinGameRequest("WHITE", existingGameID);
-        JoinGameRequest gameBlackRequest = new JoinGameRequest("BLACK", existingGameID);
+        JoinGameRequest gameWhiteRequestSQL = new JoinGameRequest("WHITE", existingGameIDSQL);
+        JoinGameRequest gameBlackRequestSQL = new JoinGameRequest("BLACK", existingGameIDSQL);
 
-        GameJoinResult whiteResponse = service.joinGame(gameWhiteRequest, existingAuth);
+        GameJoinResult whiteResponse = service.joinGame(gameWhiteRequestSQL, existingAuthSQL);
 
         assertNotNull(whiteResponse);
         assertEquals(new GameJoinResult(), whiteResponse);
 
         assertThrows(ForbiddenResponse.class, () -> {
-            service.joinGame(gameWhiteRequest, existingAuth);
+            service.joinGame(gameWhiteRequestSQL, existingAuthSQL);
         });
 
-        GameJoinResult blackResponse = service.joinGame(gameBlackRequest, existingAuth);
+        GameJoinResult blackResponse = service.joinGame(gameBlackRequestSQL, existingAuthSQL);
 
         assertNotNull(blackResponse);
         assertEquals(new GameJoinResult(), blackResponse);
 
         assertThrows(ForbiddenResponse.class, () -> {
-            service.joinGame(gameBlackRequest, existingAuth);
+            service.joinGame(gameBlackRequestSQL, existingAuthSQL);
         });
     }
 
     @Test
     void listGame() {
         var service = new GameService(da);
-        GameListResult listResponse = service.listGame(existingAuth);
+        GameListResult listResponseSQL = service.listGame(existingAuthSQL);
 
-        assertNotNull(listResponse);
-        assertEquals(ArrayList.class, listResponse.games().getClass());
-        assertEquals(1, listResponse.games().size());
-        Game gameOne = listResponse.games().get(0);
+        assertNotNull(listResponseSQL);
+        assertEquals(ArrayList.class, listResponseSQL.games().getClass());
+        assertEquals(1, listResponseSQL.games().size());
+        Game gameOne = listResponseSQL.games().get(0);
 
         assertEquals("ToMordor", gameOne.gameName());
         assertNull(gameOne.blackUsername());
         assertNull(gameOne.whiteUsername());
         assertEquals(ChessGame.class, gameOne.game().getClass());
 
-        Game gameName = new Game(null, null, null, "AnEnchantedForest", null);
-        service.createGame(gameName, existingAuth);
+        Game gameNameSQL = new Game(null, null, null, "AnEnchantedForest", null);
+        service.createGame(gameNameSQL, existingAuthSQL);
 
-        GameListResult listResponseTwo = service.listGame(existingAuth);
+        GameListResult listResponseTwo = service.listGame(existingAuthSQL);
         assertNotNull(listResponseTwo);
         assertEquals(ArrayList.class, listResponseTwo.games().getClass());
         assertEquals(2, listResponseTwo.games().size());
@@ -193,8 +193,8 @@ class GameServiceSQLTest {
             service.listGame(null);
         });
 
-        Game gameName = new Game(null, null, null, "AnEnchantedForest", null);
-        service.createGame(gameName, existingAuth);
+        Game gameNameSQL = new Game(null, null, null, "AnEnchantedForest", null);
+        service.createGame(gameNameSQL, existingAuthSQL);
 
         assertThrows(UnauthorizedResponse.class, () -> {
             service.listGame("");
