@@ -1,5 +1,7 @@
 package dataaccess;
 
+import chess.ChessGame;
+import com.google.gson.Gson;
 import datamodel.Game;
 import datamodel.LoginResult;
 import datamodel.RegistrationResult;
@@ -16,6 +18,7 @@ import static java.sql.Statement.RETURN_GENERATED_KEYS;
 import static java.sql.Types.NULL;
 
 public class MySqlDataAccess implements DataAccess {
+    private int nextGameID = 1;
 
     public MySqlDataAccess() throws DataAccessException {
         configureDatabase();
@@ -120,7 +123,18 @@ public class MySqlDataAccess implements DataAccess {
 
     @Override
     public Game createGame(String gameName) {
-        return null;
+        var serializer = new Gson();
+        Game newGame = new Game(nextGameID, null, null, gameName, new ChessGame());
+        String gameText = serializer.toJson(newGame.game(), ChessGame.class);
+
+        String createStatement = "INSERT INTO game (gameID, gameName, game) VALUES (?, ?, ?)";
+        try {
+            executeUpdate(createStatement, nextGameID++, gameName, gameText);
+        } catch (DataAccessException e) {
+            throw new RuntimeException(e);
+        }
+
+        return newGame;
     }
 
     @Override
