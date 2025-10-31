@@ -1,7 +1,9 @@
 package service;
 
 import chess.ChessGame;
+import dataaccess.DataAccessException;
 import dataaccess.MemoryDataAccess;
+import dataaccess.MySqlDataAccess;
 import datamodel.*;
 import io.javalin.http.BadRequestResponse;
 import io.javalin.http.ForbiddenResponse;
@@ -13,17 +15,19 @@ import java.util.ArrayList;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class GameServiceTest {
+class GameServiceSQLTest {
     private String existingAuth;
     private Integer existingGameID;
-    private MemoryDataAccess da;
+    private MySqlDataAccess da;
 
     @BeforeEach
-    public void setup() {
+    public void setup() throws DataAccessException {
         User existingUser = new User("Frodo", "theOneRing", "frodo@baggins.com");
-        da = new MemoryDataAccess();
+        da = new MySqlDataAccess();
         var userService = new UserService(da);
         var gameService = new GameService(da);
+        da.clearUsers();
+        da.clearGames();
 
         RegistrationResult regResult = userService.register(existingUser);
         existingAuth = regResult.authToken();

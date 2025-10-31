@@ -40,16 +40,16 @@ public class MySqlDataAccess implements DataAccess {
 
     @Override
     public RegistrationResult createUser(User user) {
+        String authToken = generateAuthToken();
         try {
             String userStatement = "INSERT INTO user (username, password, email) VALUES (?, ?, ?)";
             executeUpdate(userStatement, user.username(), user.password(), user.email());
-            String authToken = generateAuthToken();
             String authStatement = "INSERT INTO auth (username, authkey) VALUES (?, ?)";
             executeUpdate(authStatement, user.username(), authToken);
         } catch (DataAccessException e) {
             throw new RuntimeException(e);
         }
-        return null;
+        return new RegistrationResult(user.username(), authToken);
     }
 
     @Override
