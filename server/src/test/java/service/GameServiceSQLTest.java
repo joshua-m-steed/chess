@@ -46,7 +46,7 @@ class GameServiceSQLTest {
 
         assertNotNull(gameResult);
         assertEquals(Integer.class, gameResult.gameID().getClass());
-        assertEquals(2, gameResult.gameID());
+        assertEquals(1, gameResult.gameID());
     }
 
     @Test
