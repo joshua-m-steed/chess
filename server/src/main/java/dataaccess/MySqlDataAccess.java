@@ -130,7 +130,34 @@ public class MySqlDataAccess implements DataAccess {
 
     @Override
     public ArrayList<Game> listGame(String authToken) {
-        return null;
+        User authUser = getAuth(authToken);
+        if(authUser == null) {
+            return null;
+        }
+
+        ArrayList<Game> gameList = new ArrayList<>();
+        var serializer = new Gson();
+
+        try (Connection conn = DatabaseManager.getConnection()) {
+            String listStatement = "SELECT * FROM game";
+            try (PreparedStatement ps = conn.prepareStatement(listStatement)) {
+                try (ResultSet rs = ps.executeQuery()) {
+                    while (rs.next()) {
+                        gameList.add(
+                                new Game(rs.getInt("gameID"),
+                                        rs.getString("whiteUser"),
+                                        rs.getString("blackUser"),
+                                        rs.getString("gameName"),
+                                        serializer.fromJson(rs.getString("game"), ChessGame.class)
+                                )
+                        );
+                    }
+                }
+            }
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+        return gameList;
     }
 
     @Override
