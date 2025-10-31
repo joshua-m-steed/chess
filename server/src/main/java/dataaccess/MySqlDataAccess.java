@@ -80,7 +80,6 @@ public class MySqlDataAccess implements DataAccess {
 
     @Override
     public User getAuth(String authToken) {
-        User foundUser = null;
         String username = null;
         try (Connection conn = DatabaseManager.getConnection()) {
             String authStatement = "SELECT username, authkey FROM auth WHERE authkey=?";
@@ -96,9 +95,7 @@ public class MySqlDataAccess implements DataAccess {
             throw new RuntimeException(e);
         }
 
-        foundUser = getUser(username);
-
-        return foundUser;
+        return getUser(username);
     }
 
     @Override
