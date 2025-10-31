@@ -11,7 +11,3 @@ out/
 
 ### Chess project ###
 server/**/db.properties
-
-server/**/test/**/GameServiceMemoryTest.java
-server/**/test/**/UserServiceMemoryTest.java
-server/**/test/**/DataAccessMemoryTest.java

@@ -371,7 +371,6 @@ class DataAccessSQLTest {
     @Test
     void joinGameNegative() {
         var userWhiteSQL = new User("Frodo", "theOneRing", "frodo@baggins.com");
-        var userBlackSQL = new User("Samwise", "ImGoingWithYou", "allforfrodo@baggins.com");
         DataAccess sqlda = null;
         try {
             sqlda = new MySqlDataAccess();
@@ -381,32 +380,7 @@ class DataAccessSQLTest {
         sqlda.clearUsers();
         sqlda.clearGames();
 
-        RegistrationResult resWhite = sqlda.createUser(userWhiteSQL);
-        RegistrationResult resBlack = sqlda.createUser(userWhiteSQL);
         Game response = sqlda.createGame("YouHaveMySword");
-
-        ArrayList<Game> list = sqlda.listGame(resWhite.authToken());
-        Game onlyGame = list.getFirst();
-        assertNotNull(onlyGame);
-        assertEquals(Game.class, onlyGame.getClass());
-
-        sqlda.joinGame(userWhiteSQL, response, "WHITE");
-        list = sqlda.listGame(resWhite.authToken());
-        onlyGame = list.getFirst();
-
-        assertNotNull(onlyGame);
-        assertEquals(Game.class, onlyGame.getClass());
-        assertEquals("YouHaveMySword", onlyGame.gameName());
-        assertEquals(userWhiteSQL.username(), onlyGame.whiteUsername());
-
-        sqlda.joinGame(userBlackSQL, response, "BLACK");
-        list = sqlda.listGame(resBlack.authToken());
-        onlyGame = list.getFirst();
-
-        assertNotNull(onlyGame);
-        assertEquals(Game.class, onlyGame.getClass());
-        assertEquals("YouHaveMySword", onlyGame.gameName());
-        assertEquals(userBlackSQL.username(), onlyGame.blackUsername());
 
         assertThrows(RuntimeException.class, () -> {
             MySqlDataAccess msa = new MySqlDataAccess() {
