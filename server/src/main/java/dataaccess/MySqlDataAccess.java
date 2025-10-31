@@ -33,7 +33,12 @@ public class MySqlDataAccess implements DataAccess {
 
     @Override
     public void clearGames() {
-
+        try {
+            String userStatement = "TRUNCATE TABLE game";
+            executeUpdate(userStatement);
+        } catch (DataAccessException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Override
