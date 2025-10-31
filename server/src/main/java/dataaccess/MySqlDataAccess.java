@@ -83,6 +83,7 @@ public class MySqlDataAccess implements DataAccess {
     @Override
     public LoginResult authUser(User user) {
         String authToken = generateAuthToken();
+        String authStatement = "INSERT INTO auth (username, authkey) VALUES (?, ?)";
         try {
             String authStatement = "INSERT INTO auth (username, authkey) VALUES (?, ?)";
             executeUpdate(authStatement, user.username(), authToken);
@@ -94,7 +95,22 @@ public class MySqlDataAccess implements DataAccess {
 
     @Override
     public boolean deleteUser(String authToken) {
-        return false;
+        boolean deleted = false;
+        try (Connection conn = DatabaseManager.getConnection()) {
+            String delStatement = "DELETE FROM auth WHERE authkey=?";
+            try (PreparedStatement ps = conn.prepareStatement(delStatement)) {
+                ps.setString(1, authToken);
+                int interacted = ps.executeUpdate();
+                if(interacted > 0) {
+                    deleted = true;
+                }
+            }
+            executeUpdate(delStatement, authToken);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+
+        return deleted;
     }
 
     @Override
