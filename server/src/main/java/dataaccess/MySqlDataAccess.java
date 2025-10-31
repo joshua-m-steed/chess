@@ -27,7 +27,7 @@ public class MySqlDataAccess implements DataAccess {
             String authStatement = "TRUNCATE TABLE auth";
             executeUpdate(authStatement);
         } catch (DataAccessException e) {
-            throw new RuntimeException(e);
+            throw new RuntimeException("Error clearing user data: ", e);
         }
     }
 
@@ -37,7 +37,7 @@ public class MySqlDataAccess implements DataAccess {
             String userStatement = "TRUNCATE TABLE game";
             executeUpdate(userStatement);
         } catch (DataAccessException e) {
-            throw new RuntimeException(e);
+            throw new RuntimeException("Error clearing game data: ", e);
         }
     }
 
@@ -50,7 +50,7 @@ public class MySqlDataAccess implements DataAccess {
             String authStatement = "INSERT INTO auth (username, authkey) VALUES (?, ?)";
             executeUpdate(authStatement, user.username(), authToken);
         } catch (DataAccessException e) {
-            throw new RuntimeException(e);
+            throw new RuntimeException("Error registering user data: ", e);
         }
         return new RegistrationResult(user.username(), authToken);
     }
@@ -73,7 +73,7 @@ public class MySqlDataAccess implements DataAccess {
                 }
             }
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            throw new RuntimeException("Error retrieving user data: ", e);
         }
         return foundUser;
     }
@@ -92,7 +92,7 @@ public class MySqlDataAccess implements DataAccess {
                 }
             }
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            throw new RuntimeException("Error verifying authorization of user: ", e);
         }
 
         return getUser(username);
@@ -105,7 +105,7 @@ public class MySqlDataAccess implements DataAccess {
         try {
             executeUpdate(authStatement, user.username(), authToken);
         } catch (DataAccessException e) {
-            throw new RuntimeException(e);
+            throw new RuntimeException("Error authorizing in user: ", e);
         }
         return new LoginResult(user.username(), authToken);
     }
@@ -124,7 +124,7 @@ public class MySqlDataAccess implements DataAccess {
             }
             executeUpdate(delStatement, authToken);
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            throw new RuntimeException("Error deleting authorized user: ", e);
         }
 
         return deleted;
@@ -157,7 +157,7 @@ public class MySqlDataAccess implements DataAccess {
                 }
             }
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            throw new RuntimeException("Error listing game: ", e);
         }
         return gameList;
     }
@@ -183,7 +183,7 @@ public class MySqlDataAccess implements DataAccess {
                 }
             }
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            throw new RuntimeException("Error creating game: ", e);
         }
 
         ChessGame game = serializer.fromJson(gameText, ChessGame.class);
@@ -208,7 +208,7 @@ public class MySqlDataAccess implements DataAccess {
                 ps.executeUpdate();
             }
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            throw new RuntimeException("Error joining game: ", e);
         }
     }
 
@@ -233,7 +233,7 @@ public class MySqlDataAccess implements DataAccess {
                 ps.executeUpdate();
             }
         } catch (SQLException | DataAccessException e) {
-            System.out.println("Couldn't prepare statement string for SQL");
+            throw new DataAccessException("Error when executing SQL statement: ", e);
         }
     }
 
@@ -280,7 +280,7 @@ public class MySqlDataAccess implements DataAccess {
                 }
             }
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            throw new RuntimeException("Error when configuring database: ", e);
         }
     }
 }

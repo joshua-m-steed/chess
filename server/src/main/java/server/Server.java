@@ -18,14 +18,14 @@ import java.util.Map;
 public class Server {
 
     private final Javalin server;
-    private UserService userService;
-    private GameService gameService;
+    private final UserService userService;
+    private final GameService gameService;
     private DataAccess dataAccess;
 
     public Server() {
 //        dataAccess = new MemoryDataAccess();
         try { dataAccess = new MySqlDataAccess(); }
-        catch (DataAccessException e) { System.out.println("Failed to Connect to SQL");}
+        catch (DataAccessException e) { throw new RuntimeException("Error initializing database", e); }
 
         userService = new UserService(dataAccess);
         gameService = new GameService(dataAccess);
@@ -44,6 +44,8 @@ public class Server {
         server.exception(BadRequestResponse.class, this::badResponseHandler);
         server.exception(ForbiddenResponse.class, this::forbiddenResponseHandler);
         server.exception(UnauthorizedResponse.class, this::unauthorizedResponseHandler);
+        server.exception(DataAccessException.class, this::mySQLReponseHandler);
+        server.exception(RuntimeException.class, this::runtimeResponseHandler);
 
         // Register your endpoints and exception handlers here.
 
@@ -126,6 +128,18 @@ public class Server {
     private void forbiddenResponseHandler(ForbiddenResponse ex, Context ctx) {
         var serializer = new Gson();
         ctx.status(403);
+        ctx.json(serializer.toJson(Map.of("message", ex.getMessage())));
+    }
+
+    private void mySQLReponseHandler(DataAccessException ex, Context ctx) {
+        var serializer = new Gson();
+        ctx.status(500);
+        ctx.json(serializer.toJson(Map.of("message", ex.getMessage())));
+    }
+
+    private void runtimeResponseHandler(RuntimeException ex, Context ctx) {
+        var serializer = new Gson();
+        ctx.status(500);
         ctx.json(serializer.toJson(Map.of("message", ex.getMessage())));
     }
 
