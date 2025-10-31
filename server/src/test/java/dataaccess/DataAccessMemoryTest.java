@@ -8,7 +8,7 @@ import java.util.ArrayList;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class DataAccessTest {
+class DataAccessMemoryTest {
     @Test
     void clear() {
         var user = new User("Frodo", "theOneRing", "frodo@baggins.com");
