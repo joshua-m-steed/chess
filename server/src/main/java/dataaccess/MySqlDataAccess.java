@@ -7,18 +7,13 @@ import datamodel.LoginResult;
 import datamodel.RegistrationResult;
 import datamodel.User;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.UUID;
 
-import static java.sql.Statement.RETURN_GENERATED_KEYS;
 import static java.sql.Types.NULL;
 
 public class MySqlDataAccess implements DataAccess {
-    private int nextGameID = 1;
 
     public MySqlDataAccess() throws DataAccessException {
         configureDatabase();
@@ -123,18 +118,31 @@ public class MySqlDataAccess implements DataAccess {
 
     @Override
     public Game createGame(String gameName) {
+        Integer gameID = null;
         var serializer = new Gson();
-        Game newGame = new Game(nextGameID, null, null, gameName, new ChessGame());
-        String gameText = serializer.toJson(newGame.game(), ChessGame.class);
+        String gameText = serializer.toJson(new ChessGame(), ChessGame.class);
 
-        String createStatement = "INSERT INTO game (gameID, gameName, game) VALUES (?, ?, ?)";
-        try {
-            executeUpdate(createStatement, nextGameID++, gameName, gameText);
-        } catch (DataAccessException e) {
+        String createStatement = "INSERT INTO game (gameName, game) VALUES (?, ?)";
+
+        try (Connection conn = DatabaseManager.getConnection()) {
+            try (PreparedStatement ps = conn.prepareStatement(createStatement, Statement.RETURN_GENERATED_KEYS)) {
+                ps.setString(1, gameName);
+                ps.setString(2, gameText);
+                ps.executeUpdate();
+
+                try (ResultSet keys = ps.getGeneratedKeys()) {
+                    if (keys.next()) {
+                        gameID = keys.getInt(1);
+                    }
+                }
+            }
+        } catch (Exception e) {
             throw new RuntimeException(e);
         }
 
-        return newGame;
+        ChessGame game = serializer.fromJson(gameText, ChessGame.class);
+
+        return new Game(gameID, null, null, gameName, game);
     }
 
     @Override
