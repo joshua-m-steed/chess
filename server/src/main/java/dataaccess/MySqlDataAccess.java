@@ -192,8 +192,24 @@ public class MySqlDataAccess implements DataAccess {
     }
 
     @Override
-    public void joinGame(User authUser, Game targetGame, String s) {
+    public void joinGame(User authUser, Game targetGame, String color) {
+        String joinStatement = switch (color) {
+            case "WHITE" ->
+                    "UPDATE game SET whiteUser=? WHERE gameID=?";
+            case "BLACK" ->
+                    "UPDATE game SET blackUser=? WHERE gameID=?";
+            default -> null;
+        };
 
+        try (Connection conn = DatabaseManager.getConnection()) {
+            try (PreparedStatement ps = conn.prepareStatement(joinStatement)) {
+                ps.setString(1, authUser.username());
+                ps.setInt(2, targetGame.gameID());
+                ps.executeUpdate();
+            }
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
     private String generateAuthToken() {
@@ -221,7 +237,7 @@ public class MySqlDataAccess implements DataAccess {
         }
     }
 
-    private final String[] createStatments = {
+    private final String[] createStatements = {
             """
             CREATE TABLE IF NOT EXISTS  user (
                `id` int NOT NULL AUTO_INCREMENT,
@@ -258,7 +274,7 @@ public class MySqlDataAccess implements DataAccess {
     private void configureDatabase() throws DataAccessException {
         DatabaseManager.createDatabase();
         try (Connection conn = DatabaseManager.getConnection()) {
-            for (String statement : createStatments) {
+            for (String statement : createStatements) {
                 try (PreparedStatement preparedStatement = conn.prepareStatement(statement)) {
                     preparedStatement.executeUpdate();
                 }
