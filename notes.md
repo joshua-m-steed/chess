@@ -520,4 +520,23 @@ Don't let the user create any of the SQL statements
  - They can input or find a lot using those strings
 
 **Securing Passwords**  
-They hash the passwords and store the key in the new hashedpassword. More info to come in next lecture.
+They hash the passwords and store the key in the new hashedpassword. More info to come in next lecture.  
+
+**Logging and Debugging**  
+Desirable Characteristics  
+- Persistent  
+- Immutable  
+- Aggregated  
+- Accessible  
+- Performant  
+
+Benefits  
+- Efficient debugging  
+- Security  
+- Auditing  
+- Performance Monitoring  
+
+You can usually output as much of the logging you'd like as memory is cheaper.  
+It can help you see the system's path to an issue or user path.  
+
+Level Warnings :: Off, Severe, Warning, Info, Fine, Finer, Finest, All  
