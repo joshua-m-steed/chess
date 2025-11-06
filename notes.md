@@ -540,3 +540,21 @@ You can usually output as much of the logging you'd like as memory is cheaper.
 It can help you see the system's path to an issue or user path.  
 
 Level Warnings :: Off, Severe, Warning, Info, Fine, Finer, Finest, All  
+
+# Phase 6  
+
+**WebSocket**  
+*HTTP Highlights*  
+- Client initiates, server responds  
+- Methods, paths, headers, body  
+- Extensive caching  
+
+*HTTP Shortcomings*  
+- Inefficient
+- High use of resources  
+
+*WebSocket*  
+- HTTP upgrade  
+- Bidirectional communication  
+- More effecient communication  
+- Ping/Pong for detecting dropped connections  
