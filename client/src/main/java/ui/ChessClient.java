@@ -21,7 +21,14 @@ public class ChessClient {
         while (!result.equals("quit")) {
             printPrompt();
             String line = scanner.nextLine();
-            System.out.println(line);
+
+            try {
+                result = evaluate(line);
+                System.out.print(EscapeSequences.SET_TEXT_ITALIC + EscapeSequences.SET_TEXT_ITALIC + ": " + result + " :");
+            } catch (Throwable e) {
+                var msg = e.toString();
+                System.out.print(msg);
+            }
         }
         System.out.println();
 
@@ -29,6 +36,10 @@ public class ChessClient {
 
     private void printPrompt() {
         System.out.print("\n"+ EscapeSequences.SET_TEXT_COLOR_BLUE + "[" + this.state + "] >>> ");
+    }
+
+    private String evaluate(String input) {
+        return input;
     }
 
     private String help() {
