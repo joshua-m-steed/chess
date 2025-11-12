@@ -11,6 +11,22 @@ public class ChessClient {
     }
 
     public void run() {
-        System.out.println("Welcome to Chess! Please Sign in");
+        System.out.println("Welcome to Chess!");
+        System.out.print(help());
+
+    }
+
+    private String help() {
+        if(state == State.LOGGEDOUT) {
+            return """
+                    register - to create an account
+                    login - to login and play
+                    quit - to leave chess behind
+                    help - to list possible commands
+                    """;
+        }
+        return """
+                he
+                """;
     }
 }
