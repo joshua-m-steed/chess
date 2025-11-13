@@ -47,6 +47,7 @@ public class ChessClient {
             String[] params = Arrays.copyOfRange(tokens, 1, tokens.length);
             return switch (cmd) {
                 case "register" -> register(params);
+                case "logout" -> logout();
                 case "quit" -> "quit";
                 default -> help();
             };
@@ -64,6 +65,13 @@ public class ChessClient {
                     + EscapeSequences.SET_TEXT_COLOR_YELLOW + username;
         }
         throw new Exception("");
+    }
+
+    public String logout() {
+//      // Check if Signed in
+        state = State.LOGGED_OUT;
+        return EscapeSequences.SET_TEXT_COLOR_YELLOW + username
+                + EscapeSequences.SET_TEXT_COLOR_BLUE + " has left the playing area";
     }
 
     private String help() {
