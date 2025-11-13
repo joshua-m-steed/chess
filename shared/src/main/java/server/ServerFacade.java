@@ -26,6 +26,8 @@ public class ServerFacade {
         return handleResponse(response, Auth.class);
     }
 
+//    public
+
     private HttpRequest buildRequest(String method, String path, Object body) {
         HttpRequest.Builder request = HttpRequest.newBuilder()
                 .uri(URI.create(serverUrl + path))

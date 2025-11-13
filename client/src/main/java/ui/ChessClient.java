@@ -80,13 +80,13 @@ public class ChessClient {
             }
             return EscapeSequences.SET_TEXT_COLOR_GREEN + "Welcome!"
                     + EscapeSequences.SET_TEXT_COLOR_BLUE + " You signed in as "
-                    + EscapeSequences.SET_TEXT_COLOR_YELLOW + username + authUser.authToken();
+                    + EscapeSequences.SET_TEXT_COLOR_YELLOW + username;
         }
         throw new Exception("Not enough parameters were provided");
     }
 
     private String login(String... params) throws Exception {
-//      // Check if Registered
+//        assertAuthorized(); WORKS
         if (params.length >= 1) {
             state = State.LOGGED_IN;
             username = params[0];
@@ -120,7 +120,11 @@ public class ChessClient {
 
     // Implement LIST Game AFTER Server HTTP endpoint is joined
 
-
+    private void assertAuthorized() throws Exception {
+        if (state == State.LOGGED_OUT) {
+            throw new Exception("Please log in!");
+        }
+    }
 
     private String help() {
         if(state == State.LOGGED_OUT) {
