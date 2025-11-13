@@ -1,9 +1,11 @@
 package ui;
 
+import java.util.Arrays;
 import java.util.Scanner;
 
 public class ChessClient {
     private State state = State.LOGGED_OUT;
+    private String username = null;
 
     public ChessClient() {}
 
@@ -24,7 +26,7 @@ public class ChessClient {
 
             try {
                 result = evaluate(line);
-                System.out.print(EscapeSequences.SET_TEXT_ITALIC + EscapeSequences.SET_TEXT_ITALIC + ": " + result + " :");
+                System.out.print(EscapeSequences.SET_TEXT_COLOR_BLUE + result);
             } catch (Throwable e) {
                 var msg = e.toString();
                 System.out.print(msg);
@@ -39,7 +41,29 @@ public class ChessClient {
     }
 
     private String evaluate(String input) {
-        return input;
+        try {
+            String[] tokens = input.toLowerCase().split(" ");
+            String cmd = (tokens.length > 0) ? tokens[0] : "help";
+            String[] params = Arrays.copyOfRange(tokens, 1, tokens.length);
+            return switch (cmd) {
+                case "register" -> register(params);
+                case "quit" -> "quit";
+                default -> help();
+            };
+        } catch (Exception ex) {
+            return ex.getMessage();
+        }
+    }
+
+    private String register(String... params) throws Exception {
+        if (params.length >= 1) {
+            state = State.LOGGED_IN;
+            username = params[0];
+            return EscapeSequences.SET_TEXT_COLOR_GREEN + "Welcome!"
+                    + EscapeSequences.SET_TEXT_COLOR_BLUE + " You signed in as "
+                    + EscapeSequences.SET_TEXT_COLOR_YELLOW + username;
+        }
+        throw new Exception("");
     }
 
     private String help() {
@@ -55,7 +79,7 @@ public class ChessClient {
                 create <NAME>                           :♔:  to create a new game
                 list                                    :♔:  to present all existing games
                 join <ID> [ WHITE | BLACK ]             :♔:  to join an existing game
-                watch <ID>                              :♔:  to watch an existing game
+                observe <ID>                            :♔:  to observe an existing game
                 logout                                  :♔:  to logout
                 quit                                    :♔:  to leave chess behind
                 help                                    :♔:  to llist possible commands
