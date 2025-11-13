@@ -49,6 +49,7 @@ public class ChessClient {
                 case "register" -> register(params);
                 case "login" -> login(params);
                 case "logout" -> logout();
+                case "create" -> create(params);
                 case "quit" -> "quit";
                 default -> help();
             };
@@ -68,7 +69,7 @@ public class ChessClient {
         throw new Exception("Not enough parameters were provided");
     }
 
-    public String login(String... params) throws Exception {
+    private String login(String... params) throws Exception {
 //      // Check if Registered
         if (params.length >= 1) {
             state = State.LOGGED_IN;
@@ -80,13 +81,25 @@ public class ChessClient {
         throw new Exception("Not enough parameters were provided");
     }
 
-    public String logout() {
+    private String logout() {
 //      // Check if Signed in
         state = State.LOGGED_OUT;
         String holdUser = username;
         username = null;
         return EscapeSequences.SET_TEXT_COLOR_YELLOW + holdUser
                 + EscapeSequences.SET_TEXT_COLOR_BLUE + " has left the playing area";
+    }
+
+    private String create(String... params) throws Exception {
+        // Check if AUTH
+        if (params.length >= 1) {
+            String gameName = params[0];
+            String gameID = "0000"; // PLACEHOLDER
+            return "The game " + EscapeSequences.SET_TEXT_COLOR_GREEN + gameName
+                    + EscapeSequences.SET_TEXT_COLOR_BLUE + " has been created at ID "
+                    + EscapeSequences.SET_TEXT_COLOR_YELLOW + gameID;
+        }
+        throw new Exception("Not enough parameters were provided");
     }
 
     private String help() {
