@@ -34,4 +34,28 @@ public class ServerFacade {
         }
     }
 
+    private HttpResponse<String> sendRequest(HttpRequest request) throws Exception {
+        try {
+            return client.send(request, BodyHandlers.ofString());
+        } catch (Exception ex) {
+            throw new Exception(ex);
+        }
+    }
+
+    private <T> T handleResponse(HttpResponse<String> response, Class<T> responseClass) throws Exception {
+        int status = response.statusCode();
+        if (!(status / 100 == 2)) {
+            String body = response.body();
+            if (body != null) {
+                throw new Exception("Not authorized");
+            }
+            throw new Exception("Server failure");
+        }
+
+        if (responseClass != null) {
+            return new Gson().fromJson(response.body(), responseClass);
+        }
+
+        return null;
+    }
 }
