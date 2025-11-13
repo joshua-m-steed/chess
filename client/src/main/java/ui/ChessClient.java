@@ -67,6 +67,9 @@ public class ChessClient {
     }
 
     private String register(String... params) throws Exception {
+        if (state == State.LOGGED_IN) {
+            throw new Exception("Logout before you register a new account!");
+        }
         if (params.length >= 1) {
             username = params[0];
             String password = params[1];
