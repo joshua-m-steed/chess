@@ -1,5 +1,6 @@
 package ui;
 
+import model.*;
 import server.ServerFacade;
 
 import java.util.Arrays;
@@ -47,8 +48,9 @@ public class ChessClient {
 
     private String evaluate(String input) {
         try {
-            String[] tokens = input.toLowerCase().split(" ");
+            String[] tokens = input.split(" ");
             String cmd = (tokens.length > 0) ? tokens[0] : "help";
+            cmd = cmd.toLowerCase();
             String[] params = Arrays.copyOfRange(tokens, 1, tokens.length);
             return switch (cmd) {
                 case "register" -> register(params);
@@ -66,9 +68,19 @@ public class ChessClient {
     private String register(String... params) throws Exception {
         if (params.length >= 1) {
             username = params[0];
+            String password = params[1];
+            String email = params[2];
+
+            User user = new User(username, password, email);
+            Auth authUser = server.register(user);
+            if (authUser != null) {
+                state = State.LOGGED_IN;
+            } else {
+                throw new Exception("Not authorized");
+            }
             return EscapeSequences.SET_TEXT_COLOR_GREEN + "Welcome!"
                     + EscapeSequences.SET_TEXT_COLOR_BLUE + " You signed in as "
-                    + EscapeSequences.SET_TEXT_COLOR_YELLOW + username;
+                    + EscapeSequences.SET_TEXT_COLOR_YELLOW + username + authUser.authToken();
         }
         throw new Exception("Not enough parameters were provided");
     }

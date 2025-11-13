@@ -1,8 +1,15 @@
 package server;
 
-import java.net.http.*;
+import com.google.gson.Gson;
+
+import model.*;
+
+import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
 import java.net.http.HttpRequest.BodyPublisher;
 import java.net.http.HttpRequest.BodyPublishers;
+import java.net.http.HttpResponse;
 import java.net.http.HttpResponse.BodyHandlers;
 
 public class ServerFacade {
@@ -11,11 +18,14 @@ public class ServerFacade {
 
     public ServerFacade(String url) {
         serverUrl = url;
-        helper();
     }
 
-    private void helper() {
-        System.out.format("YOUR SERVER FACADE CONNECTED AT %s \n", serverUrl);
+    public Auth register(User user) throws Exception {
+        HttpRequest request = buildRequest("POST", "/user", user);
+        HttpResponse<String> response = sendRequest(request);
+        return handleResponse(response, Auth.class);
+    }
+
     private HttpRequest buildRequest(String method, String path, Object body) {
         HttpRequest.Builder request = HttpRequest.newBuilder()
                 .uri(URI.create(serverUrl + path))
