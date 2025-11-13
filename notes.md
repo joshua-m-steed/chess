@@ -558,3 +558,50 @@ Level Warnings :: Off, Severe, Warning, Info, Fine, Finer, Finest, All
 - Bidirectional communication  
 - More effecient communication  
 - Ping/Pong for detecting dropped connections  
+
+
+
+# Enrichment Topics
+*Computer Security*  
+Authentication: Who am I
+Authorization: What can I do
+- In Chess current example, the authorization is embedded deep within object classes, but it should be closer ot surface level
+Data Integrity: Non-counterfeit
+- Verifies that data is not changed over server calls
+Non-Repudiation: I did this
+
+*Cryptographic Hashing*
+`echo -n "Fox" | shasum -a 256`
+
+Desired Hash Chars
+- Fixed-Size
+Always the same size
+- Deterministic
+Same in, same out
+- One-Way
+Can't get the original text
+- Resistance to collisions
+One to one
+- Preimage Resistance
+Can't guess anything about the original text
+
+Hash Functions
+MD5 :: Simple, Fast, Widely used, Widely available :: Collision attacks have been found
+SHA - 1 :: More Secure than MD5, Widely used, Widely available :: Collision attacks found
+SHA - 256 :: Secure against known attacks :: Slower than the other two
+Bcrypt :: Secure against known attacks :: Slower than SHA-256
+
+Why do I want Unique IDs?
+Quick to compare
+Reduce storage
+
+Secure Credentials
+Safer to Store
+Quick to Compare
+
+Rainbow Table Attack
+Collects common passwords, and then checks to see if it's in rainbow table
+
+Salted Hash Passwords
+Adds randomness to the beginning of the hash and is stored with the hash
+
