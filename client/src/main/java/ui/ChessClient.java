@@ -10,6 +10,7 @@ public class ChessClient {
     private State state = State.LOGGED_OUT;
     private ServerFacade server;
     private String username = null;
+    private String authToken = null;
 
     public ChessClient(String serverUrl) {
         server = new ServerFacade(serverUrl);
@@ -75,6 +76,7 @@ public class ChessClient {
             Auth authUser = server.register(user);
             if (authUser != null) {
                 state = State.LOGGED_IN;
+                authToken = authUser.authToken();
             } else {
                 throw new Exception("Username already taken");
             }
@@ -104,8 +106,10 @@ public class ChessClient {
         throw new Exception("Not enough parameters were provided");
     }
 
-    private String logout() {
-//      // Check if Signed in
+    private String logout() throws Exception {
+        assertAuthorized();
+        server.logout(authToken);
+
         state = State.LOGGED_OUT;
         String holdUser = username;
         username = null;

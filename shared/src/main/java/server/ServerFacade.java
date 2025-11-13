@@ -11,6 +11,7 @@ import java.net.http.HttpRequest.BodyPublisher;
 import java.net.http.HttpRequest.BodyPublishers;
 import java.net.http.HttpResponse;
 import java.net.http.HttpResponse.BodyHandlers;
+import java.util.Map;
 
 public class ServerFacade {
     private final HttpClient client = HttpClient.newHttpClient();
@@ -21,23 +22,31 @@ public class ServerFacade {
     }
 
     public Auth register(User user) throws Exception {
-        HttpRequest request = buildRequest("POST", "/user", user);
+        HttpRequest request = buildRequest("POST", "/user", user, null);
         HttpResponse<String> response = sendRequest(request);
         return handleResponse(response, Auth.class);
     }
 
     public Auth login(User user) throws Exception {
-        HttpRequest request = buildRequest("POST", "/session", user);
+        HttpRequest request = buildRequest("POST", "/session", user, null);
         HttpResponse<String> response = sendRequest(request);
         return handleResponse(response, Auth.class);
     }
 
-    private HttpRequest buildRequest(String method, String path, Object body) {
+    public void logout(String authToken) throws Exception {
+        HttpRequest request = buildRequest("DELETE", "/session", null, authToken);
+        HttpResponse<String> response = sendRequest(request);
+        handleResponse(response, null);
+    }
+
+    private HttpRequest buildRequest(String method, String path, Object body, String authToken) {
         HttpRequest.Builder request = HttpRequest.newBuilder()
                 .uri(URI.create(serverUrl + path))
                 .method(method, makeRequestBody(body));
         if (body != null) {
             request.setHeader("Content-Type", "application/json");
+        } else {
+            request.setHeader("authorization", authToken);
         }
         return request.build();
     }
