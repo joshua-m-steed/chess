@@ -39,15 +39,24 @@ public class ServerFacade {
         handleResponse(response, null);
     }
 
+    public GameList list(String authToken) throws Exception {
+        HttpRequest request = buildRequest("GET", "/game", null, authToken);
+        HttpResponse<String> response = sendRequest(request);
+        return handleResponse(response, GameList.class);
+    }
+
     private HttpRequest buildRequest(String method, String path, Object body, String authToken) {
         HttpRequest.Builder request = HttpRequest.newBuilder()
                 .uri(URI.create(serverUrl + path))
                 .method(method, makeRequestBody(body));
         if (body != null) {
             request.setHeader("Content-Type", "application/json");
-        } else {
+        }
+
+        if (authToken != null) {
             request.setHeader("authorization", authToken);
         }
+
         return request.build();
     }
 

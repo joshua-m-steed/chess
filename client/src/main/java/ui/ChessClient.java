@@ -1,5 +1,6 @@
 package ui;
 
+import com.google.gson.Gson;
 import model.*;
 import server.ServerFacade;
 
@@ -57,6 +58,7 @@ public class ChessClient {
                 case "register" -> register(params);
                 case "login" -> login(params);
                 case "logout" -> logout();
+                case "list" -> listGames();
                 case "create" -> create(params);
                 case "quit" -> "quit";
                 default -> help();
@@ -118,6 +120,21 @@ public class ChessClient {
         username = null;
         return EscapeSequences.SET_TEXT_COLOR_YELLOW + holdUser
                 + EscapeSequences.SET_TEXT_COLOR_BLUE + " has left the playing area";
+    }
+
+    private String listGames() throws Exception {
+        assertAuthorized();
+        GameList list = server.list(authToken);
+        StringBuilder result = new StringBuilder();
+        var gson = new Gson();
+        if (list.games().isEmpty()) {
+            return "There are no games at the moment!";
+        } else {
+            for (Game game : list.games()) {
+                result.append(gson.toJson(game)).append('\n');
+            }
+        }
+        return result.toString();
     }
 
     private String create(String... params) throws Exception {
