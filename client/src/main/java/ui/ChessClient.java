@@ -1,13 +1,18 @@
 package ui;
 
+import server.ServerFacade;
+
 import java.util.Arrays;
 import java.util.Scanner;
 
 public class ChessClient {
     private State state = State.LOGGED_OUT;
+    private ServerFacade server;
     private String username = null;
 
-    public ChessClient() {}
+    public ChessClient(String serverUrl) {
+        server = new ServerFacade(serverUrl);
+    }
 
     public enum State {
         LOGGED_IN,
@@ -60,7 +65,6 @@ public class ChessClient {
 
     private String register(String... params) throws Exception {
         if (params.length >= 1) {
-            state = State.LOGGED_IN;
             username = params[0];
             return EscapeSequences.SET_TEXT_COLOR_GREEN + "Welcome!"
                     + EscapeSequences.SET_TEXT_COLOR_BLUE + " You signed in as "
@@ -101,6 +105,10 @@ public class ChessClient {
         }
         throw new Exception("Not enough parameters were provided");
     }
+
+    // Implement LIST Game AFTER Server HTTP endpoint is joined
+
+
 
     private String help() {
         if(state == State.LOGGED_OUT) {
