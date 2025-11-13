@@ -76,7 +76,7 @@ public class ChessClient {
             if (authUser != null) {
                 state = State.LOGGED_IN;
             } else {
-                throw new Exception("Not authorized");
+                throw new Exception("Username already taken");
             }
             return EscapeSequences.SET_TEXT_COLOR_GREEN + "Welcome!"
                     + EscapeSequences.SET_TEXT_COLOR_BLUE + " You signed in as "
@@ -86,10 +86,17 @@ public class ChessClient {
     }
 
     private String login(String... params) throws Exception {
-//        assertAuthorized(); WORKS
         if (params.length >= 1) {
-            state = State.LOGGED_IN;
             username = params[0];
+            String password = params[1];
+
+            User user = new User(username, password, null);
+            Auth authUser = server.login(user);
+            if (authUser != null) {
+                state = State.LOGGED_IN;
+            } else {
+                throw new Exception("User not found");
+            }
             return EscapeSequences.SET_TEXT_COLOR_GREEN + "Welcome!"
                     + EscapeSequences.SET_TEXT_COLOR_BLUE + " You logged in as "
                     + EscapeSequences.SET_TEXT_COLOR_YELLOW + username;

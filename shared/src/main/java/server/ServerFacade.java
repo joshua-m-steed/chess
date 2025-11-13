@@ -26,7 +26,11 @@ public class ServerFacade {
         return handleResponse(response, Auth.class);
     }
 
-//    public
+    public Auth login(User user) throws Exception {
+        HttpRequest request = buildRequest("POST", "/session", user);
+        HttpResponse<String> response = sendRequest(request);
+        return handleResponse(response, Auth.class);
+    }
 
     private HttpRequest buildRequest(String method, String path, Object body) {
         HttpRequest.Builder request = HttpRequest.newBuilder()
