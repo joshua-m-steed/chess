@@ -16,30 +16,14 @@ public class BoardDisplay {
         this.game = game;
     }
 
-    public void update(ChessGame game) {
-        this.game = game;
-    }
+//    public void update(ChessGame game) For future use
 
     public void draw(ChessGame.TeamColor color) {
         ChessBoard board = game.getBoard();
         ChessPiece[][] display = board.getBoard();
         StringBuilder result = new StringBuilder();
 
-        if (color == ChessGame.TeamColor.WHITE) {
-            // Print row letters
-            result.append(EscapeSequences.SET_BG_COLOR_LIGHT_GREY + "   " + EscapeSequences.SET_TEXT_COLOR_GREEN);
-            for(int i = 0; i < 8; i++) {
-                result.append(" " + letters.get(i) + " ");
-            }
-            result.append("   " + EscapeSequences.RESET_BG_COLOR + EscapeSequences.RESET_TEXT_COLOR + "\n");
-        } else {
-            // Print row letters
-            result.append(EscapeSequences.SET_BG_COLOR_LIGHT_GREY + "   " + EscapeSequences.SET_TEXT_COLOR_GREEN);
-            for(int i = 7; i >= 0; i--) {
-                result.append(" " + letters.get(i) + " ");
-            }
-            result.append("   " + EscapeSequences.RESET_BG_COLOR + EscapeSequences.RESET_TEXT_COLOR + "\n");
-        }
+        drawBorder(result, color);
 
         if (color == ChessGame.TeamColor.WHITE) {
             drawWhitePov(result, display);
@@ -47,6 +31,12 @@ public class BoardDisplay {
             drawBlackPov(result, display);
         }
 
+        drawBorder(result, color);
+
+        System.out.print(result);
+    }
+
+    private void drawBorder(StringBuilder result, ChessGame.TeamColor color) {
         if (color == ChessGame.TeamColor.WHITE) {
             // Print row letters
             result.append(EscapeSequences.SET_BG_COLOR_LIGHT_GREY + "   " + EscapeSequences.SET_TEXT_COLOR_GREEN);
@@ -62,8 +52,6 @@ public class BoardDisplay {
             }
             result.append("   " + EscapeSequences.RESET_BG_COLOR + EscapeSequences.RESET_TEXT_COLOR + "\n");
         }
-
-        System.out.print(result);
     }
 
     private void drawWhitePov(StringBuilder result, ChessPiece[][] display) {

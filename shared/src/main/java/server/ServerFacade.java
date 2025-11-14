@@ -55,12 +55,8 @@ public class ServerFacade {
         HttpResponse<String> response = sendRequest(request);
         handleResponse(response, null);
     }
-//
-//    public void observe(GameJoin gameRequest, String authToken) throws Exception {
-//        HttpRequest request = buildRequest("PUT", "/game", gameRequest, authToken);
-//        HttpResponse<String> response = sendRequest(request);
-//        handleResponse(response, null);
-//    }
+
+//    public void observe(GameJoin gameRequest, String authToken)
 
     private HttpRequest buildRequest(String method, String path, Object body, String authToken) {
         HttpRequest.Builder request = HttpRequest.newBuilder()

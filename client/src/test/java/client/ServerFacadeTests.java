@@ -35,12 +35,6 @@ public class ServerFacadeTests {
         server.stop();
     }
 
-
-//    @Test
-//    public void sampleTest() {
-//        Assertions.assertTrue(true);
-//    }
-
     @Test
     public void registerCorrectInfo() throws Exception {
         ServerFacade facade = new ServerFacade(url);

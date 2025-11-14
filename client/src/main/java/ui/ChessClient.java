@@ -136,10 +136,10 @@ public class ChessClient {
         if (list.games().isEmpty()) {
             return "There are no games at the moment!";
         } else {
-            int list_iter = 0;
+            int listIter = 0;
             for (Game game : list.games()) {
                 result.append(EscapeSequences.SET_TEXT_COLOR_YELLOW)
-                        .append(" | " + ++list_iter + " | ")
+                        .append(" | " + ++listIter + " | ")
                         .append(EscapeSequences.SET_TEXT_COLOR_BLUE)
                         .append(gson.toJson(game))
                         .append('\n');
