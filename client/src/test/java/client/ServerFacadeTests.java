@@ -234,6 +234,71 @@ public class ServerFacadeTests {
         });
     }
 
+    @Test
+    public void joinCorrectInfo() throws Exception {
+        ServerFacade facade = new ServerFacade(url);
+        registerUsers(facade);
+
+        User newUser = new User("MiniJosh", "TheOneRing", null);
+        Auth newAuth = facade.login(newUser);
+
+        Game game = new Game(null, null, null, "TrialGame", new ChessGame());
+        Game newGame = facade.create(game, newAuth.authToken());
+
+        GameJoin request = new GameJoin(ChessGame.TeamColor.WHITE, newGame.gameID());
+        facade.join(request, newAuth.authToken());
+
+        GameList list = facade.list(newAuth.authToken());
+        Game foundGame = list.games().getFirst();
+
+        Assertions.assertEquals(game.gameName(), foundGame.gameName());
+        Assertions.assertEquals(newUser.username(), foundGame.whiteUsername());
+    }
+
+    @Test
+    public void joinTwoDifferentUsers() throws Exception {
+        ServerFacade facade = new ServerFacade(url);
+        registerUsers(facade);
+
+        User userOne = new User("MiniJosh", "TheOneRing", null);
+        User userTwo = new User("Frodo", "AnotherRing?", "ThisEmail");
+        Auth newAuth = facade.login(userOne);
+        Auth newAuthTwo = facade.login(userTwo);
+
+        Game game = new Game(null, null, null, "TrialGame", new ChessGame());
+        Game newGame = facade.create(game, newAuth.authToken());
+
+        GameJoin request = new GameJoin(ChessGame.TeamColor.WHITE, newGame.gameID());
+        GameJoin requestTwo = new GameJoin(ChessGame.TeamColor.BLACK, newGame.gameID());
+        facade.join(request, newAuth.authToken());
+        facade.join(requestTwo, newAuthTwo.authToken());
+
+        GameList list = facade.list(newAuth.authToken());
+        Game foundGame = list.games().getFirst();
+
+        Assertions.assertEquals(game.gameName(), foundGame.gameName());
+        Assertions.assertEquals(userOne.username(), foundGame.whiteUsername());
+        Assertions.assertEquals(userTwo.username(), foundGame.blackUsername());
+    }
+
+    @Test
+    public void joinGameNotFound() throws Exception {
+        ServerFacade facade = new ServerFacade(url);
+        registerUsers(facade);
+
+        User newUser = new User("MiniJosh", "TheOneRing", null);
+        Auth newAuth = facade.login(newUser);
+
+        Game game = new Game(null, null, null, "TrialGame", new ChessGame());
+        Game newGame = facade.create(game, newAuth.authToken());
+
+        GameJoin request = new GameJoin(ChessGame.TeamColor.WHITE, 57);
+
+        Assertions.assertThrows(Exception.class, () -> {
+            facade.join(request, newAuth.authToken());
+        });
+    }
+
     private static void clearDatabase() {
         try {
             HttpClient client = HttpClient.newHttpClient();
