@@ -50,6 +50,52 @@ public class ServerFacadeTests {
         Assertions.assertEquals(newUser.username(), newAuth.username());
     }
 
+    @Test
+    public void registerDuplicateUsers() throws Exception {
+        ServerFacade facade = new ServerFacade(url);
+        User newUser = new User("MiniJosh", "TheOneRing", "AnEmail");
+
+        Auth newAuth = facade.register(newUser);
+        Assertions.assertNotNull(newAuth);
+
+        Assertions.assertThrows(Exception.class, () -> {
+            Auth secondAuth = facade.register(newUser);
+        });
+    }
+
+    @Test
+    public void loginCorrectInfo() throws Exception {
+        ServerFacade facade = new ServerFacade(url);
+        registerUsers(facade);
+
+        User newUser = new User("MiniJosh", "TheOneRing", null);
+
+        Auth newAuth = facade.login(newUser);
+        Assertions.assertNotNull(newAuth);
+        Assertions.assertInstanceOf(String.class, newAuth.authToken());
+        Assertions.assertEquals(newUser.username(), newAuth.username());
+    }
+
+    @Test
+    public void loginIncorrectPassword() throws Exception {
+        ServerFacade facade = new ServerFacade(url);
+        User newUser = new User("MiniJosh", "ILostTheRing", null);
+
+        Assertions.assertThrows(Exception.class, () -> {
+            facade.login(newUser);
+        });
+    }
+
+    @Test
+    public void loginUserNotFound() throws Exception {
+        ServerFacade facade = new ServerFacade(url);
+        User newUser = new User("NotAPerson", "IsThisReal", null);
+
+        Assertions.assertThrows(Exception.class, () -> {
+            facade.login(newUser);
+        });
+    }
+
     private static void clearDatabase() {
         try {
             HttpClient client = HttpClient.newHttpClient();
