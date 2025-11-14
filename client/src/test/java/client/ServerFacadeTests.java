@@ -1,6 +1,6 @@
 package client;
 
-import chess.ChessPiece;
+import chess.ChessGame;
 import model.*;
 import org.junit.jupiter.api.*;
 import server.Server;
@@ -25,8 +25,10 @@ public class ServerFacadeTests {
         System.out.println("Started test HTTP server on " + port);
 
         url = "http://localhost:" + port;
-        clearDatabase();
     }
+
+    @BeforeEach
+    void clear() {clearDatabase();}
 
     @AfterAll
     static void stopServer() {
@@ -141,6 +143,49 @@ public class ServerFacadeTests {
         // Attempt without auth
         Assertions.assertThrows(Exception.class, () -> {
             facade.logout(newAuth.authToken());
+        });
+    }
+
+    @Test
+    public void listBlankList() throws Exception {
+        ServerFacade facade = new ServerFacade(url);
+        registerUsers(facade);
+
+        User newUser = new User("MiniJosh", "TheOneRing", null);
+        Auth newAuth = facade.login(newUser);
+
+        GameList games = facade.list(newAuth.authToken());
+        Assertions.assertNotNull(games);
+        Assertions.assertEquals(0, games.games().size());
+    }
+
+    @Test
+    public void listNewGame() throws Exception {
+        ServerFacade facade = new ServerFacade(url);
+        registerUsers(facade);
+
+        User newUser = new User("MiniJosh", "TheOneRing", null);
+        Auth newAuth = facade.login(newUser);
+
+        facade.create(new Game(null, null, null, "Test", new ChessGame()), newAuth.authToken());
+
+        GameList games = facade.list(newAuth.authToken());
+        Assertions.assertNotNull(games);
+        Assertions.assertEquals(1, games.games().size());
+        Assertions.assertInstanceOf(Game.class, games.games().getFirst());
+        Assertions.assertEquals("Test", games.games().getFirst().gameName());
+    }
+
+    @Test
+    public void listMissingAuth() throws Exception {
+        ServerFacade facade = new ServerFacade(url);
+        registerUsers(facade);
+
+        User newUser = new User("MiniJosh", "TheOneRing", null);
+        facade.login(newUser);
+
+        Assertions.assertThrows(Exception.class, () -> {
+            facade.list(null);
         });
     }
 
