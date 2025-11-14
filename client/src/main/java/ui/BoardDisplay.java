@@ -10,6 +10,7 @@ public class BoardDisplay {
 
     private ChessGame game;
     List<String> letters = List.of("a", "b", "c", "d", "e", "f", "g", "h");
+    List<String> numbers = List.of("1", "2", "3", "4", "5", "6", "7", "8");
 
 
     public BoardDisplay(ChessGame game) {
@@ -20,7 +21,47 @@ public class BoardDisplay {
         this.game = game;
     }
 
-    public void draw() {
+    public void drawBlack() {
+        ChessBoard board = game.getBoard();
+        ChessPiece[][] display = board.getBoard();
+        StringBuilder result = new StringBuilder();
+
+        // Print row letters
+        result.append(EscapeSequences.SET_BG_COLOR_LIGHT_GREY + "   " + EscapeSequences.SET_TEXT_COLOR_GREEN);
+        for(int i = 7; i >= 0; i--) {
+            result.append(" " + letters.get(i) + " ");
+        }
+        result.append("   " + EscapeSequences.RESET_BG_COLOR + EscapeSequences.RESET_TEXT_COLOR + "\n");
+
+//        result.append(s.repeat(10));
+
+        for(int i = 0; i < 8; i++)
+        {
+            result.append(EscapeSequences.SET_BG_COLOR_LIGHT_GREY)
+                    .append(EscapeSequences.SET_TEXT_COLOR_GREEN + " " + (i+1) + " ");
+            // Pre
+            for (int j = 0; j < 8; j++)
+            {
+                drawTile(i, j, result);
+                drawPiece(i, j, result, display);
+            }
+            //Post
+            result.append(EscapeSequences.SET_BG_COLOR_LIGHT_GREY)
+                    .append(EscapeSequences.SET_TEXT_COLOR_GREEN + " " + (i+1) + " ")
+                    .append(EscapeSequences.RESET_BG_COLOR + EscapeSequences.RESET_TEXT_COLOR)
+                    .append("\n");
+        }
+
+        result.append(EscapeSequences.SET_BG_COLOR_LIGHT_GREY + "   " + EscapeSequences.SET_TEXT_COLOR_GREEN);
+        for(int i = 7; i >= 0; i--) {
+            result.append(" " + letters.get(i) + " ");
+        }
+        result.append("   " + EscapeSequences.RESET_BG_COLOR + EscapeSequences.RESET_TEXT_COLOR + "\n");
+
+        System.out.print(result);
+    }
+
+    public void drawWhite() {
         ChessBoard board = game.getBoard();
         ChessPiece[][] display = board.getBoard();
         StringBuilder result = new StringBuilder();
@@ -34,19 +75,20 @@ public class BoardDisplay {
 
 //        result.append(s.repeat(10));
 
-        for(int i = 0; i < 8; i++)
+        for(int i = 7; i >= 0; i--)
         {
-            result.append(EscapeSequences.SET_BG_COLOR_LIGHT_GREY + "   ");
+            result.append(EscapeSequences.SET_BG_COLOR_LIGHT_GREY)
+                    .append(EscapeSequences.SET_TEXT_COLOR_GREEN + " " + (i+1) + " ");
             // Pre
-            for (int j = 0; j < 8; j++)
+            for (int j = 7; j >= 0; j--)
             {
                 drawTile(i, j, result);
-                result.append("   ");
                 drawPiece(i, j, result, display);
             }
             //Post
-            result.append(EscapeSequences.SET_BG_COLOR_LIGHT_GREY + "   ");
-            result.append(EscapeSequences.RESET_BG_COLOR + EscapeSequences.RESET_TEXT_COLOR)
+            result.append(EscapeSequences.SET_BG_COLOR_LIGHT_GREY)
+                    .append(EscapeSequences.SET_TEXT_COLOR_GREEN + " " + (i+1) + " ")
+                    .append(EscapeSequences.RESET_BG_COLOR + EscapeSequences.RESET_TEXT_COLOR)
                     .append("\n");
         }
 
@@ -70,7 +112,7 @@ public class BoardDisplay {
     private void drawPiece(int i, int j, StringBuilder result, ChessPiece[][] display) {
         String piece;
         if (display[i][j] != null) {
-            if (display[i][j].getTeamColor() == ChessGame.TeamColor.BLACK) {
+            if (display[i][j].getTeamColor() == ChessGame.TeamColor.WHITE) {
                 result.append(EscapeSequences.SET_TEXT_COLOR_RED);
             } else {
                 result.append(EscapeSequences.SET_TEXT_COLOR_BLUE);
