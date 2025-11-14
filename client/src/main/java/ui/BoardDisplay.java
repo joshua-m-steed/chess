@@ -63,11 +63,7 @@ public class BoardDisplay {
             for (int j = 7; j >= 0; j--)
             {
                 drawTile(i, j, result);
-                if(display[i][j] != null) {
-                    drawPiece(i, j, result, display);
-                } else {
-                    result.append("   ");
-                }
+                checkPieces(i, j, result, display);
             }
             //Post
             result.append(EscapeSequences.SET_BG_COLOR_LIGHT_GREY)
@@ -86,11 +82,7 @@ public class BoardDisplay {
             for (int j = 0; j < 8; j++)
             {
                 drawTile(i, j, result);
-                if(display[i][j] != null) {
-                    drawPiece(i, j, result, display);
-                } else {
-                    result.append("   ");
-                }
+                checkPieces(i, j, result, display);
             }
             //Post
             result.append(EscapeSequences.SET_BG_COLOR_LIGHT_GREY)
@@ -135,5 +127,13 @@ public class BoardDisplay {
         }
 
         result.append(piece);
+    }
+
+    private void checkPieces(int i, int j, StringBuilder result, ChessPiece[][] display) {
+        if(display[i][j] != null) {
+            drawPiece(i, j, result, display);
+        } else {
+            result.append("   ");
+        }
     }
 }
