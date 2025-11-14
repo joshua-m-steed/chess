@@ -1,5 +1,6 @@
 package ui;
 
+import chess.ChessGame;
 import com.google.gson.Gson;
 import model.*;
 import server.ServerFacade;
@@ -138,13 +139,15 @@ public class ChessClient {
     }
 
     private String create(String... params) throws Exception {
-        // Check if AUTH
+        assertAuthorized();
         if (params.length >= 1) {
             String gameName = params[0];
-            String gameID = "0000"; // PLACEHOLDER
+
+            Game game = new Game(null, null, null, gameName, new ChessGame());
+            game = server.create(game, authToken);
             return "The game " + EscapeSequences.SET_TEXT_COLOR_GREEN + gameName
                     + EscapeSequences.SET_TEXT_COLOR_BLUE + " has been created at ID "
-                    + EscapeSequences.SET_TEXT_COLOR_YELLOW + gameID;
+                    + EscapeSequences.SET_TEXT_COLOR_YELLOW + game.gameID();
         }
         throw new Exception("Not enough parameters were provided");
     }
