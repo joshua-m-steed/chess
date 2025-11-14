@@ -51,6 +51,12 @@ public class ServerFacade {
         return handleResponse(response, Game.class);
     }
 
+    public void join(GameJoin gameRequest, String authToken) throws Exception {
+        HttpRequest request = buildRequest("PUT", "/game", gameRequest, authToken);
+        HttpResponse<String> response = sendRequest(request);
+        handleResponse(response, null);
+    }
+
     private HttpRequest buildRequest(String method, String path, Object body, String authToken) {
         HttpRequest.Builder request = HttpRequest.newBuilder()
                 .uri(URI.create(serverUrl + path))

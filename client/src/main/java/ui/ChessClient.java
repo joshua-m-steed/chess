@@ -6,6 +6,7 @@ import model.*;
 import server.ServerFacade;
 
 import java.util.Arrays;
+import java.util.Objects;
 import java.util.Scanner;
 
 public class ChessClient {
@@ -13,6 +14,7 @@ public class ChessClient {
     private ServerFacade server;
     private String username = null;
     private String authToken = null;
+    private GameList recentList = null;
 
     public ChessClient(String serverUrl) {
         server = new ServerFacade(serverUrl);
@@ -61,6 +63,7 @@ public class ChessClient {
                 case "logout" -> logout();
                 case "list" -> listGames();
                 case "create" -> create(params);
+                case "join" -> join(params);
                 case "quit" -> "quit";
                 default -> help();
             };
@@ -126,13 +129,19 @@ public class ChessClient {
     private String listGames() throws Exception {
         assertAuthorized();
         GameList list = server.list(authToken);
+        recentList = list;
         StringBuilder result = new StringBuilder();
         var gson = new Gson();
         if (list.games().isEmpty()) {
             return "There are no games at the moment!";
         } else {
+            int list_iter = 0;
             for (Game game : list.games()) {
-                result.append(gson.toJson(game)).append('\n');
+                result.append(EscapeSequences.SET_TEXT_COLOR_YELLOW)
+                        .append(" | " + ++list_iter + " | ")
+                        .append(EscapeSequences.SET_TEXT_COLOR_BLUE)
+                        .append(gson.toJson(game))
+                        .append('\n');
             }
         }
         return result.toString();
@@ -152,7 +161,34 @@ public class ChessClient {
         throw new Exception("Not enough parameters were provided");
     }
 
-    // Implement LIST Game AFTER Server HTTP endpoint is joined
+    private String join(String... params) throws Exception {
+        assertAuthorized();
+        if (params.length >= 2) {
+            Game foundGame = null;
+            int listId = Integer.parseInt(params[0]);
+            params[1] = params[1].toLowerCase();
+            if (recentList.games() == null) {
+                throw new Exception("Unable to find any games. Go make one!");
+            } else {
+                foundGame = recentList.games().get(listId - 1);
+            }
+
+
+            int gameID = foundGame.gameID();
+            ChessGame.TeamColor teamColor = Objects.equals(params[1], "white") ? ChessGame.TeamColor.WHITE : ChessGame.TeamColor.BLACK;
+
+            GameJoin gameRequest = new GameJoin(teamColor, gameID);
+            server.join(gameRequest, authToken);
+            // Potentially verify their input with the list?
+//            server.list(authToken);
+//            System.out.println("");
+            return EscapeSequences.SET_TEXT_COLOR_GREEN + username +
+                    EscapeSequences.SET_TEXT_COLOR_BLUE + " has joined the game, " +
+                    EscapeSequences.SET_TEXT_COLOR_YELLOW + foundGame.gameName() +
+                    EscapeSequences.SET_TEXT_COLOR_BLUE + ", as " + teamColor;
+        }
+        throw new Exception("Not enough parameters were provided");
+    }
 
     private void assertAuthorized() throws Exception {
         if (state == State.LOGGED_OUT) {
