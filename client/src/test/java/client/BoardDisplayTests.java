@@ -10,8 +10,9 @@ public class BoardDisplayTests {
     public void run() {
         BoardDisplay paint = new BoardDisplay(new ChessGame());
         System.out.print("THIS IS SUPPOSED TO BE FROM BLACK VIEW\n");
-        paint.drawBlack();
+        paint.draw(ChessGame.TeamColor.BLACK);
+
         System.out.print("THIS IS SUPPOSED TO BE FROM WHITE VIEW\n");
-        paint.drawWhite();
+        paint.draw(ChessGame.TeamColor.WHITE);
     }
 }
