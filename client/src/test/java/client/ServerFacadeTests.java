@@ -189,6 +189,51 @@ public class ServerFacadeTests {
         });
     }
 
+    @Test
+    public void createCorrectInfo() throws Exception {
+        ServerFacade facade = new ServerFacade(url);
+        registerUsers(facade);
+
+        User newUser = new User("MiniJosh", "TheOneRing", null);
+        Auth newAuth = facade.login(newUser);
+
+        Game game = new Game(null, null, null, "TrialGame", new ChessGame());
+        Game newGame = facade.create(game, newAuth.authToken());
+        Assertions.assertNotNull(newGame);
+        Assertions.assertInstanceOf(Integer.class, newGame.gameID());
+    }
+
+    @Test
+    public void createAndList() throws Exception {
+        ServerFacade facade = new ServerFacade(url);
+        registerUsers(facade);
+
+        User newUser = new User("MiniJosh", "TheOneRing", null);
+        Auth newAuth = facade.login(newUser);
+
+        Game game = new Game(null, null, null, "TrialGame", new ChessGame());
+        Game newGame = facade.create(game, newAuth.authToken());
+        Assertions.assertNotNull(newGame);
+        Assertions.assertInstanceOf(Integer.class, newGame.gameID());
+
+        GameList list = facade.list(newAuth.authToken());
+        Assertions.assertEquals(game.gameName(), list.games().getFirst().gameName());
+    }
+
+    @Test
+    public void createMissingInfo() throws Exception {
+        ServerFacade facade = new ServerFacade(url);
+        registerUsers(facade);
+
+        User newUser = new User("MiniJosh", "TheOneRing", null);
+        Auth newAuth = facade.login(newUser);
+
+        Game game = new Game(null, null, null, null, new ChessGame());
+        Assertions.assertThrows(Exception.class, () -> {
+            facade.create(game, "IncorrectAuth");
+        });
+    }
+
     private static void clearDatabase() {
         try {
             HttpClient client = HttpClient.newHttpClient();
