@@ -133,6 +133,7 @@ public class ChessClient {
         String holdUser = username;
         username = null;
         authToken = null;
+        recentList = null;
         return EscapeSequences.SET_TEXT_COLOR_YELLOW + holdUser
                 + EscapeSequences.SET_TEXT_COLOR_BLUE + " has left the playing area";
     }
@@ -179,18 +180,29 @@ public class ChessClient {
     private String join(String... params) throws Exception {
         assertAuthorized();
         if (params.length >= 2) {
+            if( recentList == null) {
+                throw new Exception("Please refer to 'list' before joining a game");
+            }
             Game foundGame = null;
             int listId = Integer.parseInt(params[0]);
-            params[1] = params[1].toLowerCase();
+            String color = params[1].toLowerCase();
+
             if (recentList.games() == null) {
                 throw new Exception("Unable to find any games. Go make one!");
+
+            } else if (recentList.games().size() < (listId - 1)) {
+                throw new Exception("Invalid game choice. Please refer to 'list'");
             } else {
                 foundGame = recentList.games().get(listId - 1);
             }
 
+            if (!color.equals("white") && !color.equals("black")) {
+                throw new Exception("Chose a valid team color");
+            }
+
 
             int gameID = foundGame.gameID();
-            ChessGame.TeamColor teamColor = Objects.equals(params[1], "white") ? ChessGame.TeamColor.WHITE : ChessGame.TeamColor.BLACK;
+            ChessGame.TeamColor teamColor = Objects.equals(color, "white") ? ChessGame.TeamColor.WHITE : ChessGame.TeamColor.BLACK;
 
             GameJoin gameRequest = new GameJoin(teamColor, gameID);
             server.join(gameRequest, authToken);

@@ -60,9 +60,9 @@ public class BoardDisplay {
             result.append(EscapeSequences.SET_BG_COLOR_LIGHT_GREY)
                     .append(EscapeSequences.SET_TEXT_COLOR_GREEN + " " + (i+1) + " ");
             // Pre
-            for (int j = 7; j >= 0; j--)
+            for (int j = 0; j < 8; j++)
             {
-                drawTile(i, j, result);
+                drawTile(7 - i, j, result);
                 checkPieces(i, j, result, display);
             }
             //Post
@@ -79,9 +79,9 @@ public class BoardDisplay {
             result.append(EscapeSequences.SET_BG_COLOR_LIGHT_GREY)
                     .append(EscapeSequences.SET_TEXT_COLOR_GREEN + " " + (i+1) + " ");
             // Pre
-            for (int j = 0; j < 8; j++)
+            for (int j = 7; j >= 0; j--)
             {
-                drawTile(i, j, result);
+                drawTile(i, 7- j, result);
                 checkPieces(i, j, result, display);
             }
             //Post
