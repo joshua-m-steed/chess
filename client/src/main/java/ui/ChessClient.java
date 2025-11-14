@@ -65,7 +65,7 @@ public class ChessClient {
                 case "create" -> create(params);
                 case "join" -> join(params);
                 case "observe" -> observe(params);
-                case "quit" -> "quit";
+                case "quit" -> quit();
                 default -> help();
             };
         } catch (Exception ex) {
@@ -73,11 +73,19 @@ public class ChessClient {
         }
     }
 
+    private String quit() throws Exception {
+        if (state == State.LOGGED_IN) {
+            logout();
+        }
+
+        return "quit";
+    }
+
     private String register(String... params) throws Exception {
         if (state == State.LOGGED_IN) {
             throw new Exception("Logout before you register a new account!");
         }
-        if (params.length >= 1) {
+        if (params.length >= 3) {
             username = params[0];
             String password = params[1];
             String email = params[2];
@@ -98,7 +106,7 @@ public class ChessClient {
     }
 
     private String login(String... params) throws Exception {
-        if (params.length >= 1) {
+        if (params.length >= 2) {
             username = params[0];
             String password = params[1];
 
@@ -106,6 +114,7 @@ public class ChessClient {
             Auth authUser = server.login(user);
             if (authUser != null) {
                 state = State.LOGGED_IN;
+                authToken = authUser.authToken();
             } else {
                 throw new Exception("User not found");
             }
@@ -123,6 +132,7 @@ public class ChessClient {
         state = State.LOGGED_OUT;
         String holdUser = username;
         username = null;
+        authToken = null;
         return EscapeSequences.SET_TEXT_COLOR_YELLOW + holdUser
                 + EscapeSequences.SET_TEXT_COLOR_BLUE + " has left the playing area";
     }
@@ -141,7 +151,12 @@ public class ChessClient {
                 result.append(EscapeSequences.SET_TEXT_COLOR_YELLOW)
                         .append(" | " + ++listIter + " | ")
                         .append(EscapeSequences.SET_TEXT_COLOR_BLUE)
-                        .append(gson.toJson(game))
+                        .append(" Name: ")
+                        .append(gson.toJson(game.gameName()))
+                        .append(" White: ")
+                        .append(gson.toJson(game.whiteUsername()))
+                        .append(" Black: ")
+                        .append(gson.toJson(game.blackUsername()))
                         .append('\n');
             }
         }
@@ -156,8 +171,7 @@ public class ChessClient {
             Game game = new Game(null, null, null, gameName, new ChessGame());
             game = server.create(game, authToken);
             return "The game " + EscapeSequences.SET_TEXT_COLOR_GREEN + gameName
-                    + EscapeSequences.SET_TEXT_COLOR_BLUE + " has been created at ID "
-                    + EscapeSequences.SET_TEXT_COLOR_YELLOW + game.gameID();
+                    + EscapeSequences.SET_TEXT_COLOR_BLUE + " has been created";
         }
         throw new Exception("Not enough parameters were given.");
     }
