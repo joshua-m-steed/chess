@@ -64,6 +64,7 @@ public class ChessClient {
                 case "list" -> listGames();
                 case "create" -> create(params);
                 case "join" -> join(params);
+                case "observe" -> observe(params);
                 case "quit" -> "quit";
                 default -> help();
             };
@@ -186,6 +187,29 @@ public class ChessClient {
                     EscapeSequences.SET_TEXT_COLOR_BLUE + " has joined the game, " +
                     EscapeSequences.SET_TEXT_COLOR_YELLOW + foundGame.gameName() +
                     EscapeSequences.SET_TEXT_COLOR_BLUE + ", as " + teamColor;
+        }
+        throw new Exception("Not enough parameters were provided");
+    }
+
+    private String observe(String... params) throws Exception {
+        assertAuthorized();
+        if (params.length >= 1) {
+            Game foundGame = null;
+            int listId = Integer.parseInt(params[0]);
+            if (recentList.games() == null) {
+                throw new Exception("Unable to find any games. Go make one!");
+            } else {
+                foundGame = recentList.games().get(listId - 1);
+            }
+
+            int gameID = foundGame.gameID();
+
+            GameJoin gameRequest = new GameJoin(null, gameID);
+//            server.observe(gameRequest, authToken);
+
+            return EscapeSequences.SET_TEXT_COLOR_GREEN + username +
+                    EscapeSequences.SET_TEXT_COLOR_BLUE + " is watching the game, " +
+                    EscapeSequences.SET_TEXT_COLOR_YELLOW + foundGame.gameName();
         }
         throw new Exception("Not enough parameters were provided");
     }
