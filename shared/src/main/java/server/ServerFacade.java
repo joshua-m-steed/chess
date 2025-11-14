@@ -98,9 +98,9 @@ public class ServerFacade {
         if (!(status / 100 == 2)) {
             String body = response.body();
             if (body != null) {
-                throw new Exception("Not authorized");
+                throw new Exception("You don't have authorization");
             }
-            throw new Exception("Server failure");
+            throw new Exception("The Server failed to connect");
         }
 
         if (responseClass != null) {

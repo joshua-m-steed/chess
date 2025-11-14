@@ -94,7 +94,7 @@ public class ChessClient {
                     + EscapeSequences.SET_TEXT_COLOR_BLUE + " You signed in as "
                     + EscapeSequences.SET_TEXT_COLOR_YELLOW + username;
         }
-        throw new Exception("Not enough parameters were provided");
+        throw new Exception("Not enough parameters were given.");
     }
 
     private String login(String... params) throws Exception {
@@ -113,7 +113,7 @@ public class ChessClient {
                     + EscapeSequences.SET_TEXT_COLOR_BLUE + " You logged in as "
                     + EscapeSequences.SET_TEXT_COLOR_YELLOW + username;
         }
-        throw new Exception("Not enough parameters were provided");
+        throw new Exception("Not enough parameters were given.");
     }
 
     private String logout() throws Exception {
@@ -159,7 +159,7 @@ public class ChessClient {
                     + EscapeSequences.SET_TEXT_COLOR_BLUE + " has been created at ID "
                     + EscapeSequences.SET_TEXT_COLOR_YELLOW + game.gameID();
         }
-        throw new Exception("Not enough parameters were provided");
+        throw new Exception("Not enough parameters were given.");
     }
 
     private String join(String... params) throws Exception {
@@ -188,7 +188,7 @@ public class ChessClient {
                     EscapeSequences.SET_TEXT_COLOR_YELLOW + foundGame.gameName() +
                     EscapeSequences.SET_TEXT_COLOR_BLUE + ", as " + teamColor;
         }
-        throw new Exception("Not enough parameters were provided");
+        throw new Exception("Not enough parameters were given.");
     }
 
     private String observe(String... params) throws Exception {
@@ -211,12 +211,12 @@ public class ChessClient {
                     EscapeSequences.SET_TEXT_COLOR_BLUE + " is watching the game, " +
                     EscapeSequences.SET_TEXT_COLOR_YELLOW + foundGame.gameName();
         }
-        throw new Exception("Not enough parameters were provided");
+        throw new Exception("Not enough parameters were given.");
     }
 
     private void assertAuthorized() throws Exception {
         if (state == State.LOGGED_OUT) {
-            throw new Exception("Please log in!");
+            throw new Exception("Please log in first!");
         }
     }
 
