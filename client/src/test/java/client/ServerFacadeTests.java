@@ -162,4 +162,17 @@ public class ServerFacadeTests {
         }
     }
 
+    private static void registerUsers(ServerFacade facade) throws Exception {
+        User userOne = new User("MiniJosh", "TheOneRing", "AnEmail");
+        User userTwo = new User("Frodo", "AnotherRing?", "ThisEmail");
+
+        try {
+            facade.register(userOne);
+            facade.register(userTwo);
+        } catch (Exception ex) {
+            throw new Exception("Error with registering pre-users");
+        }
+
+    }
+
 }
