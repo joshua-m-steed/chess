@@ -96,6 +96,54 @@ public class ServerFacadeTests {
         });
     }
 
+    @Test
+    public void logoutCorrectInfo() throws Exception {
+        ServerFacade facade = new ServerFacade(url);
+        registerUsers(facade);
+
+        User newUser = new User("MiniJosh", "TheOneRing", null);
+        Auth newAuth = facade.login(newUser);
+
+        Assertions.assertNotNull(newAuth);
+        Assertions.assertInstanceOf(String.class, newAuth.authToken());
+
+        facade.logout(newAuth.authToken());
+
+        // Attempt without auth
+        Assertions.assertThrows(Exception.class, () -> {
+            facade.list(newAuth.authToken());
+        });
+    }
+
+    @Test
+    public void logoutFakeAuthToken() throws Exception {
+        ServerFacade facade = new ServerFacade(url);
+        registerUsers(facade);
+
+        User newUser = new User("MiniJosh", "TheOneRing", null);
+        Auth newAuth = facade.login(newUser);
+
+        Assertions.assertThrows(Exception.class, () -> {
+            facade.logout("I'm using a fake auth token");
+        });
+    }
+
+    @Test
+    public void logoutDoubleUser() throws Exception {
+        ServerFacade facade = new ServerFacade(url);
+        registerUsers(facade);
+
+        User newUser = new User("MiniJosh", "TheOneRing", null);
+        Auth newAuth = facade.login(newUser);
+
+        facade.logout(newAuth.authToken());
+
+        // Attempt without auth
+        Assertions.assertThrows(Exception.class, () -> {
+            facade.logout(newAuth.authToken());
+        });
+    }
+
     private static void clearDatabase() {
         try {
             HttpClient client = HttpClient.newHttpClient();
