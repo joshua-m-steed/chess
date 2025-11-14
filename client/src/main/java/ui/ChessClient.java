@@ -180,6 +180,9 @@ public class ChessClient {
 
             GameJoin gameRequest = new GameJoin(teamColor, gameID);
             server.join(gameRequest, authToken);
+
+            BoardDisplay display = new BoardDisplay(foundGame.game());
+            display.draw(teamColor);
             // Potentially verify their input with the list?
 //            server.list(authToken);
 //            System.out.println("");
@@ -206,6 +209,8 @@ public class ChessClient {
 
             GameJoin gameRequest = new GameJoin(null, gameID);
 //            server.observe(gameRequest, authToken);
+            BoardDisplay display = new BoardDisplay(foundGame.game());
+            display.draw(ChessGame.TeamColor.WHITE);
 
             return EscapeSequences.SET_TEXT_COLOR_GREEN + username +
                     EscapeSequences.SET_TEXT_COLOR_BLUE + " is watching the game, " +
