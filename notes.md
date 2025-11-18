@@ -605,3 +605,45 @@ Collects common passwords, and then checks to see if it's in rainbow table
 Salted Hash Passwords
 Adds randomness to the beginning of the hash and is stored with the hash
 
+**Encryption**
+Makes data unreadable 
+
+*Symmetric Key Encryption*
+User A has a message to pass over public pathway
+User B has a similar key to recieve and decrypt
+
+Plain Text - Unencrypted Data
+Key
+Key Size
+Cipher Text
+
+
+AES - Advanced Encryption Standard  
+Adds a couple more things to the encryption rules
+
+Adv: Fast and hard to crack :: DisAdv: How do you distribute the key?  
+
+*Asymmetric Key Encryption*  
+1. Generate a key pair
+2. Keep one of the keys secret (private key)
+3. Give the other key to the world (public key)
+4. Someone uses public key to send you data
+5. Decrypt with private key
+
+Standard Encryptions
+RSA
+ECC
+
+Adv: Open key distribution :: DisAdv: Size restriction and slow  
+
+How the Web works:
+A mix of both
+- A private and public key is created. Public is passed
+- A symmetric key is made, passed (encrypted with public), and decrypt with private
+- Data sent with symmetric key after that
+
+*Digital Signatures and Web Certificates*  
+
+
+**Decryption**
+Makes data readable again
