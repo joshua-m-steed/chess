@@ -2,10 +2,9 @@ package server.websocket;
 
 import com.google.gson.Gson;
 import io.javalin.websocket.*;
-import org.jetbrains.annotations.NotNull;
+import org.eclipse.jetty.websocket.api.Session;
 import websocket.messages.Action;
-
-import java.io.IOException;
+import websocket.messages.Notification;
 
 public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsCloseHandler {
 
@@ -22,8 +21,8 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
         try {
             Action action = new Gson().fromJson(ctx.message(), Action.class);
             switch (action.type()) {
-//                case ENTER = enter();
-//                case EXIT = exit();
+                case ENTER -> enter(action.name(), ctx.session);
+//                case EXIT -> exit();
             }
         } catch (Exception ex) {
             ex.printStackTrace();
@@ -33,5 +32,12 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
     @Override
     public void handleClose(WsCloseContext ctx) {
         System.out.println("Websocket closed");
+    }
+
+    private void enter(String name, Session session) throws Exception {
+        connections.add(session);
+        String message = String.format("%s has approached the chess tables", name);
+        Notification notification = new Notification(Notification.Type.ARRIVAL, message);
+        connections.broadcast(session, notification);
     }
 }
