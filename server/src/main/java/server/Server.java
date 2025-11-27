@@ -10,6 +10,7 @@ import io.javalin.http.BadRequestResponse;
 import io.javalin.http.Context;
 import io.javalin.http.ForbiddenResponse;
 import io.javalin.http.UnauthorizedResponse;
+import server.websocket.WebSocketHandler;
 import service.GameService;
 import service.UserService;
 
@@ -20,6 +21,7 @@ public class Server {
     private final Javalin server;
     private final UserService userService;
     private final GameService gameService;
+    private final WebSocketHandler webSocketHandler;
     private DataAccess dataAccess;
 
     public Server() {
@@ -29,6 +31,8 @@ public class Server {
 
         userService = new UserService(dataAccess);
         gameService = new GameService(dataAccess);
+
+        webSocketHandler = new WebSocketHandler();
 
         server = Javalin.create(config -> config.staticFiles.add("web"));
 
@@ -40,6 +44,12 @@ public class Server {
         server.post("game", this::createGame);
         server.get("game", this::listGame);
         server.put("game", this::joinGame);
+
+        server.ws("/ws", ws -> {
+            ws.onConnect(webSocketHandler);
+            ws.onMessage(webSocketHandler);
+            ws.onClose(webSocketHandler);
+        });
 
         server.exception(BadRequestResponse.class, this::badResponseHandler);
         server.exception(ForbiddenResponse.class, this::forbiddenResponseHandler);
