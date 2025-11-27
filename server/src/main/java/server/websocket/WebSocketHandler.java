@@ -22,7 +22,7 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
             Action action = new Gson().fromJson(ctx.message(), Action.class);
             switch (action.type()) {
                 case ENTER -> enter(action.name(), ctx.session);
-//                case EXIT -> exit();
+                case EXIT -> exit(action.name(), ctx.session);
             }
         } catch (Exception ex) {
             ex.printStackTrace();
@@ -39,5 +39,12 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
         String message = String.format("%s has approached the chess tables", name);
         Notification notification = new Notification(Notification.Type.ARRIVAL, message);
         connections.broadcast(session, notification);
+    }
+
+    private void exit(String name, Session session) throws Exception {
+        String message = String.format("%s left the chess tables", name);
+        Notification notification = new Notification(Notification.Type.DEPARTURE, message);
+        connections.broadcast(session, notification);
+        connections.remove(session);
     }
 }
