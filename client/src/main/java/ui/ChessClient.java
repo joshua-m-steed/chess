@@ -22,6 +22,7 @@ public class ChessClient {
 
     public enum State {
         LOGGED_IN,
+        IN_GAME,
         LOGGED_OUT
     }
 
@@ -66,6 +67,11 @@ public class ChessClient {
                 case "join" -> join(params);
                 case "observe" -> observe(params);
                 case "quit" -> quit();
+                case "move" -> move(params);
+                case "redraw" -> redraw();
+                case "highlight" -> highlight(params);
+                case "leave" -> leave();
+                case "resign" -> resign();
                 default -> help();
             };
         } catch (Exception ex) {
@@ -245,9 +251,45 @@ public class ChessClient {
         throw new Exception("Not enough parameters were given.");
     }
 
+    private String move(String... params) throws Exception {
+        assertInGame();
+
+        return EscapeSequences.SET_TEXT_COLOR_RED + "I am a placeholder";
+    }
+
+    private String redraw(String... params) throws Exception {
+        assertInGame();
+
+        return EscapeSequences.SET_TEXT_COLOR_RED + "I am a placeholder";
+    }
+
+    private String highlight(String... params) throws Exception {
+        assertInGame();
+
+        return EscapeSequences.SET_TEXT_COLOR_RED + "I am a placeholder";
+    }
+
+    private String leave(String... params) throws Exception {
+        assertInGame();
+
+        return EscapeSequences.SET_TEXT_COLOR_RED + "I am a placeholder";
+    }
+
+    private String resign(String... params) throws Exception {
+        assertInGame();
+
+        return EscapeSequences.SET_TEXT_COLOR_RED + "I am a placeholder";
+    }
+
     private void assertAuthorized() throws Exception {
         if (state == State.LOGGED_OUT) {
             throw new Exception("Please log in first!");
+        }
+    }
+
+    private void assertInGame() throws Exception {
+        if (state != State.IN_GAME) {
+            throw new Exception("Please join a game!");
         }
     }
 
@@ -260,14 +302,28 @@ public class ChessClient {
                     help                                    :♔:  to list possible commands
                     """;
         }
-        return EscapeSequences.SET_TEXT_COLOR_MAGENTA + """
+        else if(state == State.LOGGED_IN) {
+            return EscapeSequences.SET_TEXT_COLOR_MAGENTA + """
                 create <NAME>                           :♔:  to create a new game
                 list                                    :♔:  to present all existing games
                 join <ID> [ WHITE | BLACK ]             :♔:  to join an existing game
                 observe <ID>                            :♔:  to observe an existing game
                 logout                                  :♔:  to logout
                 quit                                    :♔:  to leave chess behind
-                help                                    :♔:  to llist possible commands
+                help                                    :♔:  to list possible commands
                 """;
+        }
+        else if(state == State.IN_GAME) {
+            return EscapeSequences.SET_TEXT_COLOR_MAGENTA + """
+                move <TILE>                             :♔:  to move your chosen piece
+                redraw                                  :♔:  to redraw the board
+                highlight <TILE>                        :♔:  to list possible moves of a piece
+                leave                                   :♔:  to leave your game
+                resign                                  :♔:  to forfeit and set away from the game
+                help                                    :♔:  to list possible commands
+                """;
+        }
+
+        return EscapeSequences.SET_TEXT_COLOR_RED + "Could not find proper game state. Please reload!";
     }
 }
