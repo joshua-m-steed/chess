@@ -9,29 +9,31 @@ import java.util.List;
 public class BoardDisplay {
 
     private ChessGame game;
+    private ChessGame.TeamColor team;
     List<String> letters = List.of("a", "b", "c", "d", "e", "f", "g", "h");
 
 
-    public BoardDisplay(ChessGame game) {
+    public BoardDisplay(ChessGame game, ChessGame.TeamColor team) {
         this.game = game;
+        this.team = team;
     }
 
 //    public void update(ChessGame game) For future use
 
-    public void draw(ChessGame.TeamColor color) {
+    public void draw() {
         ChessBoard board = game.getBoard();
         ChessPiece[][] display = board.getBoard();
         StringBuilder result = new StringBuilder();
 
-        drawBorder(result, color);
+        drawBorder(result, team);
 
-        if (color == ChessGame.TeamColor.WHITE) {
+        if (team == ChessGame.TeamColor.WHITE) {
             drawWhitePov(result, display);
         } else {
             drawBlackPov(result, display);
         }
 
-        drawBorder(result, color);
+        drawBorder(result, team);
 
         System.out.print(result);
     }

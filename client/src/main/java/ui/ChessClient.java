@@ -15,6 +15,7 @@ public class ChessClient {
     private String username = null;
     private String authToken = null;
     private GameList recentList = null;
+    private BoardDisplay display = null;
 
     public ChessClient(String serverUrl) {
         server = new ServerFacade(serverUrl);
@@ -80,6 +81,10 @@ public class ChessClient {
     }
 
     private String quit() throws Exception {
+        if (state == State.IN_GAME) {
+            resign();
+        }
+
         if (state == State.LOGGED_IN) {
             logout();
         }
@@ -216,8 +221,8 @@ public class ChessClient {
             server.join(gameRequest, authToken);
             state = State.IN_GAME;
 
-            BoardDisplay display = new BoardDisplay(foundGame.game());
-            display.draw(teamColor);
+            display = new BoardDisplay(foundGame.game(), gameRequest.playerColor());
+            display.draw();
             // Potentially verify their input with the list?
 //            server.list(authToken);
 //            System.out.println("");
@@ -232,6 +237,9 @@ public class ChessClient {
     private String observe(String... params) throws Exception {
         assertAuthorized();
         if (params.length >= 1) {
+            if( recentList == null) {
+                throw new Exception("Please refer to 'list' before joining a game");
+            }
             Game foundGame = null;
             int listId = Integer.parseInt(params[0]);
             if (recentList.games() == null) {
@@ -244,8 +252,10 @@ public class ChessClient {
 
             GameJoin gameRequest = new GameJoin(null, gameID);
 //            server.observe(gameRequest, authToken);
-            BoardDisplay display = new BoardDisplay(foundGame.game());
-            display.draw(ChessGame.TeamColor.WHITE);
+            state = State.IN_GAME;
+
+            display = new BoardDisplay(foundGame.game(), ChessGame.TeamColor.WHITE);
+            display.draw();
 
             return EscapeSequences.SET_TEXT_COLOR_GREEN + username +
                     EscapeSequences.SET_TEXT_COLOR_BLUE + " is watching the game, " +
@@ -260,10 +270,11 @@ public class ChessClient {
         return EscapeSequences.SET_TEXT_COLOR_RED + "I am a placeholder";
     }
 
-    private String redraw(String... params) throws Exception {
+    private String redraw() throws Exception {
         assertInGame();
+        display.draw();
 
-        return EscapeSequences.SET_TEXT_COLOR_RED + "I am a placeholder";
+        return "Board redrawn!";
     }
 
     private String highlight(String... params) throws Exception {
