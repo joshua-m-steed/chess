@@ -1,9 +1,9 @@
 package server.websocket;
 
+import com.google.gson.Gson;
 import org.eclipse.jetty.websocket.api.Session;
-import websocket.messages.Notification;
+import websocket.messages.ServerMessage;
 
-import java.io.IOException;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class ConnectionManager {
@@ -17,14 +17,21 @@ public class ConnectionManager {
         connections.remove(session);
     }
 
-    public void broadcast(Session excludeSession, Notification notification) throws Exception {
-        String msg = notification.toString();
+    public void broadcast(Session excludeSession, ServerMessage message) throws Exception {
+        String msg = new Gson().toJson(message);
         for (Session conn : connections.values()) {
             if (conn.isOpen()) {
                 if (!conn.equals(excludeSession)) {
                     conn.getRemote().sendString(msg);
                 }
             }
+        }
+    }
+
+    public void send(Session onlySession, ServerMessage message) throws Exception {
+        String msg = new Gson().toJson(message);
+        if (onlySession.isOpen()) {
+            onlySession.getRemote().sendString(msg);
         }
     }
 }
