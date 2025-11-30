@@ -3,8 +3,9 @@ package server.websocket;
 import com.google.gson.Gson;
 import io.javalin.websocket.*;
 import org.eclipse.jetty.websocket.api.Session;
-import websocket.messages.Action;
-import websocket.messages.Notification;
+import websocket.commands.UserGameCommand;
+import websocket.messages.GameMessage;
+import websocket.messages.NotificationMessage;
 
 public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsCloseHandler {
 
@@ -19,10 +20,10 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
     @Override
     public void handleMessage(WsMessageContext ctx) {
         try {
-            Action action = new Gson().fromJson(ctx.message(), Action.class);
-            switch (action.type()) {
-                case ENTER -> enter(action.name(), ctx.session);
-                case EXIT -> exit(action.name(), ctx.session);
+            UserGameCommand command = new Gson().fromJson(ctx.message(), UserGameCommand.class);
+            switch ((command.getCommandType())) {
+                case CONNECT -> join(command.getGameID(), ctx.session);
+                case LEAVE -> exit(command.getAuthToken(), ctx.session);
             }
         } catch (Exception ex) {
             ex.printStackTrace();
@@ -34,16 +35,15 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
         System.out.println("Websocket closed");
     }
 
-    private void enter(String name, Session session) throws Exception {
+    private void join(Integer game, Session session) throws Exception {
         connections.add(session);
-        String message = String.format("%s has approached the chess tables", name);
-        Notification notification = new Notification(Notification.Type.ARRIVAL, message);
-        connections.broadcast(session, notification);
+        GameMessage notification = new GameMessage(game.toString());
+        connections.send(session, notification);
     }
 
     private void exit(String name, Session session) throws Exception {
         String message = String.format("%s left the chess tables", name);
-        Notification notification = new Notification(Notification.Type.DEPARTURE, message);
+        NotificationMessage notification = new NotificationMessage(NotificationMessage.Type.DISCONNECT, message);
         connections.broadcast(session, notification);
         connections.remove(session);
     }
