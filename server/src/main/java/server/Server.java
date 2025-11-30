@@ -32,7 +32,7 @@ public class Server {
         userService = new UserService(dataAccess);
         gameService = new GameService(dataAccess);
 
-        webSocketHandler = new WebSocketHandler();
+        webSocketHandler = new WebSocketHandler(dataAccess);
 
         server = Javalin.create(config -> config.staticFiles.add("web"));
 

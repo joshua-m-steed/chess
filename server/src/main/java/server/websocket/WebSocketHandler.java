@@ -1,13 +1,25 @@
 package server.websocket;
 
 import com.google.gson.Gson;
+import dataaccess.DataAccess;
+import datamodel.User;
 import io.javalin.websocket.*;
 import org.eclipse.jetty.websocket.api.Session;
+import service.GameService;
+import service.UserService;
 import websocket.commands.UserGameCommand;
 import websocket.messages.GameMessage;
+import service.GameService.*;
+import service.UserService.*;
 import websocket.messages.NotificationMessage;
 
 public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsCloseHandler {
+
+    private final DataAccess dataAccess;
+
+    public WebSocketHandler(DataAccess dataAccess) {
+        this.dataAccess = dataAccess;
+    }
 
     private final ConnectionManager connections = new ConnectionManager();
 
@@ -22,7 +34,7 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
         try {
             UserGameCommand command = new Gson().fromJson(ctx.message(), UserGameCommand.class);
             switch ((command.getCommandType())) {
-                case CONNECT -> join(command.getGameID(), ctx.session);
+                case CONNECT -> join(command, ctx.session);
                 case LEAVE -> exit(command.getAuthToken(), ctx.session);
             }
         } catch (Exception ex) {
@@ -35,10 +47,15 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
         System.out.println("Websocket closed");
     }
 
-    private void join(Integer game, Session session) throws Exception {
+    private void join(UserGameCommand command, Session session) throws Exception {
         connections.add(session);
-        GameMessage notification = new GameMessage(game.toString());
-        connections.send(session, notification);
+        GameMessage message = new GameMessage(command.getGameID().toString());
+        connections.send(session, message);
+
+        User authUser = dataAccess.getAuth(command.getAuthToken());
+        String notifMessage = String.format("%s joined the game", authUser.username(), command.getGameID());
+        NotificationMessage notification = new NotificationMessage(NotificationMessage.Type.JOIN, notifMessage);
+        connections.broadcast(session, notification);
     }
 
     private void exit(String name, Session session) throws Exception {

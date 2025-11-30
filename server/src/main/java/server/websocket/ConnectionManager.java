@@ -21,7 +21,7 @@ public class ConnectionManager {
         String msg = new Gson().toJson(message);
         for (Session conn : connections.values()) {
             if (conn.isOpen()) {
-                if (!conn.equals(excludeSession)) {
+                if (conn != excludeSession) {
                     conn.getRemote().sendString(msg);
                 }
             }
