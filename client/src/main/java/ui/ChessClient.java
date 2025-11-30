@@ -177,6 +177,8 @@ public class ChessClient {
 
             Game game = new Game(null, null, null, gameName, new ChessGame());
             game = server.create(game, authToken);
+            GameList list = server.list(authToken);
+            recentList = list;
             return "The game " + EscapeSequences.SET_TEXT_COLOR_GREEN + gameName
                     + EscapeSequences.SET_TEXT_COLOR_BLUE + " has been created";
         }
@@ -212,6 +214,7 @@ public class ChessClient {
 
             GameJoin gameRequest = new GameJoin(teamColor, gameID);
             server.join(gameRequest, authToken);
+            state = State.IN_GAME;
 
             BoardDisplay display = new BoardDisplay(foundGame.game());
             display.draw(teamColor);
