@@ -647,3 +647,58 @@ A mix of both
 
 **Decryption**
 Makes data readable again
+
+**Concurrency**  
+Sequential -> One after the other  
+--> -->  
+
+Concurrent -> Time slicing  
+-> ---> --> -> --> ->  
+
+Parallel -> Same time  
+---->  
+---->  
+Concurrent and parallel -> Same time, but sime slicing  
+--> ---> ->  
+--> ---> ->  
+
+Processes - OS level concurrency  
+Threads - Process level concurrency  
+
+Negatives  
+*Overhead*  
+Bookkeeping cost  
+
+*Resource Synchronization*  
+When a task can run  
+
+*Starvation*  
+One task never gets scheduled  
+
+*Deadlock*  
+Two tasks each hold a key resource
+
+
+Executor Services  
+Task Queues, Thread Pool, and Task Submitters  
+
+newSingleThreadExecutor - Uses a single thread and switches the callable task. Goof for removing thread context switching overhead.  
+newFixedThreadPool - Reuses threads. Good for saving on thread creation overhead.  
+newCachedThreadPool - Reuses threads. Good for saving on thread creation where max number of needed thread is unknown.  
+newScheduledThreadPool - Runs threads periodically. Goof for scheduled tasks without creating a new thread every time.
+
+
+Critcal Resource - Shared resource  
+Critical Section - Code that accesses the critical resource  
+Race Condition - Potentially two threads hitting programms at the same time  
+
+Synchronization
+synchronized void func() {
+    // critical section
+}
+
+void func() {
+    synchronized(this) {
+        // Critical section
+    }
+}
