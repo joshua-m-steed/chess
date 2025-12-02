@@ -702,3 +702,5 @@ void func() {
         // Critical section
     }
 }
+
+Synchronization protects the functions/objects until the person who is using it is done using it.

@@ -1,9 +1,9 @@
 package ui;
 
-import chess.ChessBoard;
-import chess.ChessGame;
-import chess.ChessPiece;
+import chess.*;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 public class BoardDisplay {
@@ -36,6 +36,42 @@ public class BoardDisplay {
         drawBorder(result, team);
 
         System.out.print(result);
+    }
+
+    public void highlight(String tileID) {
+        ChessBoard board = game.getBoard();
+        ChessPiece[][] display = board.getBoard();
+        StringBuilder result = new StringBuilder();
+        ChessPosition targetPos = parseTileID(tileID);
+
+        ChessPiece targetPiece = board.getPiece(targetPos);
+
+        if (targetPiece == null) {
+            draw();
+            System.out.println(EscapeSequences.SET_TEXT_COLOR_RED + "This tile is unoccupied!");
+        } else {
+
+            Collection<ChessMove> targetMoves = targetPiece.pieceMoves(board, targetPos);
+            List<ChessPosition> endPositions = new ArrayList<>();
+
+            for (ChessMove move : targetMoves) {
+                endPositions.add(move.getEndPosition());
+            }
+
+            drawBorder(result, team);
+
+            if (team == ChessGame.TeamColor.WHITE) {
+                drawHighlightWhitePov(result, display, endPositions, targetPos);
+            } else {
+                drawHighlightBlackPov(result, display, endPositions, targetPos);
+            }
+
+            drawBorder(result, team);
+
+            System.out.print(result);
+
+            System.out.format("I am looking for the %s piece%n", targetPiece.getPieceType().toString());
+        }
     }
 
     private void drawBorder(StringBuilder result, ChessGame.TeamColor color) {
@@ -94,6 +130,44 @@ public class BoardDisplay {
         }
     }
 
+    private void drawHighlightWhitePov(StringBuilder result, ChessPiece[][] display, List<ChessPosition> endPositions, ChessPosition targetPos) {
+        for(int i = 7; i >= 0; i--)
+        {
+            result.append(EscapeSequences.SET_BG_COLOR_LIGHT_GREY)
+                    .append(EscapeSequences.SET_TEXT_COLOR_GREEN + " " + (i+1) + " ");
+            // Pre
+            for (int j = 0; j < 8; j++)
+            {
+                drawTile(7 - i, j, result);
+                checkPieces(i, j, result, display);
+            }
+            //Post
+            result.append(EscapeSequences.SET_BG_COLOR_LIGHT_GREY)
+                    .append(EscapeSequences.SET_TEXT_COLOR_GREEN + " " + (i+1) + " ")
+                    .append(EscapeSequences.RESET_BG_COLOR + EscapeSequences.RESET_TEXT_COLOR)
+                    .append("\n");
+        }
+    }
+
+    private void drawHighlightBlackPov(StringBuilder result, ChessPiece[][] display, List<ChessPosition> endPositions, ChessPosition targetPos) {
+        for(int i = 0; i < 8; i++)
+        {
+            result.append(EscapeSequences.SET_BG_COLOR_LIGHT_GREY)
+                    .append(EscapeSequences.SET_TEXT_COLOR_GREEN + " " + (i+1) + " ");
+            // Pre
+            for (int j = 7; j >= 0; j--)
+            {
+                drawTile(i, 7- j, result);
+                checkPieces(i, j, result, display);
+            }
+            //Post
+            result.append(EscapeSequences.SET_BG_COLOR_LIGHT_GREY)
+                    .append(EscapeSequences.SET_TEXT_COLOR_GREEN + " " + (i+1) + " ")
+                    .append(EscapeSequences.RESET_BG_COLOR + EscapeSequences.RESET_TEXT_COLOR)
+                    .append("\n");
+        }
+    }
+
     private void drawTile(int i, int j, StringBuilder result) {
         if((i + j) % 2 == 0) {
             result.append(EscapeSequences.SET_BG_COLOR_WHITE);
@@ -129,6 +203,16 @@ public class BoardDisplay {
         }
 
         result.append(piece);
+    }
+
+    private ChessPosition parseTileID(String tileID) {
+        char colChar = tileID.charAt(0);
+        char rowChar = tileID.charAt(1);
+
+        int colInt = colChar - 'a' + 1;
+        int rowInt = Character.getNumericValue(rowChar);
+
+        return new ChessPosition(rowInt, colInt);
     }
 
     private void checkPieces(int i, int j, StringBuilder result, ChessPiece[][] display) {

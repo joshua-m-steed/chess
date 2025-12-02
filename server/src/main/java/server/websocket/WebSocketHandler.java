@@ -5,8 +5,6 @@ import dataaccess.DataAccess;
 import datamodel.User;
 import io.javalin.websocket.*;
 import org.eclipse.jetty.websocket.api.Session;
-import service.GameService;
-import service.UserService;
 import websocket.commands.UserGameCommand;
 import websocket.messages.GameMessage;
 import service.GameService.*;

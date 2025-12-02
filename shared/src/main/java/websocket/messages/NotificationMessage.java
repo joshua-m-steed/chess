@@ -9,7 +9,6 @@ public class NotificationMessage extends ServerMessage {
         RESIGN,
         CHECK,
         CHECKMATE,
-        CONNECT,
         DISCONNECT
     }
 

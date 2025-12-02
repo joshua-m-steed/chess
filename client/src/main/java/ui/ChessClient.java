@@ -279,14 +279,20 @@ public class ChessClient {
 
     private String highlight(String... params) throws Exception {
         assertInGame();
+        if (params.length >= 1) {
+            String tileID = params[0];
+            display.highlight(tileID);
 
-        return EscapeSequences.SET_TEXT_COLOR_RED + "I am a placeholder";
+            return EscapeSequences.SET_TEXT_COLOR_RED + "I am a placeholder";
+        }
+        throw new Exception("Not enough parameters were given.");
     }
 
-    private String leave(String... params) throws Exception {
+    private String leave() throws Exception {
         assertInGame();
 
-        return EscapeSequences.SET_TEXT_COLOR_RED + "I am a placeholder";
+        state = State.LOGGED_IN;
+        return "Leaving the game";
     }
 
     private String resign(String... params) throws Exception {
