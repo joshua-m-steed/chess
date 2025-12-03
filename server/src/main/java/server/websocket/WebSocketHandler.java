@@ -3,15 +3,12 @@ package server.websocket;
 import com.google.gson.Gson;
 import dataaccess.DataAccess;
 import datamodel.Game;
-import datamodel.GameListResult;
 import datamodel.User;
 import io.javalin.websocket.*;
 import org.eclipse.jetty.websocket.api.Session;
 import websocket.commands.UserGameCommand;
 import websocket.messages.ErrorMessage;
-import websocket.messages.GameMessage;
-import service.GameService.*;
-import service.UserService.*;
+import websocket.messages.LoadGameMessage;
 import websocket.messages.NotificationMessage;
 
 import java.util.ArrayList;
@@ -38,6 +35,7 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
             UserGameCommand command = new Gson().fromJson(ctx.message(), UserGameCommand.class);
             switch ((command.getCommandType())) {
                 case CONNECT -> join(command, ctx.session);
+                case MAKE_MOVE -> move(command, ctx.session);
                 case LEAVE -> exit(command.getAuthToken(), ctx.session);
             }
         } catch (Exception ex) {
@@ -79,7 +77,7 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
 
 
         connections.add(session);
-        GameMessage message = new GameMessage(command.getGameID().toString());
+        LoadGameMessage message = new LoadGameMessage(command.getGameID().toString());
         connections.send(session, message);
 
 
@@ -87,6 +85,16 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
         String notifMessage = String.format("%s joined the game", authUser.username(), command.getGameID());
         NotificationMessage notification = new NotificationMessage(NotificationMessage.Type.JOIN, notifMessage);
         connections.broadcast(session, notification);
+    }
+
+    private void move(UserGameCommand command, Session session) throws Exception {
+        User authUser = dataAccess.getAuth(command.getAuthToken());
+        Game game = null;
+        if (authUser == null) {
+            ErrorMessage errorMessage = new ErrorMessage("Error: Could not find the user. Please try again, or reload!");
+            connections.send(session, errorMessage);
+            return;
+        }
     }
 
     private void exit(String name, Session session) throws Exception {
