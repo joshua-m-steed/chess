@@ -48,30 +48,28 @@ public class BoardDisplay {
 
         if (targetPiece == null) {
             draw();
-            System.out.println(EscapeSequences.SET_TEXT_COLOR_RED + "This tile is unoccupied!");
-        } else {
-
-            Collection<ChessMove> targetMoves = targetPiece.pieceMoves(board, targetPos);
-            List<ChessPosition> endPositions = new ArrayList<>();
-
-            for (ChessMove move : targetMoves) {
-                endPositions.add(move.getEndPosition());
-            }
-
-            drawBorder(result, team);
-
-            if (team == ChessGame.TeamColor.WHITE) {
-                drawHighlightWhitePov(result, display, endPositions, targetPos);
-            } else {
-                drawHighlightBlackPov(result, display, endPositions, targetPos);
-            }
-
-            drawBorder(result, team);
-
-            System.out.print(result);
-
-            System.out.format("I am looking for the %s piece%n", targetPiece.getPieceType().toString());
+            System.out.println(EscapeSequences.SET_TEXT_COLOR_RED + "'" + tileID + "'" + " is unoccupied!" + EscapeSequences.RESET_TEXT_COLOR);
+            return;
         }
+
+        Collection<ChessMove> targetMoves = targetPiece.pieceMoves(board, targetPos);
+        List<ChessPosition> endPositions = new ArrayList<>();
+
+        for (ChessMove move : targetMoves) {
+            endPositions.add(move.getEndPosition());
+        }
+
+        drawBorder(result, team);
+
+        if (team == ChessGame.TeamColor.WHITE) {
+            drawHighlightWhitePov(result, display, endPositions, targetPos);
+        } else {
+            drawHighlightBlackPov(result, display, endPositions, targetPos);
+        }
+
+        drawBorder(result, team);
+
+        System.out.print(result);
     }
 
     private void drawBorder(StringBuilder result, ChessGame.TeamColor color) {
@@ -100,8 +98,8 @@ public class BoardDisplay {
             // Pre
             for (int j = 0; j < 8; j++)
             {
-                drawTile(7 - i, j, result);
-                checkPieces(i, j, result, display);
+                drawTile(i, j, result);
+                checkPieces(i, j, result, display, Boolean.FALSE, Boolean.FALSE);
             }
             //Post
             result.append(EscapeSequences.SET_BG_COLOR_LIGHT_GREY)
@@ -119,8 +117,8 @@ public class BoardDisplay {
             // Pre
             for (int j = 7; j >= 0; j--)
             {
-                drawTile(i, 7- j, result);
-                checkPieces(i, j, result, display);
+                drawTile(i, 8 - j, result);
+                checkPieces(i, j, result, display, Boolean.FALSE, Boolean.FALSE);
             }
             //Post
             result.append(EscapeSequences.SET_BG_COLOR_LIGHT_GREY)
@@ -136,10 +134,19 @@ public class BoardDisplay {
             result.append(EscapeSequences.SET_BG_COLOR_LIGHT_GREY)
                     .append(EscapeSequences.SET_TEXT_COLOR_GREEN + " " + (i+1) + " ");
             // Pre
-            for (int j = 0; j < 8; j++)
-            {
-                drawTile(7 - i, j, result);
-                checkPieces(i, j, result, display);
+            for (int j = 0; j < 8; j++) {
+                ChessPosition scan = new ChessPosition(i + 1, j + 1);
+                if (endPositions.contains(scan)) {
+                    drawHighlightTile(i, j, result);
+                    checkPieces(i, j, result, display, Boolean.TRUE, Boolean.FALSE);
+                } else if (scan.equals(targetPos)) {
+                    result.append(EscapeSequences.SET_BG_COLOR_MAGENTA);
+                    checkPieces(i, j, result, display, Boolean.FALSE, Boolean.TRUE);
+                } else {
+                    drawTile(i, j, result);
+                    checkPieces(i, j, result, display, Boolean.FALSE, Boolean.FALSE);
+                }
+
             }
             //Post
             result.append(EscapeSequences.SET_BG_COLOR_LIGHT_GREY)
@@ -157,8 +164,17 @@ public class BoardDisplay {
             // Pre
             for (int j = 7; j >= 0; j--)
             {
-                drawTile(i, 7- j, result);
-                checkPieces(i, j, result, display);
+                ChessPosition scan = new ChessPosition(i + 1, j + 1);
+                if (endPositions.contains(scan)) {
+                    drawHighlightTile(i, j, result);
+                    checkPieces(i, j, result, display, Boolean.TRUE, Boolean.FALSE);
+                } else if (scan.equals(targetPos)) {
+                    result.append(EscapeSequences.SET_BG_COLOR_MAGENTA);
+                    checkPieces(i, j, result, display, Boolean.FALSE, Boolean.TRUE);
+                } else {
+                    drawTile(i, j, result);
+                    checkPieces(i, j, result, display, Boolean.FALSE, Boolean.FALSE);
+                }
             }
             //Post
             result.append(EscapeSequences.SET_BG_COLOR_LIGHT_GREY)
@@ -170,17 +186,34 @@ public class BoardDisplay {
 
     private void drawTile(int i, int j, StringBuilder result) {
         if((i + j) % 2 == 0) {
-            result.append(EscapeSequences.SET_BG_COLOR_WHITE);
-        } else {
             result.append(EscapeSequences.SET_BG_COLOR_BLACK);
+        } else {
+            result.append(EscapeSequences.SET_BG_COLOR_WHITE);
         }
     }
 
-    private void drawPiece(int i, int j, StringBuilder result, ChessPiece[][] display) {
+    private void drawHighlightTile(int i, int j, StringBuilder result) {
+        if((i + j) % 2 == 0) {
+            result.append(EscapeSequences.SET_BG_COLOR_DARK_GREEN);
+        } else {
+            result.append(EscapeSequences.SET_BG_COLOR_GREEN);
+        }
+    }
+
+    private void drawPiece(int i, int j, StringBuilder result, ChessPiece[][] display, Boolean highlight, Boolean target) {
+
+        if (highlight) {
+            result.append(EscapeSequences.SET_TEXT_COLOR_MAGENTA);
+        } else if (target) {
+            result.append(EscapeSequences.SET_TEXT_COLOR_YELLOW);
+        } else if (display[i][j].getTeamColor() == ChessGame.TeamColor.WHITE) {
+            result.append(EscapeSequences.SET_TEXT_COLOR_RED);
+        } else {
+            result.append(EscapeSequences.SET_TEXT_COLOR_BLUE);
+        }
+
         String piece;
         if (display[i][j].getTeamColor() == ChessGame.TeamColor.WHITE) {
-            result.append(EscapeSequences.SET_TEXT_COLOR_RED);
-
             piece = switch(display[i][j].getPieceType()) {
                 case KING -> EscapeSequences.WHITE_KING;
                 case QUEEN -> EscapeSequences.WHITE_QUEEN;
@@ -189,9 +222,10 @@ public class BoardDisplay {
                 case KNIGHT -> EscapeSequences.WHITE_KNIGHT;
                 case PAWN -> EscapeSequences.WHITE_PAWN;
             };
-        } else {
-            result.append(EscapeSequences.SET_TEXT_COLOR_BLUE);
-
+            result.append(piece);
+            return;
+        }
+        if (display[i][j].getTeamColor() == ChessGame.TeamColor.BLACK) {
             piece = switch(display[i][j].getPieceType()) {
                 case KING -> EscapeSequences.BLACK_KING;
                 case QUEEN -> EscapeSequences.BLACK_QUEEN;
@@ -200,9 +234,8 @@ public class BoardDisplay {
                 case KNIGHT -> EscapeSequences.BLACK_KNIGHT;
                 case PAWN -> EscapeSequences.BLACK_PAWN;
             };
+            result.append(piece);
         }
-
-        result.append(piece);
     }
 
     private ChessPosition parseTileID(String tileID) {
@@ -215,9 +248,9 @@ public class BoardDisplay {
         return new ChessPosition(rowInt, colInt);
     }
 
-    private void checkPieces(int i, int j, StringBuilder result, ChessPiece[][] display) {
+    private void checkPieces(int i, int j, StringBuilder result, ChessPiece[][] display, Boolean highlight, Boolean target) {
         if(display[i][j] != null) {
-            drawPiece(i, j, result, display);
+            drawPiece(i, j, result, display, highlight, target);
         } else {
             result.append("   ");
         }
