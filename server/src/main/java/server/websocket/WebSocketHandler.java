@@ -6,6 +6,7 @@ import datamodel.User;
 import io.javalin.websocket.*;
 import org.eclipse.jetty.websocket.api.Session;
 import websocket.commands.UserGameCommand;
+import websocket.messages.ErrorMessage;
 import websocket.messages.GameMessage;
 import service.GameService.*;
 import service.UserService.*;
@@ -46,11 +47,22 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
     }
 
     private void join(UserGameCommand command, Session session) throws Exception {
+        User authUser = dataAccess.getAuth(command.getAuthToken());
+        if (authUser == null) {
+            ErrorMessage errorMessage = new ErrorMessage("Error: Could not find the user. Please try again, or reload!");
+            connections.send(session, errorMessage);
+            return;
+        }
+
+
+
+
         connections.add(session);
         GameMessage message = new GameMessage(command.getGameID().toString());
         connections.send(session, message);
 
-        User authUser = dataAccess.getAuth(command.getAuthToken());
+
+
         String notifMessage = String.format("%s joined the game", authUser.username(), command.getGameID());
         NotificationMessage notification = new NotificationMessage(NotificationMessage.Type.JOIN, notifMessage);
         connections.broadcast(session, notification);
