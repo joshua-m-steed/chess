@@ -51,9 +51,7 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
     private void join(UserGameCommand command, Session session) throws Exception {
         User authUser = dataAccess.getAuth(command.getAuthToken());
         Game game = null;
-        if (authUser == null) {
-            ErrorMessage errorMessage = new ErrorMessage("Error: Could not find the user. Please try again, or reload!");
-            connections.send(session, errorMessage);
+        if (checkAuth(authUser, session)) {
             return;
         }
         ArrayList<Game> gameList = dataAccess.listGame(command.getAuthToken());
@@ -90,9 +88,7 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
     private void move(UserGameCommand command, Session session) throws Exception {
         User authUser = dataAccess.getAuth(command.getAuthToken());
         Game game = null;
-        if (authUser == null) {
-            ErrorMessage errorMessage = new ErrorMessage("Error: Could not find the user. Please try again, or reload!");
-            connections.send(session, errorMessage);
+        if (checkAuth(authUser, session)) {
             return;
         }
     }
@@ -102,5 +98,15 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
         NotificationMessage notification = new NotificationMessage(NotificationMessage.Type.DISCONNECT, message);
         connections.broadcast(session, notification);
         connections.remove(session);
+    }
+
+    private Boolean checkAuth(User authUser, Session session) throws Exception {
+        if (authUser == null) {
+            ErrorMessage errorMessage = new ErrorMessage("Error: Could not find the user. Please try again, or reload!");
+            connections.send(session, errorMessage);
+            return Boolean.TRUE;
+        } else {
+            return Boolean.FALSE;
+        }
     }
 }
