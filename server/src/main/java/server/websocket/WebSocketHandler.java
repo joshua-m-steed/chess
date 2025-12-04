@@ -230,7 +230,7 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
             connections.broadcast(session, notificationMessage, game.gameID());
             connections.send(session, notificationMessage);
         } else if (authUser.username().equals(game.blackUsername())) {
-            chessGame.resign(ChessGame.TeamColor.WHITE);
+            chessGame.resign(ChessGame.TeamColor.BLACK);
             String message = String.format("%s has resigned from the game! %s wins be default!",
                     game.blackUsername(),
                     game.whiteUsername());

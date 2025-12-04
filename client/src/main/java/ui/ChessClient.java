@@ -2,21 +2,40 @@ package ui;
 
 import chess.ChessGame;
 import com.google.gson.Gson;
+import jakarta.websocket.*;
 import model.*;
 import server.ServerFacade;
+import websocket.NotificationHandler;
+import websocket.WebSocketFacade;
+import websocket.commands.UserGameCommand;
+import websocket.messages.NotificationMessage;
 
+import java.net.URI;
 import java.util.*;
 
-public class ChessClient {
+public class ChessClient implements NotificationHandler {
     private State state = State.LOGGED_OUT;
-    private ServerFacade server;
+    private final ServerFacade server;
+    private final WebSocketFacade ws;
     private String username = null;
     private String authToken = null;
+    private Integer currGameID = null;
     private GameList recentList = null;
     private BoardDisplay display = null;
+    private Gson gson = new Gson();
 
-    public ChessClient(String serverUrl) {
+    public ChessClient(String serverUrl) throws Exception {
         server = new ServerFacade(serverUrl);
+        ws = new WebSocketFacade(serverUrl, this);
+    }
+
+    public void notify(NotificationMessage notificationMessage) {
+        if (notificationMessage.getMessage() == null) {
+            return;
+        } else {
+            System.out.println(notificationMessage.getMessage());
+        }
+
     }
 
     public enum State {
@@ -152,7 +171,6 @@ public class ChessClient {
         GameList list = server.list(authToken);
         recentList = list;
         StringBuilder result = new StringBuilder();
-        var gson = new Gson();
         if (list.games().isEmpty()) {
             return "There are no games at the moment!";
         } else {
@@ -213,10 +231,12 @@ public class ChessClient {
 
 
             int gameID = foundGame.gameID();
+            currGameID = gameID;
             ChessGame.TeamColor teamColor = Objects.equals(color, "white") ? ChessGame.TeamColor.WHITE : ChessGame.TeamColor.BLACK;
 
             GameJoin gameRequest = new GameJoin(teamColor, gameID);
             server.join(gameRequest, authToken);
+            ws.joinGame(authToken, gameID);
             state = State.IN_GAME;
 
             display = new BoardDisplay(foundGame.game(), gameRequest.playerColor());
@@ -249,6 +269,7 @@ public class ChessClient {
             int gameID = foundGame.gameID();
 
             GameJoin gameRequest = new GameJoin(null, gameID);
+            ws.joinGame(authToken, gameID);
 //            server.observe(gameRequest, authToken);
             state = State.IN_GAME;
 
@@ -306,11 +327,18 @@ public class ChessClient {
         assertInGame();
         // NEEDS MORE USER TO LEAVE GAME!!!
         state = State.LOGGED_IN;
+        currGameID = null;
         return "Leaving the game";
     }
 
     private String resign(String... params) throws Exception {
         assertInGame();
+
+        UserGameCommand command = new UserGameCommand(
+                UserGameCommand.CommandType.RESIGN,
+                authToken,
+                currGameID
+        );
 
         return EscapeSequences.SET_TEXT_COLOR_RED + "I am a placeholder";
     }
