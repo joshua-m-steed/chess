@@ -89,7 +89,7 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
 
 
         String notifMessage = String.format("%s joined the game", authUser.username(), command.getGameID());
-        NotificationMessage notification = new NotificationMessage(NotificationMessage.Type.JOIN, notifMessage);
+        NotificationMessage notification = new NotificationMessage(NotificationMessage.NotificationType.JOIN, notifMessage);
         connections.broadcast(session, notification, game.gameID());
     }
 
@@ -184,7 +184,7 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
                 piece.getPieceType(),
                 move.getStartPosition(),
                 move.getEndPosition());
-        NotificationMessage notificationMessage = new NotificationMessage(NotificationMessage.Type.MOVE, message);
+        NotificationMessage notificationMessage = new NotificationMessage(NotificationMessage.NotificationType.MOVE, message);
         connections.broadcast(session, notificationMessage, game.gameID());
     }
 
@@ -226,7 +226,7 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
             String message = String.format("%s has resigned from the game! %s wins be default!",
                     game.whiteUsername(),
                     game.blackUsername());
-            NotificationMessage notificationMessage = new NotificationMessage(NotificationMessage.Type.RESIGN, message);
+            NotificationMessage notificationMessage = new NotificationMessage(NotificationMessage.NotificationType.RESIGN, message);
             connections.broadcast(session, notificationMessage, game.gameID());
             connections.send(session, notificationMessage);
         } else if (authUser.username().equals(game.blackUsername())) {
@@ -234,7 +234,7 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
             String message = String.format("%s has resigned from the game! %s wins be default!",
                     game.blackUsername(),
                     game.whiteUsername());
-            NotificationMessage notificationMessage = new NotificationMessage(NotificationMessage.Type.RESIGN, message);
+            NotificationMessage notificationMessage = new NotificationMessage(NotificationMessage.NotificationType.RESIGN, message);
             connections.broadcast(session, notificationMessage, game.gameID());
             connections.send(session, notificationMessage);
         } else {
@@ -279,7 +279,7 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
 
 
         String message = String.format("%s left the chess tables", authUser.username());
-        NotificationMessage notification = new NotificationMessage(NotificationMessage.Type.DISCONNECT, message);
+        NotificationMessage notification = new NotificationMessage(NotificationMessage.NotificationType.DISCONNECT, message);
 
         connections.broadcast(session, notification, game.gameID());
         connections.remove(session);
