@@ -1,17 +1,20 @@
 package server.websocket;
 
+import chess.*;
 import com.google.gson.Gson;
 import dataaccess.DataAccess;
 import datamodel.Game;
 import datamodel.User;
 import io.javalin.websocket.*;
 import org.eclipse.jetty.websocket.api.Session;
+import websocket.commands.MakeMoveCommand;
 import websocket.commands.UserGameCommand;
 import websocket.messages.ErrorMessage;
 import websocket.messages.LoadGameMessage;
 import websocket.messages.NotificationMessage;
 
 import java.util.ArrayList;
+import java.util.Collection;
 
 public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsCloseHandler {
 
@@ -32,10 +35,12 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
     @Override
     public void handleMessage(WsMessageContext ctx) {
         try {
-            UserGameCommand command = new Gson().fromJson(ctx.message(), UserGameCommand.class);
+            Gson gson = new Gson();
+            UserGameCommand command = gson.fromJson(ctx.message(), UserGameCommand.class);
+
             switch ((command.getCommandType())) {
                 case CONNECT -> join(command, ctx.session);
-                case MAKE_MOVE -> move(command, ctx.session);
+                case MAKE_MOVE -> move(gson.fromJson(ctx.message(), MakeMoveCommand.class), ctx.session);
                 case LEAVE -> exit(command.getAuthToken(), ctx.session);
             }
         } catch (Exception ex) {
@@ -85,10 +90,76 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
         connections.broadcast(session, notification);
     }
 
-    private void move(UserGameCommand command, Session session) throws Exception {
+    private void move(MakeMoveCommand command, Session session) throws Exception {
         User authUser = dataAccess.getAuth(command.getAuthToken());
         Game game = null;
+        ChessMove move = command.getMove();
         if (checkAuth(authUser, session)) {
+            return;
+        }
+
+        // Verify GameID
+        ArrayList<Game> gameList = dataAccess.listGame(command.getAuthToken());
+        if (gameList == null || gameList.size() < command.getGameID()) {
+            ErrorMessage errorMessage = new ErrorMessage("Error: Could not find the game. Please try again!");
+            connections.send(session, errorMessage);
+            return;
+        } else {
+            for (Game gameItem : gameList) {
+                if (gameItem.gameID() == command.getGameID());
+                {
+                    game = gameItem;
+                }
+            }
+            if (game == null) {
+                ErrorMessage errorMessage = new ErrorMessage("Error: Could not find the game. Please try again!");
+                connections.send(session, errorMessage);
+                return;
+            }
+        }
+
+
+        ChessGame chessGame = game.game();
+        ChessBoard board = chessGame.getBoard();
+        ChessPiece piece = board.getPiece(move.getStartPosition());
+        Collection<ChessMove> pieceMoves = piece.pieceMoves(board, move.getStartPosition());
+
+        // Check Game Concluded
+
+        // Check Observer
+        if (authUser.username() != game.whiteUsername() && authUser.username() != game.blackUsername()) {
+            ErrorMessage errorMessage = new ErrorMessage("Error: You are currently observing the game and can't move pieces.");
+            connections.send(session, errorMessage);
+            return;
+        }
+
+        // Check Wrong Turn
+        if (authUser.username() == game.whiteUsername() && chessGame.getTeamTurn() != ChessGame.TeamColor.WHITE) {
+            ErrorMessage errorMessage = new ErrorMessage("Error: It is not your turn to move just yet.");
+            connections.send(session, errorMessage);
+            return;
+        } else if (authUser.username() == game.blackUsername() && chessGame.getTeamTurn() != ChessGame.TeamColor.BLACK) {
+            ErrorMessage errorMessage = new ErrorMessage("Error: It is not your turn to move just yet.");
+            connections.send(session, errorMessage);
+            return;
+        }
+
+        // Check Move Opponent piece
+        if (authUser.username() == game.blackUsername() && piece.getTeamColor() == ChessGame.TeamColor.WHITE) {
+            ErrorMessage errorMessage = new ErrorMessage("Error: You aren't allowed to move that piece!");
+            connections.send(session, errorMessage);
+            return;
+        } else if (authUser.username() == game.whiteUsername() && piece.getTeamColor() == ChessGame.TeamColor.BLACK) {
+            ErrorMessage errorMessage = new ErrorMessage("Error: You aren't allowed to move that piece!");
+            connections.send(session, errorMessage);
+            return;
+        }
+
+        // Check Move for Validity
+        if (!pieceMoves.contains(move));
+        {
+            ErrorMessage errorMessage = new ErrorMessage("Error: This is not a valid move!");
+            connections.send(session, errorMessage);
             return;
         }
     }

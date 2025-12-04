@@ -335,7 +335,7 @@ public class ChessClient {
         }
         else if(state == State.IN_GAME) {
             return EscapeSequences.SET_TEXT_COLOR_MAGENTA + """
-                move <TILE>                             :♔:  to move your chosen piece
+                move <PIECE> <TILE>                     :♔:  to move piece to chosen tile
                 redraw                                  :♔:  to redraw the board
                 highlight <TILE>                        :♔:  to list possible moves of a piece
                 leave                                   :♔:  to leave your game

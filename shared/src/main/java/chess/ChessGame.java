@@ -14,9 +14,13 @@ public class ChessGame {
 
     final private ChessBoard board = new ChessBoard();
     private TeamColor teamTurn;
+    private WinCondition winState;
+    private Boolean whiteWin = false;
+    private Boolean blackWin = false;
 
     public ChessGame() {
         this.teamTurn = TeamColor.WHITE;
+        this.winState = WinCondition.IN_PLAY;
         this.board.resetBoard();
     }
 
@@ -36,12 +40,23 @@ public class ChessGame {
         teamTurn = team;
     }
 
+    public WinCondition getWinCondition() {
+        return winState;
+    }
+
     /**
      * Enum identifying the 2 possible teams in a chess game
      */
     public enum TeamColor {
         WHITE,
         BLACK
+    }
+
+    public enum WinCondition {
+        IN_PLAY,
+        RESIGN,
+        CHECKMATE,
+        STALEMATE
     }
 
     /**
