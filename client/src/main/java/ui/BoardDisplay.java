@@ -18,9 +18,12 @@ public class BoardDisplay {
         this.team = team;
     }
 
-//    public void update(ChessGame game) For future use
+    public void update(ChessGame game) {
+        this.game = game;
+    }
 
     public void draw() {
+        System.out.println();
         ChessBoard board = game.getBoard();
         ChessPiece[][] display = board.getBoard();
         StringBuilder result = new StringBuilder();

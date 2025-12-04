@@ -236,11 +236,10 @@ public class ChessClient implements NotificationHandler {
 
             GameJoin gameRequest = new GameJoin(teamColor, gameID);
             server.join(gameRequest, authToken);
-            ws.joinGame(authToken, gameID);
+            ws.joinGame(authToken, currGameID);
             state = State.IN_GAME;
 
             display = new BoardDisplay(foundGame.game(), gameRequest.playerColor());
-            display.draw();
             // Potentially verify their input with the list?
 //            server.list(authToken);
 //            System.out.println("");
@@ -269,7 +268,7 @@ public class ChessClient implements NotificationHandler {
             int gameID = foundGame.gameID();
 
             GameJoin gameRequest = new GameJoin(null, gameID);
-            ws.joinGame(authToken, gameID);
+            ws.joinGame(authToken, currGameID);
 //            server.observe(gameRequest, authToken);
             state = State.IN_GAME;
 
@@ -294,11 +293,55 @@ public class ChessClient implements NotificationHandler {
             } else if (checkInvalidMoveInputs(endPosition)) {
                 return EscapeSequences.SET_TEXT_COLOR_RED + "Invalid end input. Please try again";
             }
+
+            Pair<Integer, Integer> start = convertMoveToInts(startPosition);
+            ChessPosition startPos = new ChessPosition(start.getFirst(), start.getSecond());
+
+            Pair<Integer, Integer> end = convertMoveToInts(endPosition);
+            ChessPosition endPos = new ChessPosition(end.getFirst(), end.getSecond());
+
+            Game target = null;
+            for (Game game : recentList.games()) {
+                if (game.gameID().equals(currGameID)) {
+                    target = game;
+                }
+            }
+            ChessPiece.PieceType promoChoice = null;
+            if (evalPromotionPiece(startPos, endPos, target.game().getBoard())) {
+                Scanner scanner = new Scanner(System.in);
+                while (promoChoice == null) {
+                    System.out.println("You're piece can be promoted! Please choose below!");
+                    System.out.println(EscapeSequences.SET_TEXT_COLOR_MAGENTA +
+                            "|:| QUEEN | ROOK | BISHOP | KNIGHT |:|");
+
+                    String line = scanner.nextLine().trim().toLowerCase();
+
+                    switch (line) {
+                        case "queen":
+                        case "q":
+                            promoChoice = ChessPiece.PieceType.QUEEN;
+                            break;
+                        case "rook":
+                        case "r":
+                            promoChoice = ChessPiece.PieceType.ROOK;
+                            break;
+                        case "bishop":
+                        case "b":
+                            promoChoice = ChessPiece.PieceType.BISHOP;
+                            break;
+                        case "knight":
+                        case "k":
+                            promoChoice = ChessPiece.PieceType.KNIGHT;
+                            break;
+                    }
+                }
+            }
+
+            ChessMove move = new ChessMove(startPos, endPos, promoChoice);
+            ws.makeMove(authToken, currGameID, move);
         }
 
-
-
-        return EscapeSequences.SET_TEXT_COLOR_RED + "I am a placeholder";
+        return "Piece Moved!";
     }
 
     private String redraw() throws Exception {
@@ -343,6 +386,16 @@ public class ChessClient implements NotificationHandler {
         return EscapeSequences.SET_TEXT_COLOR_RED + "I am a placeholder";
     }
 
+    private Pair<Integer, Integer> convertMoveToInts(String tile) {
+        char letter = tile.charAt(0);
+        char number = tile.charAt(1);
+
+        Integer col = letter - 'a' + 1;
+        Integer row = number - '0';
+
+        return new Pair<>(row, col);
+    }
+
     private boolean checkInvalidMoveInputs(String tile) {
         if (tile.length() != 2) {
             return true;
@@ -358,6 +411,23 @@ public class ChessClient implements NotificationHandler {
             return false;
         }
         return true;
+    }
+
+    private boolean evalPromotionPiece(ChessPosition start, ChessPosition end, ChessBoard board) {
+        ChessPiece piece = board.getPiece(start);
+        if (piece == null) {
+            return false;
+        }
+
+        ChessGame.TeamColor teamColor = piece.getTeamColor();
+        if (piece.getPieceType() == ChessPiece.PieceType.PAWN) {
+            if (end.getRow() == 8 && teamColor == ChessGame.TeamColor.WHITE) {
+                return true;
+            } else if (end.getRow() == 1 && teamColor == ChessGame.TeamColor.BLACK) {
+                return true;
+            }
+        }
+        return false;
     }
 
     private void assertAuthorized() throws Exception {
