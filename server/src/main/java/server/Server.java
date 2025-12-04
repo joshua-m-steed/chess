@@ -119,8 +119,6 @@ public class Server {
         String authToken = ctx.header("authorization");
         GameJoinResult response = gameService.joinGame(req, authToken);
 
-        // Place Websocket here?
-
         var res = serializer.toJson(response);
         ctx.result(res);
     }

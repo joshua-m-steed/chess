@@ -5,9 +5,7 @@ import com.google.gson.Gson;
 import model.*;
 import server.ServerFacade;
 
-import java.util.Arrays;
-import java.util.Objects;
-import java.util.Scanner;
+import java.util.*;
 
 public class ChessClient {
     private State state = State.LOGGED_OUT;
@@ -266,6 +264,18 @@ public class ChessClient {
 
     private String move(String... params) throws Exception {
         assertInGame();
+        if (params.length >= 2) {
+            String startPosition = params[0];
+            String endPosition = params[1];
+
+            if (checkInvalidMoveInputs(startPosition)) {
+                return EscapeSequences.SET_TEXT_COLOR_RED + "Invalid start input. Please try again";
+            } else if (checkInvalidMoveInputs(endPosition)) {
+                return EscapeSequences.SET_TEXT_COLOR_RED + "Invalid end input. Please try again";
+            }
+        }
+
+
 
         return EscapeSequences.SET_TEXT_COLOR_RED + "I am a placeholder";
     }
@@ -283,14 +293,18 @@ public class ChessClient {
             String tileID = params[0];
             display.highlight(tileID);
 
-            return EscapeSequences.SET_TEXT_COLOR_RED + "I am a placeholder";
+            if (checkInvalidMoveInputs(tileID)) {
+                return EscapeSequences.SET_TEXT_COLOR_RED + "Invalid highlight input. Please try again";
+            }
+
+            return "Displaying " + tileID + " and possible moves!";
         }
         throw new Exception("Not enough parameters were given.");
     }
 
     private String leave() throws Exception {
         assertInGame();
-
+        // NEEDS MORE USER TO LEAVE GAME!!!
         state = State.LOGGED_IN;
         return "Leaving the game";
     }
@@ -299,6 +313,23 @@ public class ChessClient {
         assertInGame();
 
         return EscapeSequences.SET_TEXT_COLOR_RED + "I am a placeholder";
+    }
+
+    private boolean checkInvalidMoveInputs(String tile) {
+        if (tile.length() != 2) {
+            return true;
+        }
+
+        char letter = tile.charAt(0);
+        char number = tile.charAt(1);
+
+        List<Character> letters = List.of('a', 'b', 'c', 'd', 'e', 'f', 'g', 'h');
+        List<Character> numbers = List.of('1', '2', '3', '4', '5', '6', '7', '8');
+
+        if (letters.contains(letter) && numbers.contains(number)) {
+            return false;
+        }
+        return true;
     }
 
     private void assertAuthorized() throws Exception {
@@ -335,7 +366,7 @@ public class ChessClient {
         }
         else if(state == State.IN_GAME) {
             return EscapeSequences.SET_TEXT_COLOR_MAGENTA + """
-                move <PIECE> <TILE>                     :♔:  to move piece to chosen tile
+                move <TILE_START> <TILE_END>            :♔:  to move piece to chosen tile
                 redraw                                  :♔:  to redraw the board
                 highlight <TILE>                        :♔:  to list possible moves of a piece
                 leave                                   :♔:  to leave your game

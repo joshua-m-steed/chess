@@ -12,6 +12,7 @@ import websocket.commands.UserGameCommand;
 import websocket.messages.ErrorMessage;
 import websocket.messages.LoadGameMessage;
 import websocket.messages.NotificationMessage;
+import websocket.messages.ServerMessage;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -38,12 +39,18 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
         try {
             Gson gson = new Gson();
             UserGameCommand command = gson.fromJson(ctx.message(), UserGameCommand.class);
-
-            switch ((command.getCommandType())) {
-                case CONNECT -> join(command, ctx.session);
-                case MAKE_MOVE -> move(gson.fromJson(ctx.message(), MakeMoveCommand.class), ctx.session);
-                case LEAVE -> exit(command.getAuthToken(), ctx.session);
+            if (command.getCommandType() instanceof UserGameCommand.CommandType) {
+                switch ((command.getCommandType())) {
+                    case CONNECT -> join(command, ctx.session);
+                    case MAKE_MOVE -> move(gson.fromJson(ctx.message(), MakeMoveCommand.class), ctx.session);
+                    case LEAVE -> exit(command.getAuthToken(), ctx.session);
+                }
             }
+            ServerMessage message = gson.fromJson(ctx.message(), ServerMessage.class);
+            if (message.getServerMessageType() instanceof ServerMessage.ServerMessageType) {
+                System.out.println("I MADE IT CORRECTLY!");
+            }
+
         } catch (Exception ex) {
             ex.printStackTrace();
         }
@@ -125,6 +132,7 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
         ChessBoard board = chessGame.getBoard();
         ChessPiece piece = board.getPiece(move.getStartPosition());
         Collection<ChessMove> pieceMoves = piece.pieceMoves(board, move.getStartPosition());
+
         // Check Game Concluded
         if (chessGame.getWinCondition() != ChessGame.WinCondition.IN_PLAY) {
             ErrorMessage errorMessage = new ErrorMessage("Error: The game has ended.");
