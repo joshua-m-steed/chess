@@ -120,10 +120,11 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
 
 
         ChessGame chessGame = game.game();
+        chessGame.updateGameState();
+
         ChessBoard board = chessGame.getBoard();
         ChessPiece piece = board.getPiece(move.getStartPosition());
         Collection<ChessMove> pieceMoves = piece.pieceMoves(board, move.getStartPosition());
-
         // Check Game Concluded
         if (chessGame.getWinCondition() != ChessGame.WinCondition.IN_PLAY) {
             ErrorMessage errorMessage = new ErrorMessage("Error: The game has ended.");
@@ -169,6 +170,7 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
 
         chessGame.makeMove(move);
         dataAccess.updateGame(game.gameID(), chessGame);
+        chessGame.updateGameState();
 
         LoadGameMessage loadGame = new LoadGameMessage(chessGame);
         connections.send(session, loadGame);

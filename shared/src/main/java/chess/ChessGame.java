@@ -72,6 +72,7 @@ public class ChessGame {
     public enum PlayerState {
         IN_PLAY,
         IN_CHECK,
+        STALEMATE,
         RESIGNED,
         LOST,
         WON
@@ -248,6 +249,39 @@ public class ChessGame {
      */
     public ChessBoard getBoard() {
         return board;
+    }
+
+    public void updateGameState() {
+        if (isInCheckmate(TeamColor.WHITE)) {
+            whiteState = PlayerState.LOST;
+            blackState = PlayerState.WON;
+
+            winState = WinCondition.CHECKMATE;
+        } else if (isInCheckmate(TeamColor.BLACK)) {
+            whiteState = PlayerState.LOST;
+            blackState = PlayerState.WON;
+
+            winState = WinCondition.CHECKMATE;
+        }
+
+        if (isInCheck(TeamColor.WHITE)) {
+            whiteState = PlayerState.IN_CHECK;
+            blackState = PlayerState.IN_PLAY;
+
+            winState = WinCondition.CHECKMATE;
+        } else if (isInCheck(TeamColor.BLACK)) {
+            whiteState = PlayerState.IN_PLAY;
+            blackState = PlayerState.IN_CHECK;
+
+            winState = WinCondition.IN_PLAY;
+        }
+
+        if(isInStalemate(TeamColor.WHITE) || isInStalemate(TeamColor.BLACK)) {
+            whiteState = PlayerState.STALEMATE;
+            blackState = PlayerState.STALEMATE;
+
+            winState = WinCondition.STALEMATE;
+        }
     }
 
     private boolean isInCheckHelper(TeamColor teamColor, ChessBoard board, ChessMove move) {
