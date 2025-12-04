@@ -40,15 +40,16 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
             Gson gson = new Gson();
             UserGameCommand command = gson.fromJson(ctx.message(), UserGameCommand.class);
             if (command.getCommandType() instanceof UserGameCommand.CommandType) {
-                switch ((command.getCommandType())) {
+                switch (command.getCommandType()) {
                     case CONNECT -> join(command, ctx.session);
                     case MAKE_MOVE -> move(gson.fromJson(ctx.message(), MakeMoveCommand.class), ctx.session);
                     case LEAVE -> exit(command.getAuthToken(), ctx.session);
+                    case RESIGN -> resign(command, ctx.session);
                 }
-            }
-            ServerMessage message = gson.fromJson(ctx.message(), ServerMessage.class);
-            if (message.getServerMessageType() instanceof ServerMessage.ServerMessageType) {
-                System.out.println("I MADE IT CORRECTLY!");
+//            } else {
+//                switch (command.getCommandType()) {
+//
+//                }
             }
 
         } catch (Exception ex) {
@@ -191,6 +192,53 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
                 move.getEndPosition());
         NotificationMessage notificationMessage = new NotificationMessage(NotificationMessage.Type.MOVE, message);
         connections.broadcast(session, notificationMessage);
+    }
+
+    private void resign(UserGameCommand command, Session session) throws Exception {
+        User authUser = dataAccess.getAuth(command.getAuthToken());
+        Game game = null;
+        if (checkAuth(authUser, session)) {
+            return;
+        }
+
+        // Verify GameID
+        ArrayList<Game> gameList = dataAccess.listGame(command.getAuthToken());
+        if (gameList == null || gameList.size() < command.getGameID()) {
+            ErrorMessage errorMessage = new ErrorMessage("Error: Could not find the game. Please try again!");
+            connections.send(session, errorMessage);
+            return;
+        } else {
+            for (Game gameItem : gameList) {
+                if (gameItem.gameID().equals(command.getGameID())) {
+                    game = gameItem;
+                }
+            }
+            if (game == null) {
+                ErrorMessage errorMessage = new ErrorMessage("Error: Could not find the game. Please try again!");
+                connections.send(session, errorMessage);
+                return;
+            }
+        }
+
+        ChessGame chessGame = game.game();
+        if (authUser.username().equals(game.whiteUsername())) {
+            chessGame.resign(ChessGame.TeamColor.WHITE);
+            String message = String.format("%s has resigned from the game! %s wins be default!",
+                    game.whiteUsername(),
+                    game.blackUsername());
+            NotificationMessage notificationMessage = new NotificationMessage(NotificationMessage.Type.RESIGN, message);
+            connections.broadcast(session, notificationMessage);
+        } else if (authUser.username().equals(game.blackUsername())) {
+            chessGame.resign(ChessGame.TeamColor.WHITE);
+            String message = String.format("%s has resigned from the game! %s wins be default!",
+                    game.blackUsername(),
+                    game.whiteUsername());
+            NotificationMessage notificationMessage = new NotificationMessage(NotificationMessage.Type.RESIGN, message);
+            connections.broadcast(session, notificationMessage);
+        } else {
+            ErrorMessage errorMessage = new ErrorMessage("Error: You can't resign as an Observer.");
+            connections.send(session, errorMessage);
+        }
     }
 
     private void exit(String name, Session session) throws Exception {
