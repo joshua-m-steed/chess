@@ -215,6 +215,12 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
         }
 
         ChessGame chessGame = game.game();
+        if (chessGame.getWinCondition() == ChessGame.WinCondition.RESIGN) {
+            ErrorMessage errorMessage = new ErrorMessage("Error: A player has already resigned!");
+            connections.send(session, errorMessage);
+            return;
+        }
+
         if (authUser.username().equals(game.whiteUsername())) {
             chessGame.resign(ChessGame.TeamColor.WHITE);
             String message = String.format("%s has resigned from the game! %s wins be default!",
