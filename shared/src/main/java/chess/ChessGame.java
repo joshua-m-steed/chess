@@ -251,6 +251,20 @@ public class ChessGame {
         return board;
     }
 
+    public void resign(TeamColor team) {
+        if (team == TeamColor.WHITE) {
+            whiteState = PlayerState.RESIGNED;
+            blackState = PlayerState.WON;
+
+            winState = WinCondition.RESIGN;
+        } else if (team == TeamColor.BLACK) {
+            whiteState = PlayerState.WON;
+            blackState = PlayerState.RESIGNED;
+
+            winState = WinCondition.RESIGN;
+        }
+    }
+
     public void updateGameState() {
         if (isInCheckmate(TeamColor.WHITE)) {
             whiteState = PlayerState.LOST;

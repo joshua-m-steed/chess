@@ -39,17 +39,11 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
         try {
             Gson gson = new Gson();
             UserGameCommand command = gson.fromJson(ctx.message(), UserGameCommand.class);
-            if (command.getCommandType() instanceof UserGameCommand.CommandType) {
-                switch (command.getCommandType()) {
-                    case CONNECT -> join(command, ctx.session);
-                    case MAKE_MOVE -> move(gson.fromJson(ctx.message(), MakeMoveCommand.class), ctx.session);
-                    case LEAVE -> exit(command.getAuthToken(), ctx.session);
-                    case RESIGN -> resign(command, ctx.session);
-                }
-//            } else {
-//                switch (command.getCommandType()) {
-//
-//                }
+            switch (command.getCommandType()) {
+                case CONNECT -> join(command, ctx.session);
+                case MAKE_MOVE -> move(gson.fromJson(ctx.message(), MakeMoveCommand.class), ctx.session);
+                case LEAVE -> exit(command.getAuthToken(), ctx.session);
+                case RESIGN -> resign(command, ctx.session);
             }
 
         } catch (Exception ex) {
@@ -178,8 +172,8 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
         }
 
         chessGame.makeMove(move);
-        dataAccess.updateGame(game.gameID(), chessGame);
         chessGame.updateGameState();
+        dataAccess.updateGame(game.gameID(), chessGame);
 
         LoadGameMessage loadGame = new LoadGameMessage(chessGame);
         connections.send(session, loadGame);
@@ -228,6 +222,7 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
                     game.blackUsername());
             NotificationMessage notificationMessage = new NotificationMessage(NotificationMessage.Type.RESIGN, message);
             connections.broadcast(session, notificationMessage);
+            connections.send(session, notificationMessage);
         } else if (authUser.username().equals(game.blackUsername())) {
             chessGame.resign(ChessGame.TeamColor.WHITE);
             String message = String.format("%s has resigned from the game! %s wins be default!",
@@ -235,10 +230,13 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
                     game.whiteUsername());
             NotificationMessage notificationMessage = new NotificationMessage(NotificationMessage.Type.RESIGN, message);
             connections.broadcast(session, notificationMessage);
+            connections.send(session, notificationMessage);
         } else {
             ErrorMessage errorMessage = new ErrorMessage("Error: You can't resign as an Observer.");
             connections.send(session, errorMessage);
         }
+
+        dataAccess.updateGame(game.gameID(), chessGame);
     }
 
     private void exit(String name, Session session) throws Exception {
