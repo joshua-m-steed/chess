@@ -15,6 +15,7 @@ import websocket.messages.NotificationMessage;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Objects;
 
 public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsCloseHandler {
 
@@ -106,8 +107,7 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
             return;
         } else {
             for (Game gameItem : gameList) {
-                if (gameItem.gameID() == command.getGameID());
-                {
+                if (gameItem.gameID() == command.getGameID()) {
                     game = gameItem;
                 }
             }
@@ -125,39 +125,43 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
         Collection<ChessMove> pieceMoves = piece.pieceMoves(board, move.getStartPosition());
 
         // Check Game Concluded
+        if (chessGame.getWinCondition() != ChessGame.WinCondition.IN_PLAY) {
+            ErrorMessage errorMessage = new ErrorMessage("Error: The game has ended.");
+            connections.send(session, errorMessage);
+            return;
+        }
 
         // Check Observer
-        if (authUser.username() != game.whiteUsername() && authUser.username() != game.blackUsername()) {
+        if (!Objects.equals(authUser.username(), game.whiteUsername()) && !Objects.equals(authUser.username(), game.blackUsername())) {
             ErrorMessage errorMessage = new ErrorMessage("Error: You are currently observing the game and can't move pieces.");
             connections.send(session, errorMessage);
             return;
         }
 
         // Check Wrong Turn
-        if (authUser.username() == game.whiteUsername() && chessGame.getTeamTurn() != ChessGame.TeamColor.WHITE) {
+        if (authUser.username().equals(game.whiteUsername()) && chessGame.getTeamTurn() != ChessGame.TeamColor.WHITE) {
             ErrorMessage errorMessage = new ErrorMessage("Error: It is not your turn to move just yet.");
             connections.send(session, errorMessage);
             return;
-        } else if (authUser.username() == game.blackUsername() && chessGame.getTeamTurn() != ChessGame.TeamColor.BLACK) {
+        } else if (authUser.username().equals(game.blackUsername()) && chessGame.getTeamTurn() != ChessGame.TeamColor.BLACK) {
             ErrorMessage errorMessage = new ErrorMessage("Error: It is not your turn to move just yet.");
             connections.send(session, errorMessage);
             return;
         }
 
         // Check Move Opponent piece
-        if (authUser.username() == game.blackUsername() && piece.getTeamColor() == ChessGame.TeamColor.WHITE) {
+        if (authUser.username().equals(game.blackUsername()) && piece.getTeamColor() == ChessGame.TeamColor.WHITE) {
             ErrorMessage errorMessage = new ErrorMessage("Error: You aren't allowed to move that piece!");
             connections.send(session, errorMessage);
             return;
-        } else if (authUser.username() == game.whiteUsername() && piece.getTeamColor() == ChessGame.TeamColor.BLACK) {
+        } else if (authUser.username().equals(game.whiteUsername()) && piece.getTeamColor() == ChessGame.TeamColor.BLACK) {
             ErrorMessage errorMessage = new ErrorMessage("Error: You aren't allowed to move that piece!");
             connections.send(session, errorMessage);
             return;
         }
 
         // Check Move for Validity
-        if (!pieceMoves.contains(move));
-        {
+        if (!pieceMoves.contains(move)) {
             ErrorMessage errorMessage = new ErrorMessage("Error: This is not a valid move!");
             connections.send(session, errorMessage);
             return;

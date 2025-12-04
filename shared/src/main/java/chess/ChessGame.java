@@ -15,12 +15,14 @@ public class ChessGame {
     final private ChessBoard board = new ChessBoard();
     private TeamColor teamTurn;
     private WinCondition winState;
-    private Boolean whiteWin = false;
-    private Boolean blackWin = false;
+    private PlayerState whiteState;
+    private PlayerState blackState;
 
     public ChessGame() {
         this.teamTurn = TeamColor.WHITE;
         this.winState = WinCondition.IN_PLAY;
+        this.whiteState = PlayerState.IN_PLAY;
+        this.blackState = PlayerState.IN_PLAY;
         this.board.resetBoard();
     }
 
@@ -44,6 +46,14 @@ public class ChessGame {
         return winState;
     }
 
+    public PlayerState getWhiteState() {
+        return whiteState;
+    }
+
+    public PlayerState getBlackState() {
+        return blackState;
+    }
+
     /**
      * Enum identifying the 2 possible teams in a chess game
      */
@@ -57,6 +67,14 @@ public class ChessGame {
         RESIGN,
         CHECKMATE,
         STALEMATE
+    }
+
+    public enum PlayerState {
+        IN_PLAY,
+        IN_CHECK,
+        RESIGNED,
+        LOST,
+        WON
     }
 
     /**
