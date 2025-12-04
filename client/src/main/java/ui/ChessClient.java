@@ -1,16 +1,17 @@
 package ui;
 
-import chess.ChessGame;
+import chess.*;
 import com.google.gson.Gson;
-import jakarta.websocket.*;
 import model.*;
+import org.glassfish.grizzly.utils.Pair;
 import server.ServerFacade;
 import websocket.NotificationHandler;
 import websocket.WebSocketFacade;
 import websocket.commands.UserGameCommand;
-import websocket.messages.NotificationMessage;
+import websocket.messages.ErrorMessage;
+import websocket.messages.LoadGameMessage;
+import websocket.messages.ServerMessage;
 
-import java.net.URI;
 import java.util.*;
 
 public class ChessClient implements NotificationHandler {

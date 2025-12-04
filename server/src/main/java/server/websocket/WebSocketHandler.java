@@ -126,6 +126,14 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
 
         ChessBoard board = chessGame.getBoard();
         ChessPiece piece = board.getPiece(move.getStartPosition());
+
+        // MISSING PIECE
+        if (piece == null) {
+            ErrorMessage errorMessage = new ErrorMessage("Error: There's no piece there. Try again.");
+            connections.send(session, errorMessage);
+            return;
+        }
+
         Collection<ChessMove> pieceMoves = piece.pieceMoves(board, move.getStartPosition());
 
         // Check Game Concluded
