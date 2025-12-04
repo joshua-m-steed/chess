@@ -704,3 +704,12 @@ void func() {
 }
 
 Synchronization protects the functions/objects until the person who is using it is done using it.
+
+
+# Maven - Command Line Builds  
+*Maven Structure*  
+
+Lifecycle - Collection of Phases for building or distributing an artifact  
+Phase - A specific step in a lifecycle  
+Goal - Code actually compiles to  
+Plugin - Code  
