@@ -81,8 +81,8 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
 
 
         connections.add(session);
-        LoadGameMessage message = new LoadGameMessage(command.getGameID().toString());
-        connections.send(session, message);
+        LoadGameMessage loadGame = new LoadGameMessage(game.game());
+        connections.send(session, loadGame);
 
 
 
@@ -166,6 +166,20 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
             connections.send(session, errorMessage);
             return;
         }
+
+        chessGame.makeMove(move);
+
+        LoadGameMessage loadGame = new LoadGameMessage(chessGame);
+        connections.send(session, loadGame);
+        connections.broadcast(session, loadGame);
+
+        String message = String.format("%s moved their %s from %s to %s.",
+                authUser.username(),
+                piece.getPieceType(),
+                move.getStartPosition(),
+                move.getEndPosition());
+        NotificationMessage notificationMessage = new NotificationMessage(NotificationMessage.Type.MOVE, message);
+        connections.broadcast(session, notificationMessage);
     }
 
     private void exit(String name, Session session) throws Exception {
