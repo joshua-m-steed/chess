@@ -17,4 +17,5 @@ public interface DataAccess {
         Game createGame(String gameName);
         void joinGame(User authUser, Game targetGame, String s);
         void updateGame(Integer gameID, ChessGame chessGame);
+        void updateGameUser(Integer gameID, ChessGame.TeamColor team, ChessGame chessGame);
 }

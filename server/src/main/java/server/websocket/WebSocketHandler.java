@@ -42,7 +42,7 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
             switch (command.getCommandType()) {
                 case CONNECT -> join(command, ctx.session);
                 case MAKE_MOVE -> move(gson.fromJson(ctx.message(), MakeMoveCommand.class), ctx.session);
-                case LEAVE -> exit(command.getAuthToken(), ctx.session);
+                case LEAVE -> leave(command, ctx.session);
                 case RESIGN -> resign(command, ctx.session);
             }
 
@@ -239,9 +239,42 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
         dataAccess.updateGame(game.gameID(), chessGame);
     }
 
-    private void exit(String name, Session session) throws Exception {
-        String message = String.format("%s left the chess tables", name);
+    private void leave(UserGameCommand command, Session session) throws Exception {
+        User authUser = dataAccess.getAuth(command.getAuthToken());
+        Game game = null;
+        if (checkAuth(authUser, session)) {
+            return;
+        }
+
+        // Verify GameID
+        ArrayList<Game> gameList = dataAccess.listGame(command.getAuthToken());
+        if (gameList == null || gameList.size() < command.getGameID()) {
+            ErrorMessage errorMessage = new ErrorMessage("Error: Could not find the game. Please try again!");
+            connections.send(session, errorMessage);
+            return;
+        } else {
+            for (Game gameItem : gameList) {
+                if (gameItem.gameID().equals(command.getGameID())) {
+                    game = gameItem;
+                }
+            }
+            if (game == null) {
+                ErrorMessage errorMessage = new ErrorMessage("Error: Could not find the game. Please try again!");
+                connections.send(session, errorMessage);
+                return;
+            }
+        }
+
+        if (authUser.username().equals(game.whiteUsername())) {
+            dataAccess.updateGameUser(game.gameID(), ChessGame.TeamColor.WHITE, game.game());
+        } else if (authUser.username().equals(game.blackUsername())) {
+            dataAccess.updateGameUser(game.gameID(), ChessGame.TeamColor.BLACK, game.game());
+        }
+
+
+        String message = String.format("%s left the chess tables", authUser.username());
         NotificationMessage notification = new NotificationMessage(NotificationMessage.Type.DISCONNECT, message);
+
         connections.broadcast(session, notification);
         connections.remove(session);
     }

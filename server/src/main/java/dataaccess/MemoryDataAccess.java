@@ -107,6 +107,20 @@ public class MemoryDataAccess implements DataAccess{
         games.put(gameID, updatedGame);
     }
 
+    @Override
+    public void updateGameUser(Integer gameID, ChessGame.TeamColor team, ChessGame chessGame) {
+        Game game = games.get(gameID);
+        Game updatedGame = null;
+        if (team == ChessGame.TeamColor.WHITE) {
+            updatedGame = new Game(gameID, null, game.blackUsername(), game.gameName(), chessGame);
+        } else if (team == ChessGame.TeamColor.BLACK) {
+            updatedGame = new Game(gameID, game.whiteUsername(), null, game.gameName(), chessGame);
+        }
+
+        games.remove(gameID);
+        games.put(gameID, updatedGame);
+    }
+
     private String generateAuthToken() {
         return UUID.randomUUID().toString();
     }

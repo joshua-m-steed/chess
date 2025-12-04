@@ -233,6 +233,26 @@ public class MySqlDataAccess implements DataAccess {
         }
     }
 
+    @Override
+    public void updateGameUser(Integer gameID, ChessGame.TeamColor team, ChessGame chessGame) {
+        String joinStatement = "";
+        if (team == ChessGame.TeamColor.WHITE) {
+            joinStatement = "UPDATE game SET whiteUser=? WHERE gameID=?";
+        } else if (team == ChessGame.TeamColor.BLACK) {
+            joinStatement = "UPDATE game SET blackUser=? WHERE gameID=?";
+        }
+
+        try (Connection conn = DatabaseManager.getConnection()) {
+            try (PreparedStatement ps = conn.prepareStatement(joinStatement)) {
+                ps.setString(1, null);
+                ps.setInt(2, gameID);
+                ps.executeUpdate();
+            }
+        } catch (Exception e) {
+            throw new RuntimeException("Error updating game: ", e);
+        }
+    }
+
     private void executeUpdate(String statement, Object... params) throws DataAccessException {
         try (Connection conn = DatabaseManager.getConnection();
              PreparedStatement ps = conn.prepareStatement(statement)) {
