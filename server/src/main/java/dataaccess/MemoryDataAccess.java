@@ -99,6 +99,14 @@ public class MemoryDataAccess implements DataAccess{
         games.put(newGame.gameID(), newGame);
     }
 
+    @Override
+    public void updateGame(Integer gameID, ChessGame chessGame) {
+        Game game = games.get(gameID);
+        Game updatedGame = new Game(gameID, game.whiteUsername(), game.blackUsername(), game.gameName(), chessGame);
+        games.remove(gameID);
+        games.put(gameID, updatedGame);
+    }
+
     private String generateAuthToken() {
         return UUID.randomUUID().toString();
     }

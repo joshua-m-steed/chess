@@ -216,6 +216,23 @@ public class MySqlDataAccess implements DataAccess {
         return UUID.randomUUID().toString();
     }
 
+    @Override
+    public void updateGame(Integer gameID, ChessGame chessGame) {
+        var serializer = new Gson();
+        String gameText = serializer.toJson(chessGame, ChessGame.class);
+        String joinStatement = "UPDATE game SET game=? WHERE gameID=?";
+
+        try (Connection conn = DatabaseManager.getConnection()) {
+            try (PreparedStatement ps = conn.prepareStatement(joinStatement)) {
+                ps.setString(1, gameText);
+                ps.setInt(2, gameID);
+                ps.executeUpdate();
+            }
+        } catch (Exception e) {
+            throw new RuntimeException("Error updating game: ", e);
+        }
+    }
+
     private void executeUpdate(String statement, Object... params) throws DataAccessException {
         try (Connection conn = DatabaseManager.getConnection();
              PreparedStatement ps = conn.prepareStatement(statement)) {

@@ -107,7 +107,7 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
             return;
         } else {
             for (Game gameItem : gameList) {
-                if (gameItem.gameID() == command.getGameID()) {
+                if (gameItem.gameID().equals(command.getGameID())) {
                     game = gameItem;
                 }
             }
@@ -168,6 +168,7 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
         }
 
         chessGame.makeMove(move);
+        dataAccess.updateGame(game.gameID(), chessGame);
 
         LoadGameMessage loadGame = new LoadGameMessage(chessGame);
         connections.send(session, loadGame);
