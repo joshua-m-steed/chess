@@ -86,18 +86,12 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
     private void move(MakeMoveCommand command, Session session) throws Exception {
         User authUser = dataAccess.getAuth(command.getAuthToken());
         Game game = checkInputErrors(command, session, authUser);
-        if (game == null) {
-            return;
-        }
+        if (game == null) {return;}
         ChessMove move = command.getMove();
-
-
         ChessGame chessGame = game.game();
-
         ChessBoard board = chessGame.getBoard();
         ChessPiece piece = board.getPiece(move.getStartPosition());
 
-        // MISSING PIECE
         if (piece == null) {
             ErrorMessage errorMessage = new ErrorMessage("Error: There's no piece there. Try again.");
             connections.send(session, errorMessage);
@@ -106,22 +100,17 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
 
         Collection<ChessMove> pieceMoves = piece.pieceMoves(board, move.getStartPosition());
 
-        // Check Game Concluded
         if (chessGame.getWinCondition() != ChessGame.WinCondition.IN_PLAY) {
             ErrorMessage errorMessage = new ErrorMessage("Error: The game has ended.");
             connections.send(session, errorMessage);
             return;
         }
-
-        // Check Observer
         if (!Objects.equals(authUser.username(), game.whiteUsername()) &&
                 !Objects.equals(authUser.username(), game.blackUsername())) {
             ErrorMessage errorMessage = new ErrorMessage("Error: You are currently observing the game and can't move pieces.");
             connections.send(session, errorMessage);
             return;
         }
-
-        // Check Wrong Turn
         if (authUser.username().equals(game.whiteUsername()) && chessGame.getTeamTurn() != ChessGame.TeamColor.WHITE) {
             ErrorMessage errorMessage = new ErrorMessage("Error: It is not your turn to move just yet.");
             connections.send(session, errorMessage);
@@ -131,8 +120,6 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
             connections.send(session, errorMessage);
             return;
         }
-
-        // Check Move Opponent piece
         if (authUser.username().equals(game.blackUsername()) && piece.getTeamColor() == ChessGame.TeamColor.WHITE) {
             ErrorMessage errorMessage = new ErrorMessage("Error: You aren't allowed to move that piece!");
             connections.send(session, errorMessage);
@@ -142,8 +129,6 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
             connections.send(session, errorMessage);
             return;
         }
-
-        // Check Move for Validity
         if (!pieceMoves.contains(move)) {
             ErrorMessage errorMessage = new ErrorMessage("Error: This is not a valid move!");
             connections.send(session, errorMessage);
@@ -153,7 +138,6 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
         chessGame.makeMove(move);
         chessGame.updateGameState();
         dataAccess.updateGame(game.gameID(), chessGame);
-
         LoadGameMessage loadGame = new LoadGameMessage(chessGame);
         connections.send(session, loadGame);
         connections.broadcast(session, loadGame, game.gameID());
@@ -165,7 +149,6 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
                 move.getEndPosition());
         NotificationMessage notificationMessage = new NotificationMessage(NotificationMessage.NotificationType.MOVE, message);
         connections.broadcast(session, notificationMessage, game.gameID());
-
         if (chessGame.getWinCondition() == ChessGame.WinCondition.CHECKMATE) {
             if (chessGame.getWhiteState() == ChessGame.PlayerState.WON) {
                 NotificationMessage checkmateMsg = new NotificationMessage(NotificationMessage.NotificationType.CHECKMATE,
@@ -180,7 +163,6 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
             }
             return;
         }
-
         if(chessGame.getWinCondition() == ChessGame.WinCondition.STALEMATE) {
             NotificationMessage staleMsg = new NotificationMessage(NotificationMessage.NotificationType.STALEMATE,
                     "Both " + game.whiteUsername() + " and " + game.blackUsername() + " have ended in a stalemate!");
@@ -188,8 +170,6 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
             connections.broadcast(session, staleMsg, game.gameID());
             return;
         }
-
-
         if (chessGame.getWhiteState() == ChessGame.PlayerState.IN_CHECK) {
             NotificationMessage checkMsg = new NotificationMessage(NotificationMessage.NotificationType.CHECK,
                     authUser.username() + " [WHITE] is in check!");

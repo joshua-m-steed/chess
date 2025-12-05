@@ -55,9 +55,6 @@ public class ChessClient implements NotificationHandler {
                 break;
             }
         }
-
-
-
     }
 
     public enum State {
@@ -75,7 +72,6 @@ public class ChessClient implements NotificationHandler {
         while (!result.equals("quit")) {
             printPrompt();
             String line = scanner.nextLine();
-
             try {
                 result = evaluate(line);
                 System.out.print(EscapeSequences.SET_TEXT_COLOR_BLUE + result);
@@ -85,7 +81,6 @@ public class ChessClient implements NotificationHandler {
             }
         }
         System.out.println();
-
     }
 
     private void printPrompt() {
@@ -134,18 +129,15 @@ public class ChessClient implements NotificationHandler {
             authToken = null;
             recentList = null;
         }
-
         return "quit";
     }
 
     private String register(String... params) throws Exception {
         assertOnlyLoggedOut();
-
         if (params.length >= 3) {
             username = params[0];
             String password = params[1];
             String email = params[2];
-
             User user = new User(username, password, email);
             Auth authUser = server.register(user);
             if (authUser != null) {
@@ -163,11 +155,9 @@ public class ChessClient implements NotificationHandler {
 
     private String login(String... params) throws Exception {
         assertOnlyLoggedOut();
-
         if (params.length >= 2) {
             username = params[0];
             String password = params[1];
-
             User user = new User(username, password, null);
             Auth authUser = server.login(user);
             if (authUser != null) {
@@ -185,9 +175,7 @@ public class ChessClient implements NotificationHandler {
 
     private String logout() throws Exception {
         assertOnlyLoggedIn();
-
         server.logout(authToken);
-
         state = State.LOGGED_OUT;
         String holdUser = username;
         username = null;
@@ -199,7 +187,6 @@ public class ChessClient implements NotificationHandler {
 
     private String listGames() throws Exception {
         assertOnlyLoggedIn();
-
         GameList list = server.list(authToken);
         recentList = list;
         StringBuilder result = new StringBuilder();
@@ -227,10 +214,8 @@ public class ChessClient implements NotificationHandler {
 
     private String create(String... params) throws Exception {
         assertOnlyLoggedIn();
-
         if (params.length >= 1) {
             String gameName = params[0];
-
             Game game = new Game(null, null, null, gameName, new ChessGame());
             game = server.create(game, authToken);
             GameList list = server.list(authToken);
@@ -243,16 +228,13 @@ public class ChessClient implements NotificationHandler {
 
     private String join(String... params) throws Exception {
         assertOnlyLoggedIn();
-
         if (params.length >= 2) {
-            if( recentList == null) {
+            if(recentList == null) {
                 throw new Exception("Please refer to 'list' before joining a game");
             }
             Game foundGame = null;
             int listId = Integer.parseInt(params[0]);
-
             String color = params[1].toLowerCase();
-
             if (recentList.games() == null) {
                 throw new Exception("Unable to find any games. Go make one!");
 
@@ -269,11 +251,9 @@ public class ChessClient implements NotificationHandler {
                 throw new Exception("Chose a valid team color");
             }
 
-
             int gameID = foundGame.gameID();
             currGameID = gameID;
             ChessGame.TeamColor teamColor = Objects.equals(color, "white") ? ChessGame.TeamColor.WHITE : ChessGame.TeamColor.BLACK;
-
             GameJoin gameRequest = new GameJoin(teamColor, gameID);
             server.join(gameRequest, authToken);
             ws.joinGame(authToken, currGameID);
@@ -290,7 +270,6 @@ public class ChessClient implements NotificationHandler {
 
     private String observe(String... params) throws Exception {
         assertOnlyLoggedIn();
-
         if (params.length >= 1) {
             if( recentList == null) {
                 throw new Exception("Please refer to 'list' before joining a game");
@@ -343,9 +322,7 @@ public class ChessClient implements NotificationHandler {
 
             Game target = null;
             for (Game game : recentList.games()) {
-                if (game.gameID().equals(currGameID)) {
-                    target = game;
-                }
+                if (game.gameID().equals(currGameID)) {target = game;}
             }
             ChessPiece.PieceType promoChoice = null;
             if (evalPromotionPiece(startPos, endPos, target.game().getBoard())) {
@@ -356,32 +333,25 @@ public class ChessClient implements NotificationHandler {
                             "|:| QUEEN | ROOK | BISHOP | KNIGHT |:|");
 
                     String line = scanner.nextLine().trim().toLowerCase();
-
                     switch (line) {
                         case "queen":
-                        case "q":
                             promoChoice = ChessPiece.PieceType.QUEEN;
                             break;
                         case "rook":
-                        case "r":
                             promoChoice = ChessPiece.PieceType.ROOK;
                             break;
                         case "bishop":
-                        case "b":
                             promoChoice = ChessPiece.PieceType.BISHOP;
                             break;
                         case "knight":
-                        case "k":
                             promoChoice = ChessPiece.PieceType.KNIGHT;
                             break;
                     }
                 }
             }
-
             ChessMove move = new ChessMove(startPos, endPos, promoChoice);
             ws.makeMove(authToken, currGameID, move);
         }
-
         return "Moving piece...";
     }
 
@@ -401,7 +371,6 @@ public class ChessClient implements NotificationHandler {
             if (checkInvalidMoveInputs(tileID)) {
                 return EscapeSequences.SET_TEXT_COLOR_RED + "Invalid highlight input. Please try again";
             }
-
             return "Displaying " + tileID + " and possible moves!";
         }
         throw new Exception("Not enough parameters were given.");
@@ -409,7 +378,6 @@ public class ChessClient implements NotificationHandler {
 
     private String leave() throws Exception {
         assertOnlyInGame();
-
         state = State.LOGGED_IN;
         ws.leaveGame(authToken, currGameID);
         currGameID = null;
@@ -419,7 +387,6 @@ public class ChessClient implements NotificationHandler {
 
     private String resign() throws Exception {
         assertOnlyInGame();
-
         ws.resignGame(authToken, currGameID);
 
         return "Resigning...";
@@ -436,9 +403,7 @@ public class ChessClient implements NotificationHandler {
     }
 
     private boolean checkInvalidMoveInputs(String tile) {
-        if (tile.length() != 2) {
-            return true;
-        }
+        if (tile.length() != 2) {return true;}
 
         char letter = tile.charAt(0);
         char number = tile.charAt(1);
@@ -446,25 +411,18 @@ public class ChessClient implements NotificationHandler {
         List<Character> letters = List.of('a', 'b', 'c', 'd', 'e', 'f', 'g', 'h');
         List<Character> numbers = List.of('1', '2', '3', '4', '5', '6', '7', '8');
 
-        if (letters.contains(letter) && numbers.contains(number)) {
-            return false;
-        }
+        if (letters.contains(letter) && numbers.contains(number)) {return false;}
         return true;
     }
 
     private boolean evalPromotionPiece(ChessPosition start, ChessPosition end, ChessBoard board) {
         ChessPiece piece = board.getPiece(start);
-        if (piece == null) {
-            return false;
-        }
+        if (piece == null) {return false;}
 
         ChessGame.TeamColor teamColor = piece.getTeamColor();
         if (piece.getPieceType() == ChessPiece.PieceType.PAWN) {
-            if (end.getRow() == 8 && teamColor == ChessGame.TeamColor.WHITE) {
-                return true;
-            } else if (end.getRow() == 1 && teamColor == ChessGame.TeamColor.BLACK) {
-                return true;
-            }
+            if (end.getRow() == 8 && teamColor == ChessGame.TeamColor.WHITE) {return true;}
+            else if (end.getRow() == 1 && teamColor == ChessGame.TeamColor.BLACK) {return true;}
         }
         return false;
     }
@@ -529,7 +487,6 @@ public class ChessClient implements NotificationHandler {
                 help                                    :♔:  to list possible commands
                 """;
         }
-
         return EscapeSequences.SET_TEXT_COLOR_RED + "Could not find proper game state. Please reload!";
     }
 }
