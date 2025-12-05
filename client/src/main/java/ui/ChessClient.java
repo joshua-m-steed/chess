@@ -7,7 +7,6 @@ import org.glassfish.grizzly.utils.Pair;
 import server.ServerFacade;
 import websocket.NotificationHandler;
 import websocket.WebSocketFacade;
-import websocket.commands.UserGameCommand;
 import websocket.messages.ErrorMessage;
 import websocket.messages.LoadGameMessage;
 import websocket.messages.NotificationMessage;
@@ -208,6 +207,8 @@ public class ChessClient implements NotificationHandler {
                         .append(gson.toJson(game.whiteUsername()))
                         .append(" Black: ")
                         .append(gson.toJson(game.blackUsername()))
+                        .append(" State: ")
+                        .append(gson.toJson(game.game().getWinCondition()))
                         .append('\n');
             }
         }
@@ -237,6 +238,7 @@ public class ChessClient implements NotificationHandler {
             }
             Game foundGame = null;
             int listId = Integer.parseInt(params[0]);
+
             String color = params[1].toLowerCase();
 
             if (recentList.games() == null) {
@@ -245,6 +247,9 @@ public class ChessClient implements NotificationHandler {
             } else if (recentList.games().size() < (listId - 1)) {
                 throw new Exception("Invalid game choice. Please refer to 'list'");
             } else {
+                if (listId > recentList.games().size()) {
+                    throw new Exception("You chose a gameID that doesn't exist. Try 'list' or pick a new number");
+                }
                 foundGame = recentList.games().get(listId - 1);
             }
 
@@ -263,9 +268,6 @@ public class ChessClient implements NotificationHandler {
             state = State.IN_GAME;
 
             display = new BoardDisplay(foundGame.game(), gameRequest.playerColor());
-            // Potentially verify their input with the list?
-//            server.list(authToken);
-//            System.out.println("");
             return EscapeSequences.SET_TEXT_COLOR_GREEN + username +
                     EscapeSequences.SET_TEXT_COLOR_BLUE + " has joined the game, " +
                     EscapeSequences.SET_TEXT_COLOR_YELLOW + foundGame.gameName() +
@@ -282,9 +284,13 @@ public class ChessClient implements NotificationHandler {
             }
             Game foundGame = null;
             int listId = Integer.parseInt(params[0]);
+
             if (recentList.games() == null) {
                 throw new Exception("Unable to find any games. Go make one!");
             } else {
+                if (listId > recentList.games().size()) {
+                    throw new Exception("You chose a gameID that doesn't exist. Try 'list' or pick a new number");
+                }
                 foundGame = recentList.games().get(listId - 1);
             }
 
@@ -293,7 +299,6 @@ public class ChessClient implements NotificationHandler {
             GameJoin gameRequest = new GameJoin(ChessGame.TeamColor.OBSERVER, gameID);
             server.join(gameRequest, authToken);
             ws.joinGame(authToken, currGameID);
-//            server.observe(gameRequest, authToken);
             state = State.IN_GAME;
 
             display = new BoardDisplay(foundGame.game(), ChessGame.TeamColor.WHITE);

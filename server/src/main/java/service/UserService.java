@@ -19,12 +19,12 @@ public class UserService {
         if((user.username() == null || user.username().isBlank())
             || (user.password() == null || user.password().isBlank())
                 || (user.email() == null || user.email().isBlank())) {
-            throw new BadRequestResponse("Error: bad request");
+            throw new BadRequestResponse("Error: Bad Request: Missing data");
         }
 
         // Verify that GetUser is either Object or result!
         if(this.dataAccess.getUser(user.username()) != null) {
-            throw new ForbiddenResponse("Error: already taken");
+            throw new ForbiddenResponse("Error: Username already taken");
         }
 
         // Hash Password
@@ -38,18 +38,18 @@ public class UserService {
         // Verifies that all needed information is present
         if((user.username() == null || user.username().isBlank() )
                 || (user.password() == null || user.password().isBlank())) {
-            throw new BadRequestResponse("Error: bad request");
+            throw new BadRequestResponse("Error: Bad Request: Missing data");
         }
 
         // Fetches user from dataAccess by username
         User checkAuth = this.dataAccess.getUser(user.username());
         if(checkAuth == null) {
-            throw new UnauthorizedResponse("Error: unauthorized");
+            throw new UnauthorizedResponse("Error: Unauthorized user");
         }
 
         // Check Hashed Password
         if(!BCrypt.checkpw(user.password(), checkAuth.password())) {
-            throw new UnauthorizedResponse("Error: unauthorized");
+            throw new UnauthorizedResponse("Error: Unauthorized user");
         }
 
         return this.dataAccess.authUser(user);
@@ -58,13 +58,13 @@ public class UserService {
     public LogoutResult logout(String authToken) {
         if(authToken == null || authToken.isBlank())
         {
-            throw new UnauthorizedResponse("Error: unauthorized");
+            throw new UnauthorizedResponse("Error: Unauthorized user");
         }
 
         if(this.dataAccess.deleteUser(authToken)) {
             return new LogoutResult();
         } else {
-            throw new UnauthorizedResponse("Error: unauthorized");
+            throw new UnauthorizedResponse("Error: Unauthorized user");
         }
     }
 

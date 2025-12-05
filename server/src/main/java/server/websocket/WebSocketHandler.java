@@ -57,22 +57,9 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
 
     private void join(UserGameCommand command, Session session) throws Exception {
         User authUser = dataAccess.getAuth(command.getAuthToken());
-        Game game = null;
-        if (checkAuth(authUser, session)) {
+        Game game = checkInputErrors(command, session, authUser);
+        if (game == null) {
             return;
-        }
-        ArrayList<Game> gameList = dataAccess.listGame(command.getAuthToken());
-        if (gameList == null || gameList.size() < command.getGameID()) {
-            ErrorMessage errorMessage = new ErrorMessage("Error: Could not find the game. Please try again!");
-            connections.send(session, errorMessage);
-            return;
-        } else {
-            game = grabGame(command, gameList, game);
-            if (game == null) {
-                ErrorMessage errorMessage = new ErrorMessage("Error: Could not find the game. Please try again!");
-                connections.send(session, errorMessage);
-                return;
-            }
         }
 
 
@@ -98,26 +85,11 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
 
     private void move(MakeMoveCommand command, Session session) throws Exception {
         User authUser = dataAccess.getAuth(command.getAuthToken());
-        Game game = null;
+        Game game = checkInputErrors(command, session, authUser);
+        if (game == null) {
+            return;
+        }
         ChessMove move = command.getMove();
-        if (checkAuth(authUser, session)) {
-            return;
-        }
-
-        // Verify GameID
-        ArrayList<Game> gameList = dataAccess.listGame(command.getAuthToken());
-        if (gameList == null || gameList.size() < command.getGameID()) {
-            ErrorMessage errorMessage = new ErrorMessage("Error: Could not find the game. Please try again!");
-            connections.send(session, errorMessage);
-            return;
-        } else {
-            game = grabGame(command, gameList, game);
-            if (game == null) {
-                ErrorMessage errorMessage = new ErrorMessage("Error: Could not find the game. Please try again!");
-                connections.send(session, errorMessage);
-                return;
-            }
-        }
 
 
         ChessGame chessGame = game.game();
@@ -233,24 +205,9 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
 
     private void resign(UserGameCommand command, Session session) throws Exception {
         User authUser = dataAccess.getAuth(command.getAuthToken());
-        Game game = null;
-        if (checkAuth(authUser, session)) {
+        Game game = checkInputErrors(command, session, authUser);
+        if (game == null) {
             return;
-        }
-
-        // Verify GameID
-        ArrayList<Game> gameList = dataAccess.listGame(command.getAuthToken());
-        if (gameList == null || gameList.size() < command.getGameID()) {
-            ErrorMessage errorMessage = new ErrorMessage("Error: Could not find the game. Please try again!");
-            connections.send(session, errorMessage);
-            return;
-        } else {
-            game = grabGame(command, gameList, game);
-            if (game == null) {
-                ErrorMessage errorMessage = new ErrorMessage("Error: Could not find the game. Please try again!");
-                connections.send(session, errorMessage);
-                return;
-            }
         }
 
         ChessGame chessGame = game.game();
@@ -286,24 +243,9 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
 
     private void leave(UserGameCommand command, Session session) throws Exception {
         User authUser = dataAccess.getAuth(command.getAuthToken());
-        Game game = null;
-        if (checkAuth(authUser, session)) {
+        Game game = checkInputErrors(command, session, authUser);
+        if (game == null) {
             return;
-        }
-
-        // Verify GameID
-        ArrayList<Game> gameList = dataAccess.listGame(command.getAuthToken());
-        if (gameList == null || gameList.size() < command.getGameID()) {
-            ErrorMessage errorMessage = new ErrorMessage("Error: Could not find the game. Please try again!");
-            connections.send(session, errorMessage);
-            return;
-        } else {
-            game = grabGame(command, gameList, game);
-            if (game == null) {
-                ErrorMessage errorMessage = new ErrorMessage("Error: Could not find the game. Please try again!");
-                connections.send(session, errorMessage);
-                return;
-            }
         }
 
         String message;
@@ -344,10 +286,34 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
         }
     }
 
-    private Game grabGame(UserGameCommand command, ArrayList<Game> gameList, Game game) {
+    private Game grabGame(UserGameCommand command, ArrayList<Game> gameList) {
+        Game game = null;
         for (Game gameItem : gameList) {
             if (gameItem.gameID().equals(command.getGameID())) {
                 game = gameItem;
+            }
+        }
+        return game;
+    }
+
+    private Game checkInputErrors(UserGameCommand command, Session session, User authUser) throws Exception {
+        if (checkAuth(authUser, session)) {
+            return null;
+        }
+
+        // Verify GameID
+        Game game = null;
+        ArrayList<Game> gameList = dataAccess.listGame(command.getAuthToken());
+        if (gameList == null || gameList.size() < command.getGameID()) {
+            ErrorMessage errorMessage = new ErrorMessage("Error: Could not find the game. Please try again!");
+            connections.send(session, errorMessage);
+            return game;
+        } else {
+            game = grabGame(command, gameList);
+            if (game == null) {
+                ErrorMessage errorMessage = new ErrorMessage("Error: Could not find the game. Please try again!");
+                connections.send(session, errorMessage);
+                return game;
             }
         }
         return game;

@@ -18,18 +18,18 @@ public class GameService {
     public GameListResult listGame(String authToken) {
         ArrayList<Game> games = this.dataAccess.listGame(authToken);
         if(games == null) {
-            throw new UnauthorizedResponse("Error: unauthorized");
+            throw new UnauthorizedResponse("Error: You're unauthorized");
         }
         return new GameListResult(games);
     }
 
     public GameCreateResult createGame(Game game, String authToken) {
         if(this.dataAccess.getAuth(authToken) == null) {
-            throw new UnauthorizedResponse("Error: unauthorized");
+            throw new UnauthorizedResponse("Error: You're unauthorized");
         }
 
         if((game.gameName() == null || game.gameName().isBlank())) {
-            throw new BadRequestResponse("Error: bad request");
+            throw new BadRequestResponse("Error: Bad Request: Missing data");
         }
 
         Game newGame = this.dataAccess.createGame(game.gameName());
@@ -40,18 +40,18 @@ public class GameService {
         User authUser = this.dataAccess.getAuth(authToken);
         // Verify AuthToken
         if(authUser == null) {
-            throw new UnauthorizedResponse("Error: unauthorized");
+            throw new UnauthorizedResponse("Error: You're unauthorized");
         }
 
         // Verify Given Data Exists
         if(gameRequest.playerColor() == null || gameRequest.playerColor().isBlank()) {
-            throw new BadRequestResponse("Error: bad request");
+            throw new BadRequestResponse("Error: Bad Request: Missing data");
         } else if (!gameRequest.playerColor().equals("WHITE") &&
                 !gameRequest.playerColor().equals("BLACK") &&
                 !gameRequest.playerColor().equals("OBSERVER")) {
-            throw new BadRequestResponse("Error: bad request");
+            throw new BadRequestResponse("Error: Bad Request: Missing data");
         } else if (gameRequest.gameID() == null) {
-            throw new BadRequestResponse("Error: bad request");
+            throw new BadRequestResponse("Error: Bad Request: Missing data");
         }
 
         if (gameRequest.playerColor().equals("OBSERVER")) {
@@ -69,18 +69,18 @@ public class GameService {
 
         // Verify that there is a matching game
         if(targetGame == null) {
-            throw new BadRequestResponse("Error: bad request");
+            throw new BadRequestResponse("Error: Bad Request: Missing data");
         }
 
         switch (gameRequest.playerColor()) {
             case "WHITE":
                 if(targetGame.whiteUsername() != null && !targetGame.whiteUsername().isBlank()) {
-                    throw new ForbiddenResponse("Error: already taken");
+                    throw new ForbiddenResponse("Error: Spot already taken");
                 }
                 break;
             case "BLACK":
                 if(targetGame.blackUsername() != null && !targetGame.blackUsername().isBlank()) {
-                    throw new ForbiddenResponse("Error: already taken");
+                    throw new ForbiddenResponse("Error: Spot already taken");
                 }
                 break;
         }
