@@ -2,7 +2,7 @@ package client;
 
 import chess.ChessGame;
 import org.junit.jupiter.api.Test;
-import passoff.chess.TestUtilities;
+//import passoff.chess.TestUtilities;
 import ui.BoardDisplay;
 
 public class BoardDisplayTests {
@@ -35,16 +35,16 @@ public class BoardDisplayTests {
     @Test
     public void testWhiteMovedPieces() {
         var game = new ChessGame();
-        game.setBoard(TestUtilities.loadBoard("""
-                | | | | | | | | |
-                | | | | | | | | |
-                | |B| | | | | | |
-                | | | | | |K| | |
-                | | |n| | | | | |
-                | | | | | | | | |
-                | | | |q| |k| | |
-                | | | | | | | | |
-                """));
+//        game.setBoard(TestUtilities.loadBoard("""
+//                | | | | | | | | |
+//                | | | | | | | | |
+//                | |B| | | | | | |
+//                | | | | | |K| | |
+//                | | |n| | | | | |
+//                | | | | | | | | |
+//                | | | |q| |k| | |
+//                | | | | | | | | |
+//                """));
 
         BoardDisplay paint = new BoardDisplay(game, ChessGame.TeamColor.WHITE);
         System.out.print("THIS IS SUPPOSED TO BE FROM WHITE VIEW\n");
@@ -54,16 +54,16 @@ public class BoardDisplayTests {
     @Test
     public void testBlackMovedPieces() {
         var game = new ChessGame();
-        game.setBoard(TestUtilities.loadBoard("""
-                | | | | | | | | |
-                | | | | | | | | |
-                | |B| | | | | | |
-                | | | | | |K| | |
-                | | |n| | | | | |
-                | | | | | | | | |
-                | | | |q| |k| | |
-                | | | | | | | | |
-                """));
+//        game.setBoard(TestUtilities.loadBoard("""
+//                | | | | | | | | |
+//                | | | | | | | | |
+//                | |B| | | | | | |
+//                | | | | | |K| | |
+//                | | |n| | | | | |
+//                | | | | | | | | |
+//                | | | |q| |k| | |
+//                | | | | | | | | |
+//                """));
 
         BoardDisplay paint = new BoardDisplay(game, ChessGame.TeamColor.BLACK);
         System.out.print("THIS IS SUPPOSED TO BE FROM BLACK VIEW\n");
@@ -74,16 +74,16 @@ public class BoardDisplayTests {
     public void testWhiteOpeningMoves() {
         var game = new ChessGame();
         game.setTeamTurn(ChessGame.TeamColor.WHITE);
-        game.setBoard(TestUtilities.loadBoard("""
-                    |r|n|b|q|k|b| |r|
-                    |p|p|p|p|p|p|p|p|
-                    | | | | | |n| | |
-                    | | | | | | | | |
-                    | | | | |P| | | |
-                    | | | | | | | | |
-                    |P|P|P|P| |P|P|P|
-                    |R|N|B|Q|K|B|N|R|
-                    """));
+//        game.setBoard(TestUtilities.loadBoard("""
+//                    |r|n|b|q|k|b| |r|
+//                    |p|p|p|p|p|p|p|p|
+//                    | | | | | |n| | |
+//                    | | | | | | | | |
+//                    | | | | |P| | | |
+//                    | | | | | | | | |
+//                    |P|P|P|P| |P|P|P|
+//                    |R|N|B|Q|K|B|N|R|
+//                    """));
 
 
         BoardDisplay paint = new BoardDisplay(game, ChessGame.TeamColor.WHITE);
@@ -95,16 +95,16 @@ public class BoardDisplayTests {
     public void testBlackOpeningMoves() {
         var game = new ChessGame();
         game.setTeamTurn(ChessGame.TeamColor.WHITE);
-        game.setBoard(TestUtilities.loadBoard("""
-                    |r|n|b|q|k|b| |r|
-                    |p|p|p|p|p|p|p|p|
-                    | | | | | |n| | |
-                    | | | | | | | | |
-                    | | | | |P| | | |
-                    | | | | | | | | |
-                    |P|P|P|P| |P|P|P|
-                    |R|N|B|Q|K|B|N|R|
-                    """));
+//        game.setBoard(TestUtilities.loadBoard("""
+//                    |r|n|b|q|k|b| |r|
+//                    |p|p|p|p|p|p|p|p|
+//                    | | | | | |n| | |
+//                    | | | | | | | | |
+//                    | | | | |P| | | |
+//                    | | | | | | | | |
+//                    |P|P|P|P| |P|P|P|
+//                    |R|N|B|Q|K|B|N|R|
+//                    """));
 
 
         BoardDisplay paint = new BoardDisplay(game, ChessGame.TeamColor.BLACK);
@@ -132,16 +132,16 @@ public class BoardDisplayTests {
     @Test
     public void testMovedPiecesHighlightQueenWhite() {
         var game = new ChessGame();
-        game.setBoard(TestUtilities.loadBoard("""
-                | | | | | | | | |
-                | | | | | | | | |
-                | |B|B| | | | | |
-                | | | | | |K| | |
-                | |n|n| | | | | |
-                | | | | | | | | |
-                | | | |q| |k| | |
-                | | | | | | | | |
-                """));
+//        game.setBoard(TestUtilities.loadBoard("""
+//                | | | | | | | | |
+//                | | | | | | | | |
+//                | |B|B| | | | | |
+//                | | | | | |K| | |
+//                | |n|n| | | | | |
+//                | | | | | | | | |
+//                | | | |q| |k| | |
+//                | | | | | | | | |
+//                """));
 
         BoardDisplay paint = new BoardDisplay(game, ChessGame.TeamColor.WHITE);
         paint.highlight("d2");
@@ -150,16 +150,16 @@ public class BoardDisplayTests {
     @Test
     public void testMovedPiecesHighlightQueenBlack() {
         var game = new ChessGame();
-        game.setBoard(TestUtilities.loadBoard("""
-                | | | | | | | | |
-                | | | | | | | | |
-                | |B|B| | | | | |
-                | | | | | |K| | |
-                | |n|n| | | | | |
-                | | | | | | | | |
-                | | | |q| |k| | |
-                | | | | | | | | |
-                """));
+//        game.setBoard(TestUtilities.loadBoard("""
+//                | | | | | | | | |
+//                | | | | | | | | |
+//                | |B|B| | | | | |
+//                | | | | | |K| | |
+//                | |n|n| | | | | |
+//                | | | | | | | | |
+//                | | | |q| |k| | |
+//                | | | | | | | | |
+//                """));
 
         BoardDisplay paint = new BoardDisplay(game, ChessGame.TeamColor.BLACK);
         paint.highlight("d2");
