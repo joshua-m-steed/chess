@@ -59,8 +59,11 @@ public class BoardDisplay {
         List<ChessPosition> endPositions = new ArrayList<>();
 
         for (ChessMove move : targetMoves) {
-            endPositions.add(move.getEndPosition());
+            if(verifyHighlight(move)){
+                endPositions.add(move.getEndPosition());
+            }
         }
+
 
         drawBorder(result, team);
 
@@ -73,6 +76,17 @@ public class BoardDisplay {
         drawBorder(result, team);
 
         System.out.print(result);
+    }
+
+    private boolean verifyHighlight(ChessMove move) {
+        ChessGame falseGame = new ChessGame();
+        falseGame.setBoard(this.game.getBoard());
+        ChessBoard falseBoard = falseGame.getBoard();
+        ChessPiece targetPiece = falseBoard.getPiece(move.getStartPosition());
+        falseBoard.addPiece(move.getEndPosition(), targetPiece);
+        falseBoard.removePiece(move.getStartPosition());
+
+        return !falseGame.isInCheck(targetPiece.getTeamColor());
     }
 
     private void drawBorder(StringBuilder result, ChessGame.TeamColor color) {
