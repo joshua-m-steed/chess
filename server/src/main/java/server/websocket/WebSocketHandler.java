@@ -152,12 +152,12 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
         if (chessGame.getWinCondition() == ChessGame.WinCondition.CHECKMATE) {
             if (chessGame.getWhiteState() == ChessGame.PlayerState.WON) {
                 NotificationMessage checkmateMsg = new NotificationMessage(NotificationMessage.NotificationType.CHECKMATE,
-                        authUser.username() + " [WHITE] placed " + game.blackUsername() + " in CHECKMATE!");
+                        game.whiteUsername() + " [WHITE] placed " + game.blackUsername() + " in CHECKMATE!");
                 connections.send(session, checkmateMsg);
                 connections.broadcast(session, checkmateMsg, game.gameID());
             } else if (chessGame.getBlackState() == ChessGame.PlayerState.WON) {
                 NotificationMessage checkmateMsg = new NotificationMessage(NotificationMessage.NotificationType.CHECKMATE,
-                        authUser.username() + " [WHITE] placed " + game.whiteUsername() + " in CHECKMATE!");
+                        game.blackUsername() + " [BLACK] placed " + game.whiteUsername() + " in CHECKMATE!");
                 connections.send(session, checkmateMsg);
                 connections.broadcast(session, checkmateMsg, game.gameID());
             }
@@ -172,12 +172,12 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
         }
         if (chessGame.getWhiteState() == ChessGame.PlayerState.IN_CHECK) {
             NotificationMessage checkMsg = new NotificationMessage(NotificationMessage.NotificationType.CHECK,
-                    authUser.username() + " [WHITE] is in check!");
+                    game.whiteUsername() + " [WHITE] is in check!");
             connections.send(session, checkMsg);
             connections.broadcast(session, checkMsg, game.gameID());
         } else if (chessGame.getBlackState() == ChessGame.PlayerState.IN_CHECK) {
             NotificationMessage checkMsg = new NotificationMessage(NotificationMessage.NotificationType.CHECK,
-                    authUser.username() + " [BLACK] is in check!");
+                    game.blackUsername() + " [BLACK] is in check!");
             connections.send(session, checkMsg);
             connections.broadcast(session, checkMsg, game.gameID());
         }
