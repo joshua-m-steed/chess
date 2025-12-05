@@ -121,20 +121,26 @@ public class ChessClient implements NotificationHandler {
 
     private String quit() throws Exception {
         if (state == State.IN_GAME) {
-            resign();
+            state = State.LOGGED_IN;
+            ws.leaveGame(authToken, currGameID);
+            currGameID = null;
         }
 
         if (state == State.LOGGED_IN) {
-            logout();
+            server.logout(authToken);
+
+            state = State.LOGGED_OUT;
+            username = null;
+            authToken = null;
+            recentList = null;
         }
 
         return "quit";
     }
 
     private String register(String... params) throws Exception {
-        if (state == State.LOGGED_IN) {
-            throw new Exception("Logout before you register a new account!");
-        }
+        assertOnlyLoggedOut();
+
         if (params.length >= 3) {
             username = params[0];
             String password = params[1];
@@ -156,6 +162,8 @@ public class ChessClient implements NotificationHandler {
     }
 
     private String login(String... params) throws Exception {
+        assertOnlyLoggedOut();
+
         if (params.length >= 2) {
             username = params[0];
             String password = params[1];
@@ -176,7 +184,8 @@ public class ChessClient implements NotificationHandler {
     }
 
     private String logout() throws Exception {
-        assertAuthorized();
+        assertOnlyLoggedIn();
+
         server.logout(authToken);
 
         state = State.LOGGED_OUT;
@@ -189,7 +198,8 @@ public class ChessClient implements NotificationHandler {
     }
 
     private String listGames() throws Exception {
-        assertAuthorized();
+        assertOnlyLoggedIn();
+
         GameList list = server.list(authToken);
         recentList = list;
         StringBuilder result = new StringBuilder();
@@ -216,7 +226,8 @@ public class ChessClient implements NotificationHandler {
     }
 
     private String create(String... params) throws Exception {
-        assertAuthorized();
+        assertOnlyLoggedIn();
+
         if (params.length >= 1) {
             String gameName = params[0];
 
@@ -231,7 +242,8 @@ public class ChessClient implements NotificationHandler {
     }
 
     private String join(String... params) throws Exception {
-        assertAuthorized();
+        assertOnlyLoggedIn();
+
         if (params.length >= 2) {
             if( recentList == null) {
                 throw new Exception("Please refer to 'list' before joining a game");
@@ -277,7 +289,8 @@ public class ChessClient implements NotificationHandler {
     }
 
     private String observe(String... params) throws Exception {
-        assertAuthorized();
+        assertOnlyLoggedIn();
+
         if (params.length >= 1) {
             if( recentList == null) {
                 throw new Exception("Please refer to 'list' before joining a game");
@@ -311,7 +324,7 @@ public class ChessClient implements NotificationHandler {
     }
 
     private String move(String... params) throws Exception {
-        assertInGame();
+        assertOnlyInGame();
         if (params.length >= 2) {
             String startPosition = params[0];
             String endPosition = params[1];
@@ -373,14 +386,14 @@ public class ChessClient implements NotificationHandler {
     }
 
     private String redraw() throws Exception {
-        assertInGame();
+        assertOnlyInGame();
         display.draw();
 
         return "Board redrawn!";
     }
 
     private String highlight(String... params) throws Exception {
-        assertInGame();
+        assertOnlyInGame();
         if (params.length >= 1) {
             String tileID = params[0];
             display.highlight(tileID);
@@ -395,7 +408,7 @@ public class ChessClient implements NotificationHandler {
     }
 
     private String leave() throws Exception {
-        assertInGame();
+        assertOnlyInGame();
 
         state = State.LOGGED_IN;
         ws.leaveGame(authToken, currGameID);
@@ -405,7 +418,7 @@ public class ChessClient implements NotificationHandler {
     }
 
     private String resign() throws Exception {
-        assertInGame();
+        assertOnlyInGame();
 
         ws.resignGame(authToken, currGameID);
 
@@ -456,15 +469,33 @@ public class ChessClient implements NotificationHandler {
         return false;
     }
 
-    private void assertAuthorized() throws Exception {
-        if (state == State.LOGGED_OUT) {
-            throw new Exception("Please log in first!");
+    private void assertOnlyLoggedOut() throws Exception {
+        if (state != State.LOGGED_OUT) {
+            if (state == State.LOGGED_IN) {
+                throw new Exception("Please logout first!");
+            } else {
+                throw new Exception("Please leave your game and logout!");
+            }
         }
     }
 
-    private void assertInGame() throws Exception {
+    private void assertOnlyLoggedIn() throws Exception {
+        if (state != State.LOGGED_IN) {
+            if (state == State.LOGGED_OUT) {
+                throw new Exception("Please login first!");
+            } else {
+                throw new Exception("Please leave your game first!");
+            }
+        }
+    }
+
+    private void assertOnlyInGame() throws Exception {
         if (state != State.IN_GAME) {
-            throw new Exception("Please join a game!");
+            if (state == State.LOGGED_IN) {
+                throw new Exception("Please join a game first!");
+            } else {
+                throw new Exception("Please login and join a game!");
+            }
         }
     }
 
