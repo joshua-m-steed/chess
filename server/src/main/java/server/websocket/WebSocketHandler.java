@@ -131,7 +131,6 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
 
 
         ChessGame chessGame = game.game();
-        chessGame.updateGameState();
 
         ChessBoard board = chessGame.getBoard();
         ChessPiece piece = board.getPiece(move.getStartPosition());
@@ -203,6 +202,42 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
                 move.getEndPosition());
         NotificationMessage notificationMessage = new NotificationMessage(NotificationMessage.NotificationType.MOVE, message);
         connections.broadcast(session, notificationMessage, game.gameID());
+
+        if (chessGame.getWinCondition() == ChessGame.WinCondition.CHECKMATE) {
+            if (chessGame.getWhiteState() == ChessGame.PlayerState.WON) {
+                NotificationMessage checkmateMsg = new NotificationMessage(NotificationMessage.NotificationType.CHECKMATE,
+                        authUser.username() + " [WHITE] placed " + game.blackUsername() + " in CHECKMATE!");
+                connections.send(session, checkmateMsg);
+                connections.broadcast(session, checkmateMsg, game.gameID());
+            } else if (chessGame.getBlackState() == ChessGame.PlayerState.WON) {
+                NotificationMessage checkmateMsg = new NotificationMessage(NotificationMessage.NotificationType.CHECKMATE,
+                        authUser.username() + " [WHITE] placed " + game.whiteUsername() + " in CHECKMATE!");
+                connections.send(session, checkmateMsg);
+                connections.broadcast(session, checkmateMsg, game.gameID());
+            }
+            return;
+        }
+
+        if(chessGame.getWinCondition() == ChessGame.WinCondition.STALEMATE) {
+            NotificationMessage staleMsg = new NotificationMessage(NotificationMessage.NotificationType.STALEMATE,
+                    "Both " + game.whiteUsername() + " and " + game.blackUsername() + " have ended in a stalemate!");
+            connections.send(session, staleMsg);
+            connections.broadcast(session, staleMsg, game.gameID());
+            return;
+        }
+
+
+        if (chessGame.getWhiteState() == ChessGame.PlayerState.IN_CHECK) {
+            NotificationMessage checkMsg = new NotificationMessage(NotificationMessage.NotificationType.CHECK,
+                    authUser.username() + " [WHITE] is in check!");
+            connections.send(session, checkMsg);
+            connections.broadcast(session, checkMsg, game.gameID());
+        } else if (chessGame.getBlackState() == ChessGame.PlayerState.IN_CHECK) {
+            NotificationMessage checkMsg = new NotificationMessage(NotificationMessage.NotificationType.CHECK,
+                    authUser.username() + " [BLACK] is in check!");
+            connections.send(session, checkMsg);
+            connections.broadcast(session, checkMsg, game.gameID());
+        }
     }
 
     private void resign(UserGameCommand command, Session session) throws Exception {
@@ -289,15 +324,26 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
         }
 
         String message;
-        if (authUser.username().equals(game.whiteUsername())) {
-            dataAccess.updateGameUser(game.gameID(), ChessGame.TeamColor.WHITE, game.game());
-            message = String.format("%s [Team White] left the chess table", authUser.username());
-        } else if (authUser.username().equals(game.blackUsername())) {
-            dataAccess.updateGameUser(game.gameID(), ChessGame.TeamColor.BLACK, game.game());
-            message = String.format("%s [Team Black] left the chess table", authUser.username());
+        if (game.game().getWinCondition() != ChessGame.WinCondition.IN_PLAY) {
+            if (authUser.username().equals(game.whiteUsername())) {
+                message = String.format("%s [Team White] left the chess table", authUser.username());
+            } else if (authUser.username().equals(game.blackUsername())) {
+                message = String.format("%s [Team Black] left the chess table", authUser.username());
+            } else {
+                message = String.format("%s [Observer] left the chess table", authUser.username());
+            }
         } else {
-            message = String.format("%s [Observer] left the chess table", authUser.username());
+            if (authUser.username().equals(game.whiteUsername())) {
+                dataAccess.updateGameUser(game.gameID(), ChessGame.TeamColor.WHITE, game.game());
+                message = String.format("%s [Team White] left the chess table", authUser.username());
+            } else if (authUser.username().equals(game.blackUsername())) {
+                dataAccess.updateGameUser(game.gameID(), ChessGame.TeamColor.BLACK, game.game());
+                message = String.format("%s [Team Black] left the chess table", authUser.username());
+            } else {
+                message = String.format("%s [Observer] left the chess table", authUser.username());
+            }
         }
+
 
         NotificationMessage notification = new NotificationMessage(NotificationMessage.NotificationType.LEAVE, message);
 

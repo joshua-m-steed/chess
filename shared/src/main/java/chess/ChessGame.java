@@ -272,11 +272,13 @@ public class ChessGame {
             blackState = PlayerState.WON;
 
             winState = WinCondition.CHECKMATE;
+            return;
         } else if (isInCheckmate(TeamColor.BLACK)) {
             whiteState = PlayerState.LOST;
             blackState = PlayerState.WON;
 
             winState = WinCondition.CHECKMATE;
+            return;
         }
 
         if (isInCheck(TeamColor.WHITE)) {
@@ -284,11 +286,13 @@ public class ChessGame {
             blackState = PlayerState.IN_PLAY;
 
             winState = WinCondition.CHECKMATE;
+            return;
         } else if (isInCheck(TeamColor.BLACK)) {
             whiteState = PlayerState.IN_PLAY;
             blackState = PlayerState.IN_CHECK;
 
             winState = WinCondition.IN_PLAY;
+            return;
         }
 
         if(isInStalemate(TeamColor.WHITE) || isInStalemate(TeamColor.BLACK)) {

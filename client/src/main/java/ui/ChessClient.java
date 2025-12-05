@@ -38,7 +38,7 @@ public class ChessClient implements NotificationHandler {
                 display.update(gameMessage.getGame());
                 display.draw();
                 System.out.println(EscapeSequences.SET_TEXT_COLOR_MAGENTA +
-                        "[CURRENT_TURN] " + gameMessage.getGame().getTeamTurn());
+                        "[TURN] " + gameMessage.getGame().getTeamTurn() + " || [GAME] " + gameMessage.getGame().getWinCondition());
                 System.out.print(EscapeSequences.SET_TEXT_COLOR_BLUE + "[IN_GAME] >>> ");
                 break;
             }

@@ -9,6 +9,7 @@ public class NotificationMessage extends ServerMessage {
         RESIGN,
         CHECK,
         CHECKMATE,
+        STALEMATE,
     }
 
     private final NotificationType type;
