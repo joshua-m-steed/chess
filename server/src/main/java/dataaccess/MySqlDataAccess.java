@@ -244,7 +244,7 @@ public class MySqlDataAccess implements DataAccess {
 
         try (Connection conn = DatabaseManager.getConnection()) {
             try (PreparedStatement ps = conn.prepareStatement(joinStatement)) {
-                ps.setString(1, null);
+                ps.setNull(1, Types.VARCHAR);
                 ps.setInt(2, gameID);
                 ps.executeUpdate();
             }

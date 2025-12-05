@@ -295,8 +295,8 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
         }
 
 
-        String message = String.format("%s left the chess tables", authUser.username());
-        NotificationMessage notification = new NotificationMessage(NotificationMessage.NotificationType.DISCONNECT, message);
+        String message = String.format("%s left the chess table", authUser.username());
+        NotificationMessage notification = new NotificationMessage(NotificationMessage.NotificationType.LEAVE, message);
 
         connections.broadcast(session, notification, game.gameID());
         connections.remove(session);

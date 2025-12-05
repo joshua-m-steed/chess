@@ -37,19 +37,20 @@ public class ChessClient implements NotificationHandler {
                 LoadGameMessage gameMessage = gson.fromJson(message, LoadGameMessage.class);
                 display.update(gameMessage.getGame());
                 display.draw();
-                System.out.println(EscapeSequences.SET_TEXT_COLOR_BLUE + "[IN_GAME] >>> ");
+                System.out.print(EscapeSequences.SET_TEXT_COLOR_BLUE + "[IN_GAME] >>> ");
                 break;
             }
             case ERROR: {
                 ErrorMessage errorMessage = gson.fromJson(message, ErrorMessage.class);
                 System.out.println(EscapeSequences.SET_TEXT_COLOR_RED + errorMessage.getMessage());
+                System.out.print(EscapeSequences.SET_TEXT_COLOR_BLUE + "[IN_GAME] >>> ");
                 break;
             }
             case NOTIFICATION: {
                 NotificationMessage notificationMessage = gson.fromJson(message, NotificationMessage.class);
                 System.out.println(EscapeSequences.SET_TEXT_COLOR_YELLOW + "[" +
                         notificationMessage.getType() + "] " + notificationMessage.getMessage());
-                System.out.println(EscapeSequences.SET_TEXT_COLOR_BLUE + "[IN_GAME] >>> ");
+                System.out.print(EscapeSequences.SET_TEXT_COLOR_BLUE + "[IN_GAME] >>> ");
                 break;
             }
         }
@@ -294,7 +295,6 @@ public class ChessClient implements NotificationHandler {
             state = State.IN_GAME;
 
             display = new BoardDisplay(foundGame.game(), ChessGame.TeamColor.WHITE);
-            display.draw();
 
             return EscapeSequences.SET_TEXT_COLOR_GREEN + username +
                     EscapeSequences.SET_TEXT_COLOR_BLUE + " is watching the game, " +
@@ -389,10 +389,12 @@ public class ChessClient implements NotificationHandler {
 
     private String leave() throws Exception {
         assertInGame();
-        // NEEDS MORE USER TO LEAVE GAME!!!
+
         state = State.LOGGED_IN;
+        ws.leaveGame(authToken, currGameID);
         currGameID = null;
-        return "Leaving the game";
+
+        return "Leaving the game...";
     }
 
     private String resign(String... params) throws Exception {
