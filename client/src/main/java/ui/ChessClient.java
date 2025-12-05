@@ -12,6 +12,7 @@ import websocket.messages.LoadGameMessage;
 import websocket.messages.NotificationMessage;
 import websocket.messages.ServerMessage;
 
+import javax.swing.*;
 import java.util.*;
 
 public class ChessClient implements NotificationHandler {
@@ -387,6 +388,18 @@ public class ChessClient implements NotificationHandler {
 
     private String resign() throws Exception {
         assertOnlyInGame();
+
+        Scanner scanner = new Scanner(System.in);
+        System.out.println(EscapeSequences.SET_TEXT_COLOR_RED + "You are about to resign, which means you'll forfeit the match.\n" +
+                "Are you sure you'd like to resign? [YES | NO] >>> ");
+        String line = scanner.nextLine().trim().toLowerCase();
+        while (!line.equals("no") && !line.equals("yes")) {
+            System.out.println("Please type 'yes' or 'no' >>> ");
+            line = scanner.nextLine().trim().toLowerCase();
+        }
+        if (line.equals("no")) {return EscapeSequences.SET_TEXT_COLOR_MAGENTA + "Canceling...";}
+
+        System.out.print(EscapeSequences.SET_TEXT_COLOR_BLUE + "[IN_GAME] >>> ");
         ws.resignGame(authToken, currGameID);
 
         return "Resigning...";
@@ -395,22 +408,17 @@ public class ChessClient implements NotificationHandler {
     private Pair<Integer, Integer> convertMoveToInts(String tile) {
         char letter = tile.charAt(0);
         char number = tile.charAt(1);
-
         Integer col = letter - 'a' + 1;
         Integer row = number - '0';
-
         return new Pair<>(row, col);
     }
 
     private boolean checkInvalidMoveInputs(String tile) {
         if (tile.length() != 2) {return true;}
-
         char letter = tile.charAt(0);
         char number = tile.charAt(1);
-
         List<Character> letters = List.of('a', 'b', 'c', 'd', 'e', 'f', 'g', 'h');
         List<Character> numbers = List.of('1', '2', '3', '4', '5', '6', '7', '8');
-
         if (letters.contains(letter) && numbers.contains(number)) {return false;}
         return true;
     }
@@ -418,7 +426,6 @@ public class ChessClient implements NotificationHandler {
     private boolean evalPromotionPiece(ChessPosition start, ChessPosition end, ChessBoard board) {
         ChessPiece piece = board.getPiece(start);
         if (piece == null) {return false;}
-
         ChessGame.TeamColor teamColor = piece.getTeamColor();
         if (piece.getPieceType() == ChessPiece.PieceType.PAWN) {
             if (end.getRow() == 8 && teamColor == ChessGame.TeamColor.WHITE) {return true;}

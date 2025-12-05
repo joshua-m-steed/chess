@@ -199,7 +199,7 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
 
         if (authUser.username().equals(game.whiteUsername())) {
             chessGame.resign(ChessGame.TeamColor.WHITE);
-            String message = String.format("%s has resigned from the game! %s wins be default!",
+            String message = String.format("%s has resigned from the game! %s wins by default!",
                     game.whiteUsername(),
                     game.blackUsername());
             NotificationMessage notificationMessage = new NotificationMessage(NotificationMessage.NotificationType.RESIGN, message);
@@ -207,7 +207,7 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
             connections.send(session, notificationMessage);
         } else if (authUser.username().equals(game.blackUsername())) {
             chessGame.resign(ChessGame.TeamColor.BLACK);
-            String message = String.format("%s has resigned from the game! %s wins be default!",
+            String message = String.format("%s has resigned from the game! %s wins by default!",
                     game.blackUsername(),
                     game.whiteUsername());
             NotificationMessage notificationMessage = new NotificationMessage(NotificationMessage.NotificationType.RESIGN, message);
