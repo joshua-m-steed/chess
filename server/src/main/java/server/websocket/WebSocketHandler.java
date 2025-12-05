@@ -12,7 +12,6 @@ import websocket.commands.UserGameCommand;
 import websocket.messages.ErrorMessage;
 import websocket.messages.LoadGameMessage;
 import websocket.messages.NotificationMessage;
-import websocket.messages.ServerMessage;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -68,11 +67,7 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
             connections.send(session, errorMessage);
             return;
         } else {
-            for (Game gameItem : gameList) {
-                if (gameItem.gameID().equals(command.getGameID())) {
-                    game = gameItem;
-                }
-            }
+            game = grabGame(command, gameList, game);
             if (game == null) {
                 ErrorMessage errorMessage = new ErrorMessage("Error: Could not find the game. Please try again!");
                 connections.send(session, errorMessage);
@@ -116,11 +111,7 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
             connections.send(session, errorMessage);
             return;
         } else {
-            for (Game gameItem : gameList) {
-                if (gameItem.gameID().equals(command.getGameID())) {
-                    game = gameItem;
-                }
-            }
+            game = grabGame(command, gameList, game);
             if (game == null) {
                 ErrorMessage errorMessage = new ErrorMessage("Error: Could not find the game. Please try again!");
                 connections.send(session, errorMessage);
@@ -254,11 +245,7 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
             connections.send(session, errorMessage);
             return;
         } else {
-            for (Game gameItem : gameList) {
-                if (gameItem.gameID().equals(command.getGameID())) {
-                    game = gameItem;
-                }
-            }
+            game = grabGame(command, gameList, game);
             if (game == null) {
                 ErrorMessage errorMessage = new ErrorMessage("Error: Could not find the game. Please try again!");
                 connections.send(session, errorMessage);
@@ -311,11 +298,7 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
             connections.send(session, errorMessage);
             return;
         } else {
-            for (Game gameItem : gameList) {
-                if (gameItem.gameID().equals(command.getGameID())) {
-                    game = gameItem;
-                }
-            }
+            game = grabGame(command, gameList, game);
             if (game == null) {
                 ErrorMessage errorMessage = new ErrorMessage("Error: Could not find the game. Please try again!");
                 connections.send(session, errorMessage);
@@ -359,5 +342,14 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
         } else {
             return Boolean.FALSE;
         }
+    }
+
+    private Game grabGame(UserGameCommand command, ArrayList<Game> gameList, Game game) {
+        for (Game gameItem : gameList) {
+            if (gameItem.gameID().equals(command.getGameID())) {
+                game = gameItem;
+            }
+        }
+        return game;
     }
 }
