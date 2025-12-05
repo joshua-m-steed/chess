@@ -288,14 +288,17 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
             }
         }
 
+        String message;
         if (authUser.username().equals(game.whiteUsername())) {
             dataAccess.updateGameUser(game.gameID(), ChessGame.TeamColor.WHITE, game.game());
+            message = String.format("%s [Team White] left the chess table", authUser.username());
         } else if (authUser.username().equals(game.blackUsername())) {
             dataAccess.updateGameUser(game.gameID(), ChessGame.TeamColor.BLACK, game.game());
+            message = String.format("%s [Team Black] left the chess table", authUser.username());
+        } else {
+            message = String.format("%s [Observer] left the chess table", authUser.username());
         }
 
-
-        String message = String.format("%s left the chess table", authUser.username());
         NotificationMessage notification = new NotificationMessage(NotificationMessage.NotificationType.LEAVE, message);
 
         connections.broadcast(session, notification, game.gameID());

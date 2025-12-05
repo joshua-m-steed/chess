@@ -37,6 +37,8 @@ public class ChessClient implements NotificationHandler {
                 LoadGameMessage gameMessage = gson.fromJson(message, LoadGameMessage.class);
                 display.update(gameMessage.getGame());
                 display.draw();
+                System.out.println(EscapeSequences.SET_TEXT_COLOR_MAGENTA +
+                        "[CURRENT_TURN] " + gameMessage.getGame().getTeamTurn());
                 System.out.print(EscapeSequences.SET_TEXT_COLOR_BLUE + "[IN_GAME] >>> ");
                 break;
             }
@@ -362,7 +364,7 @@ public class ChessClient implements NotificationHandler {
             ws.makeMove(authToken, currGameID, move);
         }
 
-        return "Piece Moved!";
+        return "Moving piece...";
     }
 
     private String redraw() throws Exception {
