@@ -138,18 +138,7 @@ public class BoardDisplay {
                     .append(EscapeSequences.SET_TEXT_COLOR_GREEN + " " + (i+1) + " ");
             // Pre
             for (int j = 0; j < 8; j++) {
-                ChessPosition scan = new ChessPosition(i + 1, j + 1);
-                if (endPositions.contains(scan)) {
-                    drawHighlightTile(i, j, result);
-                    checkPieces(i, j, result, display, Boolean.TRUE, Boolean.FALSE);
-                } else if (scan.equals(targetPos)) {
-                    result.append(EscapeSequences.SET_BG_COLOR_MAGENTA);
-                    checkPieces(i, j, result, display, Boolean.FALSE, Boolean.TRUE);
-                } else {
-                    drawTile(i, j, result);
-                    checkPieces(i, j, result, display, Boolean.FALSE, Boolean.FALSE);
-                }
-
+                drawHighlightHelper(result, display, endPositions, targetPos, i, j);
             }
             //Post
             result.append(EscapeSequences.SET_BG_COLOR_LIGHT_GREY)
@@ -167,23 +156,29 @@ public class BoardDisplay {
             // Pre
             for (int j = 7; j >= 0; j--)
             {
-                ChessPosition scan = new ChessPosition(i + 1, j + 1);
-                if (endPositions.contains(scan)) {
-                    drawHighlightTile(i, j, result);
-                    checkPieces(i, j, result, display, Boolean.TRUE, Boolean.FALSE);
-                } else if (scan.equals(targetPos)) {
-                    result.append(EscapeSequences.SET_BG_COLOR_MAGENTA);
-                    checkPieces(i, j, result, display, Boolean.FALSE, Boolean.TRUE);
-                } else {
-                    drawTile(i, j, result);
-                    checkPieces(i, j, result, display, Boolean.FALSE, Boolean.FALSE);
-                }
+                drawHighlightHelper(result, display, endPositions, targetPos, i, j);
             }
             //Post
             result.append(EscapeSequences.SET_BG_COLOR_LIGHT_GREY)
                     .append(EscapeSequences.SET_TEXT_COLOR_GREEN + " " + (i+1) + " ")
                     .append(EscapeSequences.RESET_BG_COLOR + EscapeSequences.RESET_TEXT_COLOR)
                     .append("\n");
+        }
+    }
+
+    private void drawHighlightHelper(StringBuilder result, ChessPiece[][] display,
+                                     List<ChessPosition> endPositions,
+                                     ChessPosition targetPos, int i, int j) {
+        ChessPosition scan = new ChessPosition(i + 1, j + 1);
+        if (endPositions.contains(scan)) {
+            drawHighlightTile(i, j, result);
+            checkPieces(i, j, result, display, Boolean.TRUE, Boolean.FALSE);
+        } else if (scan.equals(targetPos)) {
+            result.append(EscapeSequences.SET_BG_COLOR_MAGENTA);
+            checkPieces(i, j, result, display, Boolean.FALSE, Boolean.TRUE);
+        } else {
+            drawTile(i, j, result);
+            checkPieces(i, j, result, display, Boolean.FALSE, Boolean.FALSE);
         }
     }
 

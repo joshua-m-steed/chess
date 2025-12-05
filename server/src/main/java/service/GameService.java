@@ -90,20 +90,6 @@ public class GameService {
         return new GameJoinResult();
     }
 
-//    public GameJoinResult observeGame(JoinGameRequest gameRequest, String authToken) throws BadRequestResponse {
-//        User authUser = this.dataAccess.getAuth(authToken);
-//        // Verify AuthToken
-//        if (authUser == null) {
-//            throw new UnauthorizedResponse("Error: unauthorized");
-//        }
-//
-//        if (gameRequest.playerColor() == null) {
-//            return new GameJoinResult();
-//        } else {
-//            throw new BadRequestResponse("Error: bad request");
-//        }
-//    }
-
     public void clear() {
         this.dataAccess.clearGames();
     }

@@ -69,8 +69,7 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
             return;
         } else {
             for (Game gameItem : gameList) {
-                if (gameItem.gameID().equals(command.getGameID()));
-                {
+                if (gameItem.gameID().equals(command.getGameID())) {
                     game = gameItem;
                 }
             }
@@ -152,7 +151,8 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
         }
 
         // Check Observer
-        if (!Objects.equals(authUser.username(), game.whiteUsername()) && !Objects.equals(authUser.username(), game.blackUsername())) {
+        if (!Objects.equals(authUser.username(), game.whiteUsername()) &&
+                !Objects.equals(authUser.username(), game.blackUsername())) {
             ErrorMessage errorMessage = new ErrorMessage("Error: You are currently observing the game and can't move pieces.");
             connections.send(session, errorMessage);
             return;

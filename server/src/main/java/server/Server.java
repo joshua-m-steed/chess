@@ -122,16 +122,6 @@ public class Server {
         var res = serializer.toJson(response);
         ctx.result(res);
     }
-//
-//    private void observeGame(Context ctx) {
-//        var serializer = new Gson();
-//        var req = serializer.fromJson(ctx.body(), JoinGameRequest.class);
-//        String authToken = ctx.header("authorization");
-//        GameJoinResult response = gameService.observeGame(req, authToken);
-//
-//        var res = serializer.toJson(response);
-//        ctx.result(res);
-//    }
 
     private void badResponseHandler(BadRequestResponse ex, Context ctx) {
         var serializer = new Gson();
