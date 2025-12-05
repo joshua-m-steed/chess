@@ -10,6 +10,7 @@ import websocket.WebSocketFacade;
 import websocket.commands.UserGameCommand;
 import websocket.messages.ErrorMessage;
 import websocket.messages.LoadGameMessage;
+import websocket.messages.NotificationMessage;
 import websocket.messages.ServerMessage;
 
 import java.util.*;
@@ -30,12 +31,28 @@ public class ChessClient implements NotificationHandler {
         ws = new WebSocketFacade(serverUrl, this);
     }
 
-    public void notify(NotificationMessage notificationMessage) {
-        if (notificationMessage.getMessage() == null) {
-            return;
-        } else {
-            System.out.println(notificationMessage.getMessage());
+    public void notify(ServerMessage serverMessage, String message) {
+        switch (serverMessage.getServerMessageType()) {
+            case LOAD_GAME: {
+                LoadGameMessage gameMessage = gson.fromJson(message, LoadGameMessage.class);
+                display.update(gameMessage.getGame());
+                display.draw();
+                System.out.println("[IN_GAME] >>> ");
+                break;
+            }
+            case ERROR: {
+                ErrorMessage errorMessage = gson.fromJson(message, ErrorMessage.class);
+                System.out.println(EscapeSequences.SET_TEXT_COLOR_RED + errorMessage.getMessage());
+                break;
+            }
+            case NOTIFICATION: {
+                NotificationMessage notificationMessage = gson.fromJson(message, NotificationMessage.class);
+                System.out.println("I WANTED TO SEND A NOTIFICATION");
+                break;
+            }
         }
+
+
 
     }
 
@@ -267,8 +284,9 @@ public class ChessClient implements NotificationHandler {
             }
 
             int gameID = foundGame.gameID();
-
-            GameJoin gameRequest = new GameJoin(null, gameID);
+            currGameID = gameID;
+            GameJoin gameRequest = new GameJoin(ChessGame.TeamColor.OBSERVER, gameID);
+            server.join(gameRequest, authToken);
             ws.joinGame(authToken, currGameID);
 //            server.observe(gameRequest, authToken);
             state = State.IN_GAME;

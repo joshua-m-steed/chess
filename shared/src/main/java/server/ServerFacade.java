@@ -56,8 +56,6 @@ public class ServerFacade {
         handleResponse(response, null);
     }
 
-//    public void observe(GameJoin gameRequest, String authToken)
-
     private HttpRequest buildRequest(String method, String path, Object body, String authToken) {
         HttpRequest.Builder request = HttpRequest.newBuilder()
                 .uri(URI.create(serverUrl + path))
