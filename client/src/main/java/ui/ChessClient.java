@@ -399,16 +399,12 @@ public class ChessClient implements NotificationHandler {
         return "Leaving the game...";
     }
 
-    private String resign(String... params) throws Exception {
+    private String resign() throws Exception {
         assertInGame();
 
-        UserGameCommand command = new UserGameCommand(
-                UserGameCommand.CommandType.RESIGN,
-                authToken,
-                currGameID
-        );
+        ws.resignGame(authToken, currGameID);
 
-        return EscapeSequences.SET_TEXT_COLOR_RED + "I am a placeholder";
+        return "Resigning...";
     }
 
     private Pair<Integer, Integer> convertMoveToInts(String tile) {
