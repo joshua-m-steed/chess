@@ -37,7 +37,7 @@ public class ChessClient implements NotificationHandler {
                 LoadGameMessage gameMessage = gson.fromJson(message, LoadGameMessage.class);
                 display.update(gameMessage.getGame());
                 display.draw();
-                System.out.println("[IN_GAME] >>> ");
+                System.out.println(EscapeSequences.SET_TEXT_COLOR_BLUE + "[IN_GAME] >>> ");
                 break;
             }
             case ERROR: {
@@ -47,7 +47,9 @@ public class ChessClient implements NotificationHandler {
             }
             case NOTIFICATION: {
                 NotificationMessage notificationMessage = gson.fromJson(message, NotificationMessage.class);
-                System.out.println("I WANTED TO SEND A NOTIFICATION");
+                System.out.println(EscapeSequences.SET_TEXT_COLOR_YELLOW + "[" +
+                        notificationMessage.getType() + "] " + notificationMessage.getMessage());
+                System.out.println(EscapeSequences.SET_TEXT_COLOR_BLUE + "[IN_GAME] >>> ");
                 break;
             }
         }

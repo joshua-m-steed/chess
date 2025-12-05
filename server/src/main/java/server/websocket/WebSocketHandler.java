@@ -86,9 +86,18 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
         LoadGameMessage loadGame = new LoadGameMessage(game.game());
         connections.send(session, loadGame);
 
+        String notifMessage;
+        if(!Objects.equals(authUser.username(), game.whiteUsername()) && !Objects.equals(authUser.username(), game.blackUsername())) {
+            notifMessage = String.format("%s is watching the game", authUser.username());
+        } else {
+            if (authUser.username().equals(game.whiteUsername())) {
+                notifMessage = String.format("%s joined the game as %s", authUser.username(), "WHITE");
+            } else {
+                notifMessage = String.format("%s joined the game as %s", authUser.username(), "BLACK");
+            }
+        }
 
 
-        String notifMessage = String.format("%s joined the game", authUser.username(), command.getGameID());
         NotificationMessage notification = new NotificationMessage(NotificationMessage.NotificationType.JOIN, notifMessage);
         connections.broadcast(session, notification, game.gameID());
     }
